@@ -1,0 +1,32 @@
+{
+    "settings" : {
+        "analyticHost" : "topface"
+    },
+
+    "keys" : {
+        "KEY_1": {
+            "description" : "Ключ 1",
+            "mustHaveSlices" : ["slice_1", "slice_2"],
+            "canHaveSlices" : ["slice_3"]
+        },
+        "KEY_2": {
+            "description" : "Ключ 2",
+            "canHaveSlices" : ["slice_3"]
+        }
+    },
+
+    "slices" :{
+        "slice_1" : {
+            "description" : "Срез 1"
+        },
+
+        "slice_2" : {
+            "values" : ["vk", "fb"],
+            "description" : "Срез 2"
+        },
+
+        "slice_3" : {
+            "description" : "Срез 2"
+        }
+    }
+}
