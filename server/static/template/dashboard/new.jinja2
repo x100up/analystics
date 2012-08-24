@@ -1,0 +1,46 @@
+{% extends 'layout/main.jinja2' %}
+
+{% block head %}
+    <script type="text/javascript" src="/static/js/jquery-ui-1.8.23.custom.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery.ui.picker.addon.js"></script>
+    <script type="text/javascript" src="/static/libs/autocomplete/jquery.autocomplete-min.js"></script>
+    <script type="text/javascript" src="/static/js/newWorker.js" ></script>
+
+    <link href="/static/libs/autocomplete/styles.css" type="text/css" rel="stylesheet">
+    <link href="/static/css/pepper-grinder/jquery-ui-1.8.23.custom.css" type="text/css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <form action="" method="post">
+        <input type="hidden" name="appname" value="topface">
+        <div class="grid_12">
+            <input class="datepicker" name="start">
+            <input class="datepicker" name="end">
+            <select name="group_interval">
+                <option value="minute">1 минута</option>
+                <option value="10minute">10 минут</option>
+                <option value="hour">час</option>
+                <option value="day">день</option>
+                <option value="week">неделя</option>
+            </select>
+        </div>
+
+        <div class="grid_12">
+        <ul>
+            <li>Ключ: <input type="text" name="key" class="key_autocomplete"> </li>
+
+            <li>
+                <ul id="tag_container_1">
+                </ul>
+            </li>
+        </ul>
+        </div>
+
+        <div class="grid_12">
+            <input type="submit" value="Отправить">
+        </div>
+
+    </form>
+
+{% endblock %}

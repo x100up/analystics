@@ -1,13 +1,13 @@
 <?
 include_once dirname(__FILE__) . '/TFLogger/TFLogger.php';
-//include_once dirname(__FILE__) . '/TFLogger/TFAnalyticsKeys.php';
+include_once dirname(__FILE__) . '/TFLogger/TFAnalyticsConfig.php';
 
-$flumeLogger = new TFLogger('topface_analytics.json');
-$flumeLogger->log('KEY_1', array('slice_1' => 100500, 'slice_2' => 'fb'));
-$flumeLogger->log('KEY_1', array('slice_1' => 100500, 'slice_2' => 'fb', 'slice_3' => 100,505));
-$flumeLogger->log('KEY_2', array('slice_3' => null));
-$flumeLogger->log('KEY_2', array('slice_3' => true));
-$flumeLogger->log('KEY_2', array('slice_3' => false));
+$flumeLogger = new TFLogger(TopFaceAnalyticsConfig::$settings);
+$flumeLogger->log('KEY_1', array('param_1' => 'fb', 'param_2' => 'my_string'));
+$flumeLogger->log('KEY_1', array('param_1' => 'vk', 'param_2' => 'my_string_2', 'param_3' => 100));
+$flumeLogger->log('KEY_2', array('param_1' => 'vk', 'param_3' => 100));
+$flumeLogger->log('KEY_2', array('param_1' => 'vk', 'param_3' => 105));
+$flumeLogger->log('KEY_2', array('param_1' => 'vk', 'param_3' => 108));
 
 try {
     $flumeLogger->commit();

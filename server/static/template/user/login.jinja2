@@ -1,0 +1,18 @@
+{% extends 'layout/main.jinja2' %}
+{% block content %}
+    <form action="" method="post">
+        <ul>
+            <li>
+                <label>Логин:</label>
+                <input type="text" name="login" value="{{login}}">
+            </li>
+            <li>
+                <label>Пароль:</label>
+                <input type="password" name="pass">
+            </li>
+            <li>
+                <input type="submit" value="Войти">
+            </li>
+        </ul>
+    </form>
+{% endblock %}

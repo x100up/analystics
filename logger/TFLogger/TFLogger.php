@@ -26,9 +26,8 @@ class TFLogger extends TFFlumeLogger {
     /**
      * @param $settingFile - путь к файлу настроек ключей и срезов
      */
-    public function __construct($settingFile) {
-        $this->settings = json_decode(file_get_contents($settingFile), true);
-        //var_dump(file_get_contents($settingFile));
+    public function __construct(&$settings) {
+        $this->settings = $settings;
     }
 
     /**
@@ -75,77 +74,152 @@ class TFLogger extends TFFlumeLogger {
     }
 
     /**
-     * Кеш TFAnalyticsKeys
-     * @var ReflectionClass
-     */
-    //private $KeyReflection;
-
-    /**
      * проверка ключа и сочетаемых срезов
      * @param $key
-     * @param $rawSlices
+     * @param $rawParams
      * @throws TFAnalyticsException
      * @return array
      */
-    private function processSlices($key, $rawSlices) {
-
-        //if (!$this->KeyReflection)
-        //    $this->KeyReflection = new ReflectionClass(TFAnalyticsKeys::getClassName());
-
-        // проверка ключа
-        //if (!$this->KeyReflection->hasConstant($key)) {
-        //    throw new TFAnalyticsException('Ключ отсутвует в списке известных ключей', TFAnalyticsException::WRONG_KEY);
-        //}
-
-        // проверка срезов
+    private function processSlices($key, $rawParams) {
+        // проверка - есть ли ключ в настройках приложения
         if (!isset($this->settings['keys'][$key])) {
-            throw new TFAnalyticsException('Ключ отсутствует в настройке приложения', TFAnalyticsException::WRONG_KEY);
+            throw new TFAnalyticsException('Ключ отсутствует в конфигурации аналитики', TFAnalyticsException::WRONG_KEY);
         }
 
-        $slices = array();
+        $params = array();
 
         $keySettings = $this->settings['keys'][$key];
+        $slicesSettings = $this->settings['slices'];
 
-        // срезы, которые должны быть
+        // параметры, которые должны быть
+        $mustHaveParams = array();
+        if (isset($keySettings['mustHaveParams'])) {
+            $mustHaveParams = $keySettings['mustHaveParams'];
+        }
+
         if (isset($keySettings['mustHaveSlices'])) {
             foreach ($keySettings['mustHaveSlices'] as $sliceName) {
-                if (!array_key_exists($sliceName, $rawSlices)) {
-                    throw new TFAnalyticsException('Отсуствует необходимый срез для ключа',
-                        TFAnalyticsException::NO_REQUIRED_SLICE_FOR_KEY);
-                }
+                if (isset($slicesSettings[$sliceName])) {
 
-                $slices[$sliceName] = $rawSlices[$sliceName];
+                    if (isset($slicesSettings[$sliceName]['params'])) {
+                        $mustHaveParams += $slicesSettings[$sliceName]['params'];
+                    } else {
+                        throw new TFAnalyticsException('Ошибка в конфигурации: у настроек среза отсутствует список параметров',
+                            TFAnalyticsException::BAD_CONFIG
+                        );
+                    }
+
+                } else {
+                    throw new TFAnalyticsException('Срез отсутствует в конфигурации аналитики',
+                        TFAnalyticsException::WRONG_SLICE);
+                }
             }
         }
 
-        // срезы, которые могут быть или не быть
+        // проверка
+        foreach ($mustHaveParams as $paramName) {
+            if (!array_key_exists($paramName, $rawParams)) {
+                    throw new TFAnalyticsException('Отсуствует необходимый параметр ' . $paramName . ' для ключа ' . $key,
+                        TFAnalyticsException::NO_REQUIRED_PARAM_FOR_KEY);
+            }
+
+            $params[$paramName] = $rawParams[$paramName];
+        }
+
+
+        // параметры, которые могут быть или не быть
+
+        $canHaveParams = array();
+        if (isset($keySettings['canHaveParams'])) {
+            $canHaveParams = $keySettings['canHaveParams'];
+        }
+
         if (isset($keySettings['canHaveSlices'])) {
             foreach ($keySettings['canHaveSlices'] as $sliceName) {
-                if (array_key_exists($sliceName, $rawSlices)) {
-                    $slices[$sliceName] = $rawSlices[$sliceName];
+                if (isset($slicesSettings[$sliceName])) {
+
+                    if (isset($slicesSettings[$sliceName]['params'])) {
+                        $canHaveParams += $slicesSettings[$sliceName]['params'];
+                    } else {
+                        throw new TFAnalyticsException('Ошибка в конфигурации: у настроек среза отсутствует список параметров',
+                            TFAnalyticsException::BAD_CONFIG
+                        );
+                    }
+
+                } else {
+                    throw new TFAnalyticsException('Срез отсутствует в конфигурации аналитики',
+                        TFAnalyticsException::WRONG_SLICE);
                 }
             }
         }
 
-        unset($rawSlices);
-        $sliceSettings = $this->settings['slices'];
-        foreach ($slices as $sliceName => $value) {
-            if (isset($sliceSettings[$sliceName])) {
-                $sliceSetting = $sliceSettings[$sliceName];
+        // копируем возможные параметры
+        foreach ($canHaveParams as $paramName) {
+            $params[$paramName] = $rawParams[$paramName];
+        }
+
+        // TODO возможно нужно сделать проверку на лишние параметры
+
+        unset($rawParams);
+
+        $paramSettings = &$this->settings['params'];
+
+        foreach ($params as $paramName => &$value) {
+            if (isset($paramSettings[$paramName])) {
+                $paramSetting = $paramSettings[$paramName];
+
+                // проверка типа значения параметра
+                if (isset($paramSetting['type'])) {
+                    switch ($paramSetting['type']) {
+
+                        case 'string':
+                            if (is_scalar($value) && !is_bool($value)) {
+                                $value = (string)$value;
+                            } else {
+                                throw new TFAnalyticsException('Тип значения параметра ' . $paramName . ' должен быть ' . $paramSetting['type'],
+                                    TFAnalyticsException::WRONG_PARAM_VALUE);
+                            }
+                        break;
+
+                        case 'int':
+                            if (is_numeric($value) && (int)$value == $value) {
+                                $value = (int)$value;
+                            } else {
+                                throw new TFAnalyticsException('Тип значения параметра ' . $paramName . ' должен быть ' . $paramSetting['type'],
+                                    TFAnalyticsException::WRONG_PARAM_VALUE);
+                            }
+                        break;
+
+                        case 'float':
+                            if (is_numeric($value) && (float)$value == $value) {
+                                $value = (float)$value;
+                            } else {
+                                throw new TFAnalyticsException('Тип значения параметра ' . $paramName . ' должен быть ' . $paramSetting['type'],
+                                    TFAnalyticsException::WRONG_PARAM_VALUE);
+                            }
+                        break;
+
+                        default:
+                            throw new TFAnalyticsException('Неверный тип значения параметра ' . $paramName,
+                                TFAnalyticsException::BAD_CONFIG);
+                    }
+                }
+
 
                 // проверка на вхождение в список допустимых значений
-                if (isset($sliceSetting['values'])) {
-                    if (!in_array($value, $sliceSetting['values'])) {
-                        throw new TFAnalyticsException('Значение среза не входит в список доступных значений',
-                            TFAnalyticsException::WRONG_SLICE_VALUE);
+                if (isset($paramSetting['values'])) {
+                    if (!in_array($value, $paramSetting['values'])) {
+                        throw new TFAnalyticsException('Значение параметр ' . $paramName . ' не входит в список доступных значений',
+                            TFAnalyticsException::WRONG_PARAM_VALUE);
                     }
                 }
 
             } else {
-                throw new TFAnalyticsException('Срез отсутсвует в списке допустимых срезов', TFAnalyticsException::WRONG_SLICE);
+                throw new TFAnalyticsException('Параметр ' . $paramName . ' отсутсвует в конфигурации аналитики',
+                    TFAnalyticsException::WRONG_PARAM);
             }
         }
 
-        return $slices;
+        return $params;
     }
 }

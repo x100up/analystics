@@ -12,22 +12,32 @@ class TFAnalyticsException extends Exception {
     const WRONG_KEY = 2101;
 
     /**
-     * Отсутствует необходимы срез для ключа
+     * Неверный срез
      */
-    const NO_REQUIRED_SLICE_FOR_KEY = 2102;
+    const WRONG_SLICE = 2102;
+
+    /**
+     * Отсутствует необходимы параметр для ключа
+     */
+    const NO_REQUIRED_PARAM_FOR_KEY = 2103;
 
     /**
      * Неверный срез
      */
-    const WRONG_SLICE = 2103;
+    const WRONG_PARAM = 2104;
 
     /**
      * Неверное значение среза
      */
-    const WRONG_SLICE_VALUE = 2104;
+    const WRONG_PARAM_VALUE = 2105;
 
     /**
-     * Исключене
+     * Исключение
      */
-    const THRIFT_EXCEPTION = 2105;
+    const THRIFT_EXCEPTION = 2106;
+
+    /**
+     * Неправильная конфигурация аналитики
+     */
+    const BAD_CONFIG = 2107;
 }
