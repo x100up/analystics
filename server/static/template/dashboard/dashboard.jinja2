@@ -1,7 +1,9 @@
 {% extends 'layout/main.jinja2' %}
 {% block content %}
     <a href="/dashboard/new">Новая задача</a>
-    <table>
+
+
+    <table style="margin-top: 20px;">
         <thead>
             <tr>
                 <th>Название</th>
@@ -23,5 +25,4 @@
     {% endfor %}
     </table>
 
-    <a href="/dashboard/run">Выполнить запрос</a>
 {% endblock %}

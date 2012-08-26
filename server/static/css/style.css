@@ -3,11 +3,21 @@ body {
     font-size: 12pt;
 }
 
+a {
+    border-bottom: 1px solid #B2CCF0;
+    color: #0099CC;
+    text-decoration: none;
+}
 
 header {
     background: #525252;
     height: 70px;
     display: block;
+    color: #FFF;
+}
+
+header a {
+    color: #FFF;
 }
 
 
@@ -15,6 +25,9 @@ div#content{
    margin-top: 15px;
 }
 
+table {
+    width: 100%;
+}
 
 table td, table th {
     border: 1px solid #525252;

@@ -55,6 +55,9 @@ application = tornado.web.Application([
     (r"/user/logout/?", UserController.LogoutAction),
 
     (r"/admin?", AdminController.IndexAction),
+    (r"/admin/users/?", AdminController.UserAction),
+    (r"/admin/users/edit?", AdminController.EditUserAction),
+
 
     (r"/ajax/key_autocomplete/?", DashboardAjaxController.KeyAutocompleteAction),
     (r"/ajax/key_configuration/?", DashboardAjaxController.KeyConfigurationAction),
