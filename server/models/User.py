@@ -11,6 +11,6 @@ class User(Base):
     login = Column(String(50))
     fullname = Column(String(50))
     password = Column(String(50))
-    role = Column(Enum('admin', 'user'))
+    role = Column(Enum('admin', 'user'), default='user')
 
 

@@ -16,7 +16,7 @@
 
     {% for worker in lastWorkers %}
         <tr>
-            <td><a href="/dashboard/result?={{worker.uuid}}">{{worker.uuid}}</a></td>
+            <td><a href="/dashboard/result?jobId={{worker.uuid}}">{{worker.uuid}}</a></td>
             <td>{{worker.startDate}}</td>
             <td>{% if worker.endDate %}{{worker.endDate}}{% endif %}</td>
             <td>{{worker.status}}</td>

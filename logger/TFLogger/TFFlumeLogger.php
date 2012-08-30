@@ -23,6 +23,7 @@ abstract class TFFlumeLogger {
      * Хост Flum -a
      * @var string
      */
+    //private $host = 'web345.verumnets.ru';
     private $host = 'localhost';
 
     /**

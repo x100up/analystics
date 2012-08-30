@@ -1,0 +1,18 @@
+{% extends 'layout/main.jinja2' %}
+
+{% block content %}
+    {% for error in errors %}
+        <p class="error">{{ error }}</p>
+    {% endfor %}
+
+<form action="" method="POST">
+    <input type="hidden" name="appId" value="{{ app.appId or '' }}">
+
+    <ul>
+        <li><label for="name">Название:</label> <input name="name" id="name" value="{{ app.name or '' }}"></li>
+        <li><label for="code">Код:</label> <input name="code" id="code" value="{{ app.code or '' }}"></li>
+        <li><input type="submit" name="save" value="Сохранить"></li>
+    </ul>
+
+</form>
+{% endblock %}

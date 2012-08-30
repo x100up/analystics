@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from BaseController import AjaxController
-from service.AppService import getAppKeyConfig, getConfigTags
+from service.AppService import AppService
 import re
 
 class KeyAutocompleteAction(AjaxController):
@@ -11,7 +11,8 @@ class KeyAutocompleteAction(AjaxController):
         if appName is None:
             self.send_ajax_error('Неверный запрос')
 
-        config = getAppKeyConfig(appName)
+        appService = AppService(self.getConfig('core', 'app_config_path'))
+        config = appService.getAppKeyConfig(appName)
         keysList = config['keys'].keys()
 
         regexp = re.compile('^' + query + '.*')
@@ -22,19 +23,17 @@ class KeyAutocompleteAction(AjaxController):
 
 class KeyConfigurationAction(AjaxController):
 
-    def get(self, *args, **kwargs):
+    def post(self, *args, **kwargs):
         keyName = self.get_argument('key', None)
         appName = self.get_argument('app', None)
-        config = getAppKeyConfig(appName)
+        index = self.get_argument('index', 1)
 
-        raw_json = {
-            "mustHaveTags": getConfigTags(config, keyName, 'must'),
-            "canHaveTags": getConfigTags(config, keyName, 'can'),
+        appService = AppService(self.getConfig('core', 'app_config_path'))
+        tags = {
+            "mustHaveTags": appService.getConfigTags(appName, keyName, 'must'),
+            "canHaveTags": appService.getConfigTags(appName, keyName, 'can'),
         }
 
-
-
-
-        self.renderJSON(raw_json)
+        self.render('blocks/tag_container.jinja2', {'tags':tags, 'key': keyName, 'index': index})
 
 

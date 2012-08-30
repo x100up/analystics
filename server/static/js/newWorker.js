@@ -13,27 +13,5 @@ $(function(){
 
 function onSelectKey(keyName) {
     // загружаем конфигурацию
-    $.getJSON('/ajax/key_configuration', {'key':keyName, 'app':appName}, function(data){
-        $('ul#tag_container_1').children().remove();
-        if (data.mustHaveTags){
-            for (i in data.mustHaveTags) {
-                grawTag(i, data.mustHaveTags[i], true)
-            }
-        }
-
-        if (data.canHaveTags){
-            for (i in data.canHaveTags) {
-                grawTag(i, data.canHaveTags[i], false)
-            }
-        }
-    })
+    $('div#key_1_tag_container').load('/ajax/key_configuration', {'key':keyName, 'app':appName})
 }
-
-
-function grawTag(name, conf, mustHave){
-
-    $('ul#tag_container_1').append('<li><label class="' + (mustHave ? 'must' : 'can') + '" title="' + conf.description + '">' + name + '</label>' +
-        '<input type="text" name="key_tag[]" value="' + name + '">' +
-        '</li>')
-}
-

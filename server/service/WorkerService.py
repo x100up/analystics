@@ -4,29 +4,49 @@ import json
 
 class WorkerService(object):
 
-    def __init__(self, path):
+    def __init__(self, path, worker):
         self.path = path
+        self.worker = worker
 
-    def getFolder(self, uuid):
-        return 'result/' + uuid
+    query = None
 
-    def initWorker(self, worker):
+    def getWorker(self):
+        return self.worker
+
+    def setQuery(self, query):
+        self.query = query
+
+    def setFields(self, fields):
+        self.fields = fields
+
+    def getFolder(self):
+        return 'result/' + self.worker.uuid
+
+    def init(self):
         # create folders
-        folder = self.getFolder(worker.uuid)
-        os.makedirs(folder)
+        os.makedirs(self.getFolder())
 
         j = {
-            'workId' : worker.uuid,
-            'start' : str(worker.startDate)
+            'workId': self.worker.uuid,
+            'start': str(self.worker.startDate),
+            'query': self.query,
+            'fields' : self.fields
         }
+
         job_json = json.dumps(j)
-        f = open(self.path + '/job.json', 'w+')
+        f = open(self.getFolder() + '/job.json', 'w+')
         f.write(job_json)
         f.close()
 
-    def flushResult(self, workerUUID, data):
-        folder = self.getFolder(workerUUID)
-        f = open(self.path + '/result.txt', 'w+')
-        f.write(json.dumps(data))
+
+    def flushResult(self, result):
+        f = open(self.getFolder() + '/result.json', 'w+')
+        f.write(json.dumps(result))
         f.close()
+
+    def getResults(self):
+        f = open(self.getFolder() + '/result.json', 'r')
+        result = json.load(f)
+        f.close()
+        return result['result']
 

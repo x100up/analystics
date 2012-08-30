@@ -1,1 +1,10 @@
-/server/service/*.pyc
+*.pyc
+/.idea/.name
+/.idea/analystics.iml
+/.idea/encodings.xml
+/.idea/inspectionProfiles/profiles_settings.xml
+/.idea/misc.xml
+/.idea/modules.xml
+/.idea/scopes/scope_settings.xml
+/.idea/vcs.xml
+/.idea/workspace.xml

@@ -1,4 +1,3 @@
-__author__ = 'prog-31'
 from jinja2 import Template, Environment, PackageLoader
 from sqlalchemy.orm import sessionmaker
 import tornado.web, json
@@ -12,19 +11,20 @@ class BaseController(tornado.web.RequestHandler):
         if not self.dbSessionMaker:
             mysqlConfig = self.getConfig("mysql")
             engine = create_engine('mysql://' + mysqlConfig['user'] + ':' + mysqlConfig['password'] + '@'
-                                   + mysqlConfig['host'] + '/' + mysqlConfig['dbname'])
-            self.dbSessionMaker = sessionmaker(bind=engine)
+                                   + mysqlConfig['host'] + '/' + mysqlConfig['dbname']+'?init_command=set%20names%20%22utf8%22', encoding='utf8', convert_unicode=True)
+            self.dbSessionMaker = sessionmaker(bind=engine, autoflush=False)
+            engine.execute('SET NAMES utf8')
         return self.dbSessionMaker
 
     def getDBSession(self):
-         return self.getSessionMaker()()
-
+        return  self.getSessionMaker()()
 
     def get_current_user(self):
         login = self.get_secure_cookie('user.login')
         if login:
             session = self.getDBSession()
             user = session.query(User).filter_by(login = login).first()
+            session.flush()
             return user
 
         return None
@@ -46,7 +46,6 @@ class BaseController(tornado.web.RequestHandler):
         return config
 
     def render(self, template_name, dict = None):
-        print dict
         if dict is None:
             dict = {}
         dict['is_login'] = self.get_secure_cookie('user.login')

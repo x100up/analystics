@@ -10,11 +10,13 @@
 </head>
 <body>
     <header class="container_12">
-        {% if is_login %}
-            <a href="/user/logout/">Выйти</a>
-        {% else %}
-            <a href="/user/login/">Войти</a>
-        {% endif %}
+        <div id="user_block" class="grid_2 push_10">
+            {% if is_login %}
+                <a href="/user/logout/">Выйти</a>
+            {% else %}
+                <a href="/user/login/">Войти</a>
+            {% endif %}
+        </div>
     </header>
 
     <div class="container_12" id="content">

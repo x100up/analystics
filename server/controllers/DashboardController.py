@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from BaseController import BaseController
-from service.HiveService import createHiveQuery
+from service.QueryService import HiveQueryConstructor
 from worker import HiveWorker
 from models.Worker import Worker
+from models.Task import Task
 import uuid, tornado.web
-from datetime import datetime
+from datetime import datetime, timedelta
 from service.WorkerService import WorkerService
 from sqlalchemy import desc
 from service import ThredService
@@ -41,8 +42,8 @@ class CreateAction(BaseController):
     """
     @tornado.web.authenticated
     def get(self):
-
-        self.render('dashboard/new.jinja2')
+        task = Task(delta = timedelta(days = -1))
+        self.render('dashboard/new.jinja2', {'task':task})
 
     def post(self):
         start = self.get_argument('start', False)
@@ -51,45 +52,52 @@ class CreateAction(BaseController):
         end = self.get_argument('end', False)
         end = datetime.strptime(end, "%m/%d/%Y %H:%M")
 
-        group_interval = self.get_argument('group_interval', False)
         appname = self.get_argument('appname', False)
+        group_interval = self.get_argument('group_interval', False)
 
-        query = createHiveQuery(appname, start, end, group_interval = group_interval)
-        print self.request.arguments
-        self.write(query)
+        task = Task(start = start, end = end, appname = appname, interval = group_interval)
 
+        # parse keys and tags
+        keys =  self.get_arguments('key')
+        index = 1
+        for key in keys:
+            tags = self.get_arguments('tag_' + str(index) + '_name')
+            for tag in tags:
+                tagsValue = self.get_arguments('tag_' + str(index) + '_' + tag, None)
+                task.addCondition(key, tag, tagsValue)
+            index += 1
 
-class HiveAction(BaseController):
-    '''
-    Запуск воркера на Hive
-    '''
-    @tornado.web.authenticated
-    def get(self):
-        # создаем новый запрос к hive
-        query = "SELECT count(1) FROM topface.stat_KEY_1"
-
+        constructor = HiveQueryConstructor(task)
+        query = constructor.getHiveQuery()
         user = self.get_current_user()
 
+        # объект для записи в базу
         worker = Worker()
         worker.uuid = str(uuid.uuid4())
         worker.userId = user.userId
         worker.startDate = datetime.now()
         worker.status = Worker.STATUS_ALIVE
-
-        ws = WorkerService(self.getConfig('core', 'result_path'))
-        ws.initWorker(worker)
         session = self.getDBSession()
         session.add(worker)
         session.commit()
 
-        print 'create worker ' + worker.uuid
+        # создаем WorkerService - он будет связывать тред с файловой системой
+        workerService = WorkerService(self.getConfig('core', 'result_path'), worker)
+        workerService.setQuery(query)
+        workerService.setFields(constructor.getFields())
+        workerService.init()
 
         # тут будем констуровать запрос
-        workerThread = HiveWorker.HiveWorker(query)
+        workerThread = HiveWorker.HiveWorker(workerService)
         # передает sessionmaker т.к. он создает сеессию в пределах треда
         workerThread.mysqlSessionMaker = self.getSessionMaker()
         workerThread.folderForWorkerService = self.getConfig('core', 'result_path')
+        workerThread.host = self.getConfig('hive', 'host')
+        workerThread.host = self.getConfig('hive', 'port')
         workerThread.setName(worker.uuid)
         workerThread.start()
 
-        self.redirect("/dashboard?newJob=" + str(worker.uuid))
+        self.write(query)
+
+        #self.redirect("/dashboard?newJob=" + str(worker.uuid))
+

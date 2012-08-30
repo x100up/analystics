@@ -1,6 +1,7 @@
 [core]
 result_path = result
 port=8888
+app_config_path=app_configs
 
 
 [mysql]
@@ -9,3 +10,12 @@ password=123123
 host=localhost
 dbname=analystic
 
+[hdfs]
+#host=localhost
+#port=
+statistic_path=/statistics
+
+[hive]
+prefix=stat_
+host=localhost
+port=10000

@@ -1,0 +1,23 @@
+{# tag #}
+<li>
+    <label title="{{ data.description or 'Нет описания' }}" class="{{ x }}">{{ data.name or name }}:</label>
+    <input type="hidden" name="tag_{{ index }}_name" value="{{ name }}">
+
+{% if data.type == 'choose' %}
+
+    {% if data.variants|length < 6   %}
+        {% for value in data.variants %}
+            {{ value }}: <input type="checkbox" value="{{ value }}" name="tag_{{ index }}_{{ name }}">
+        {% endfor %}
+    {% else %}
+        {% for value in data.variants %}
+            <ul>
+                <li><input type="checkbox" value="{{ value }}" name="tag_{{ index }}_{{ name }}"></li>
+            </ul>
+        {% endfor %}
+    {% endif %}
+
+{% else %}
+        <input type="text" name="tag_{{ index }}_{{ name }}">
+{% endif %}
+</li>

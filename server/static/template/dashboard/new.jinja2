@@ -14,27 +14,22 @@
 
     <form action="" method="post">
         <input type="hidden" name="appname" value="topface">
-        <div class="grid_12">
-            <input class="datepicker" name="start">
-            <input class="datepicker" name="end">
-            <select name="group_interval">
-                <option value="minute">1 минута</option>
-                <option value="10minute">10 минут</option>
-                <option value="hour">час</option>
-                <option value="day">день</option>
-                <option value="week">неделя</option>
+        <div class="grid_12 interval_form">
+            <label for="start">C:</label> <input class="datepicker" name="start" id="start" value="{{ task.start.strftime("%m/%d/%Y %H:%M") }}">
+            <label for="end">По:</label> <input class="datepicker" name="end" id="end" value="{{ task.end.strftime("%m/%d/%Y %H:%M") }}">
+            <label for="group_interval">Интервал:</label> <select name="group_interval" id="group_interval">
+                {% for key, value in task.intervals.items() %}
+                <option value="{{ key }}" {% if task.interval == key %}selected{% endif %} >{{ value }}</option>
+                {% endfor %}
             </select>
         </div>
 
         <div class="grid_12">
-        <ul>
-            <li>Ключ: <input type="text" name="key" class="key_autocomplete"> </li>
+        <label for="key_1">Ключ:</label>
+            <input type="text" name="key" id="key_1" class="key_autocomplete">
+            <div id="key_1_tag_container" class="tag_container">
 
-            <li>
-                <ul id="tag_container_1">
-                </ul>
-            </li>
-        </ul>
+            </div>
         </div>
 
         <div class="grid_12">

@@ -5,6 +5,15 @@
 
     <a href="/admin/users/edit">Добавить пользователя</a>
 
+    <table>
 
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td><a href="/admin/users/edit?userId={{ user.userId }}">{{ user.fullname }}</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
 {% endblock %}

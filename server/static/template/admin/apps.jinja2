@@ -1,0 +1,22 @@
+{% extends 'layout/main.jinja2' %}
+
+{% block content %}
+    <a href="/admin/app/edit">Добавить приложение</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Код</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for app in apps %}
+            <tr>
+                <td><a href="/admin/app/edit?appId={{ app.appId }}">{{ app.name }}</a></td>
+                <td>{{ app.code }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

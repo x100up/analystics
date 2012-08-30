@@ -1,39 +1,30 @@
-import sys, threading
+import threading
 from thrift import Thrift
-from thrift.transport import TSocket
-from thrift.transport import TTransport
-from thrift.protocol import TBinaryProtocol
-from hive_service import ThriftHive
-from service.WorkerService import WorkerService
 from hive_service.ttypes import HiveServerException
 from models.Worker import Worker
-from  datetime import datetime
+from datetime import datetime
+from service.HiveService import HiveService
 
 class HiveWorker(threading.Thread):
 
     mysqlSessionMaker = None
     folderForWorkerService = None
+    host = None
+    port = None
 
-    def __init__ (self, query):
+    def __init__ (self, workerService):
         threading.Thread.__init__(self)
         self.daemon = True
-        self.query = query
+        self.workerService = workerService
 
     def run(self):
         print 'worker [' + self.getName() + '] run'
+        hiveClient = None
         try:
-            # hive query
-            transport = TSocket.TSocket('localhost', 10000)
-            transport = TTransport.TBufferedTransport(transport)
-            protocol = TBinaryProtocol.TBinaryProtocol(transport)
-            client = ThriftHive.Client(protocol)
-            transport.open()
-            client.execute(self.query)
-            data = {'result' : client.fetchAll()}
+            hiveClient = HiveService(self.host, self.port)
+            data = {'result' : hiveClient.execute(self.workerService.query)}
             print 'worker [' + self.getName() + '] end job'
             status = Worker.STATUS_SUCCESS
-
-            transport.close()
 
         except Thrift.TException, tx:
             data = {'exception' : tx.message }
@@ -44,13 +35,15 @@ class HiveWorker(threading.Thread):
         except Exception, tx:
             data = {'exception' : tx.message }
             status = Worker.STATUS_ERROR
+        finally:
+            if hiveClient:
+                hiveClient.close()
 
+        worker = self.workerService.getWorker()
         session = self.mysqlSessionMaker()
-        worker = session.query(Worker).filter_by(uuid = self.getName()).first()
         worker.endDate = datetime.now()
         worker.status = status
-        session.add(worker)
+        session.merge(worker)
         session.commit()
+        self.workerService.flushResult(data)
 
-        ws = WorkerService(self.folderForWorkerService)
-        ws.flushResult(self.getName(), data)

@@ -1,22 +1,24 @@
-import tornado.ioloop
-import tornado.web
-import os
-from controllers import DashboardController, IndexController, UserController, AdminController, DashboardAjaxController
-import ConfigParser
-import sys
-print sys.argv
+import os, tornado.web, tornado.ioloop, ConfigParser
+from controllers import DashboardController, IndexController, UserController, DashboardAjaxController, DashboardResultController
+from controllers.admin import AdminUserController, AdminIndexController, AdminAppController
 
 config = {
     'core': {
         'result_path' : 'result',
-        'port' : 8888
+        'port' : 8888,
+        'app_config_path': 'app_configs'
     },
     'mysql': {
         'user':'user',
         'password':'password',
         'host':'localhost',
         'dbname':'stat'
-    }
+    },
+    'hive': {
+        'host': 'localhost',
+        'port': 10000,
+        'prefix': 'stat_'
+    },
 }
 
 configParser = ConfigParser.RawConfigParser()
@@ -30,12 +32,9 @@ for section in sections:
             if config[section].has_key(k):
                 config[section][k] = v
             else:
-                print 'warning: config section ' + section + ' hasnt property ' + k
-    else:
-        print 'warning: config hasnt section ' + section
+                print 'warning: config section ' + section + ' hasn`t property ' + k
 
-
-
+# tornado app settings
 settings = {
     "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
     "login_url": "/user/login",
@@ -44,19 +43,23 @@ settings = {
     "config" : config
 }
 
+# routing
 application = tornado.web.Application([
     (r"/", IndexController.IndexAction),
 
     (r"/dashboard/?", DashboardController.IndexAction),
-    (r"/dashboard/run/?", DashboardController.HiveAction),
+    (r"/dashboard/result/?", DashboardResultController.ResultAction),
     (r"/dashboard/new/?", DashboardController.CreateAction),
 
     (r"/user/login/?", UserController.AuthAction),
     (r"/user/logout/?", UserController.LogoutAction),
 
-    (r"/admin?", AdminController.IndexAction),
-    (r"/admin/users/?", AdminController.UserAction),
-    (r"/admin/users/edit?", AdminController.EditUserAction),
+    (r"/admin/?", AdminIndexController.IndexAction),
+    (r"/admin/users/?", AdminUserController.UserAction),
+    (r"/admin/users/edit?", AdminUserController.EditUserAction),
+
+    (r"/admin/apps/?", AdminAppController.IndexAction),
+    (r"/admin/app/edit.?", AdminAppController.EditAction),
 
 
     (r"/ajax/key_autocomplete/?", DashboardAjaxController.KeyAutocompleteAction),
