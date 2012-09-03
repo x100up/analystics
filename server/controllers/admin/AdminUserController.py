@@ -24,7 +24,7 @@ class EditUserAction(AdminAction):
         userId = self.get_argument('userId', None)
         if userId:
             db = self.getDBSession()
-            user = db.query(User).filter_by(userId = userId).first()
+            user = db.query(User).filter(User.userId == userId).first()
         else:
             user = User()
 

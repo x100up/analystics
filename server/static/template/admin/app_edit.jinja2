@@ -7,11 +7,11 @@
 
 <form action="" method="POST">
     <input type="hidden" name="appId" value="{{ app.appId or '' }}">
-
+    <input type="hidden" name="action" value="editApp">
     <ul>
         <li><label for="name">Название:</label> <input name="name" id="name" value="{{ app.name or '' }}"></li>
         <li><label for="code">Код:</label> <input name="code" id="code" value="{{ app.code or '' }}"></li>
-        <li><input type="submit" name="save" value="Сохранить"></li>
+        <li><input type="submit" name="save" value="Сохранить" class="blue awesome"></li>
     </ul>
 
 </form>

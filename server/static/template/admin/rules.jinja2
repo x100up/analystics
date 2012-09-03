@@ -1,0 +1,31 @@
+{% extends 'layout/main.jinja2' %}
+
+{% block head %}
+    <script type="text/javascript" src="/static/js/appRules.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    <table>
+        <thead>
+            <tr>
+                <th></th>
+                {% for app in apps %}
+                      <th>{{ app.name }}</th>
+                {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <th>{{ user.fullname }}</th>
+                    {% for app in apps %}
+                        <td><input type="checkbox" {% if ruleCollection.isAllow(user.userId, app.appId) %} checked="checked" {% endif %} onclick="switchAllow(this, {{ user.userId }}, {{ app.appId }})"></td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}

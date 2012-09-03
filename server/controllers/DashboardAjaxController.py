@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from BaseController import AjaxController
 from service.AppService import AppService
+from models.Task import TaskItem
+from datetime import timedelta
 import re
 
 class KeyAutocompleteAction(AjaxController):
@@ -35,5 +37,20 @@ class KeyConfigurationAction(AjaxController):
         }
 
         self.render('blocks/tag_container.jinja2', {'tags':tags, 'key': keyName, 'index': index})
+
+class GetKeyForm(AjaxController):
+    def post(self, *args, **kwargs):
+        keyIndex = self.get_argument('index')
+        taskItem = TaskItem(delta = timedelta(days = -1))
+        taskItem.index = keyIndex
+        self.render('blocks/key_container.jinja2', {'taskItem':taskItem})
+
+class GetKeys(AjaxController):
+    def get(self, appName):
+        keyIndex = self.get_argument('index')
+        self.checkAppAccess(appName)
+        appService = AppService(self.getConfig('core', 'app_config_path'))
+        keys = appService.getKeys(appName)
+        self.render('blocks/key_select.jinja2', {'_keys':keys, 'index':keyIndex})
 
 

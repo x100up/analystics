@@ -1,22 +1,39 @@
 {% extends 'layout/main.jinja2' %}
 
-{% block content %}
-    <a href="/admin/app/edit">Добавить приложение</a>
+{% block head %}
+    <link href="/static/css/app.css" rel="stylesheet" type="text/css">
+{% endblock %}
 
-    <table>
+{% block content %}
+    <a href="/admin/app/edit" class="green awesome">Добавить приложение</a>
+
+    <form action="" method="POST">
+    <table id="admin_app">
         <thead>
             <tr>
                 <th>Название</th>
                 <th>Код</th>
+                <th class="action"></th>
             </tr>
         </thead>
+
         <tbody>
         {% for app in apps %}
             <tr>
                 <td><a href="/admin/app/edit?appId={{ app.appId }}">{{ app.name }}</a></td>
                 <td>{{ app.code }}</td>
+                <td class="action"><input type="checkbox" name="appIds" value="{{ app.appId }}" /></td>
             </tr>
         {% endfor %}
         </tbody>
+
+        <tfoot>
+            <tr>
+                <td colspan="2"></td>
+                <td><input type="submit" name="action" value="Удалить" class="orange awesome"></td>
+            </tr>
+        </tfoot>
+
     </table>
+    </form>
 {% endblock %}

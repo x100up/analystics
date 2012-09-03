@@ -1,6 +1,5 @@
 
-import os
-import json
+import os, json, shutil
 
 class WorkerService(object):
 
@@ -49,4 +48,7 @@ class WorkerService(object):
         result = json.load(f)
         f.close()
         return result['result']
+
+    def delete(self):
+        shutil.rmtree(self.getFolder())
 

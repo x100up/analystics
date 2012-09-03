@@ -1,22 +1,26 @@
 {% extends 'layout/main.jinja2' %}
 
 {% block content %}
-    <h2>Пользователи</h2>
+    <nav>
+        <ul>
+            <li><a href="/admin/">Управление →</a></li>
+            <li><a href="/admin/users">пользователи →</a></li>
+            <li>{% if user.userId %}редактирование{% else %}добавление{% endif %}</li>
+        </ul>
 
-    {% for error in errors %}
-        <p class="error">{{ error }}</p>
-    {% endfor %}
+    </nav>
+
+    {% include 'blocks/error.jinja2' %}
 
    <form action="" method="POST">
-   <input type="hidden" name="userId" value="{{ user.userId or '' }}">
+       <input type="hidden" name="userId" value="{{ user.userId or '' }}">
        <ul>
            <li><label for="fullname">Имя:</label> <input type="text" id="fullname" name="fullname" value="{{ user.fullname or '' }}"></li>
            <li><label for="login">Логин:</label> <input type="text" id="login" name="login" value="{{ user.login or  '' }}"></li>
            <li><label for="password">Пароль:</label> <input type="password" id="password" name="password" value=""></li>
            <li>
-               <input type="submit" name="save" value="Сохранить">
+               <input type="submit" name="save" value="Сохранить" class="awesome blue">
            </li>
        </ul>
-
    </form>
 {% endblock %}

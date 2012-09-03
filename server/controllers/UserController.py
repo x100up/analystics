@@ -1,7 +1,9 @@
 # coding=utf-8
 from BaseController import BaseController
 from models.User import User
+from models.UserAppRule import UserAppRule, RuleCollection
 import tornado.web
+import hashlib
 
 class AuthAction(BaseController):
     def get(self, *args, **kwargs):
@@ -12,10 +14,13 @@ class AuthAction(BaseController):
         password = self.get_argument('pass', False)
 
         db = self.getDBSession()
-        user = db.query(User).filter_by(login = login, password = password).first()
+        user = db.query(User).filter_by(login = login, password = hashlib.sha256(password).hexdigest()).first()
         if user:
             self.set_secure_cookie("user.login", user.login)
             self.redirect("/dashboard")
+
+
+
 
         else:
             self.get(self)

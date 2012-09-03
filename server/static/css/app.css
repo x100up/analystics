@@ -1,0 +1,5 @@
+table#admin_app td.action,
+table#admin_app th.action {
+    width: 80px;
+    text-align: center
+}

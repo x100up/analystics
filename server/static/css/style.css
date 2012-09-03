@@ -27,6 +27,7 @@ header {
     height: 70px;
     display: block;
     color: #FFF;
+    margin-bottom: 15px;
 }
 
 header a {
@@ -53,6 +54,11 @@ table td, table th {
     padding: 5px 10px;
 }
 
+table th {
+    text-align: center;
+    font-weight: bold;
+}
+
 label.canHaveTags {
     color: #333;
 }
@@ -62,10 +68,27 @@ form li {
     margin-bottom: 6px;
 }
 
+form li > label {
+    min-width: 100px;
+    display: inline-block;
+}
+
 div.interval_form{
     margin-bottom: 10px;
 }
 
+/* navigation */
+nav li {
+    display: inline;
+    padding: 5px 7px;
+}
+
+div#content nav {
+    margin: 10px 0px;
+}
+div#content nav a {
+    border: none !important;
+}
 
 /* css for timepicker */
 .ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
@@ -82,4 +105,37 @@ div#ui-datepicker-div{
 div.tag_container label{
     display: inline-block;
     min-width: 100px;
+}
+
+table#workersTable td.action {
+    text-align: center;
+    width: 80px;
+}
+
+div.key_form_item {
+    border: 1px solid #CCC;
+    padding: 4px;
+    width: 283px !important;
+    margin-bottom: 10px;
+}
+
+div.key_form_item h2 {
+    text-align: center;
+}
+
+div.add_key{
+    background: url(/static/img/plus.png) no-repeat center;
+    height: 100%;
+    min-height: 200px;
+    border: 1px dotted #333;
+    cursor: pointer;
+    width: 283px !important;
+}
+
+img.findbutton{
+    cursor: pointer
+}
+
+table.key_selector tr{
+    cursor: pointer;
 }

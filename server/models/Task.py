@@ -3,10 +3,6 @@ from __builtin__ import object
 from datetime import datetime
 
 class Task(object):
-    start = None
-    end = None
-    appname = None
-    interval = None
 
 
     INTERVAL_MINUTE = 'minute'
@@ -24,15 +20,9 @@ class Task(object):
     }
 
     def __init__(self, *args, **kwargs):
-        if kwargs.has_key('end'):
-            self.end = kwargs['end']
-        else:
-            self.end = datetime.now()
-
-        if kwargs.has_key('start'):
-            self.start = kwargs['start']
-        else:
-            self.start = datetime.now()
+        self.items = []
+        self.appname = ''
+        self.interval = ''
 
         if kwargs.has_key('appname'):
             self.appname = kwargs['appname']
@@ -40,8 +30,11 @@ class Task(object):
         if kwargs.has_key('interval'):
             self.interval = kwargs['interval']
 
-        if kwargs.has_key('delta'):
-            self.start = self.end - kwargs['delta']
+
+
+
+    def addTaskItem(self, taskItem):
+        self.items.append(taskItem)
 
     conditions = {}
 
@@ -87,3 +80,26 @@ class Task(object):
 
         if  self.interval == self.INTERVAL_WEEK:
             pass
+
+
+class TaskItem():
+
+
+    def __init__(self, *args, **kwargs):
+        self.index = 0
+        self.start = None
+        self.end = None
+
+
+        if kwargs.has_key('end'):
+            self.end = kwargs['end']
+        else:
+            self.end = datetime.now()
+
+        if kwargs.has_key('start'):
+            self.start = kwargs['start']
+        else:
+            self.start = datetime.now()
+
+        if kwargs.has_key('delta'):
+            self.start = self.end - kwargs['delta']

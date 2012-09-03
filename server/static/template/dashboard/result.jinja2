@@ -10,5 +10,12 @@
 {% endblock %}
 
 {% block content %}
+    <h1>{{ app.name }}</h1>
+
+    {% include 'blocks/error.jinja2' %}
+
+
+
+    <a href="/dashboard/app/{{ app.code }}/">&larr; к списку задач</a>
     <div id="chart_container"></div>
 {% endblock %}

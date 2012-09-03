@@ -1,11 +1,14 @@
 {% extends 'layout/main.jinja2' %}
 
 {% block content %}
-    <h2>Пользователи</h2>
-
-    <a href="/admin/users/edit">Добавить пользователя</a>
+    <a href="/admin/users/edit" class="awesome green">Добавить пользователя</a>
 
     <table>
+        <thead>
+           <tr>
+               <th>Имя</th>
+           </tr>
+        </thead>
 
         <tbody>
             {% for user in users %}
@@ -14,6 +17,7 @@
                 </tr>
             {% endfor %}
         </tbody>
+
     </table>
 
 {% endblock %}

@@ -8,15 +8,22 @@
 
     <link href="/static/libs/autocomplete/styles.css" type="text/css" rel="stylesheet">
     <link href="/static/css/pepper-grinder/jquery-ui-1.8.23.custom.css" type="text/css" rel="stylesheet">
+
+    <script type="text/javascript" src="/static/libs/reveal/jquery.reveal.js"></script>
+    <link href="/static/libs/reveal/reveal.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript">
+        var appCode = '{{ app.code }}';
+    </script>
 {% endblock %}
 
 {% block content %}
-
+    <h1>{{ app.name }}</h1>
     <form action="" method="post">
         <input type="hidden" name="appname" value="topface">
         <div class="grid_12 interval_form">
-            <label for="start">C:</label> <input class="datepicker" name="start" id="start" value="{{ task.start.strftime("%m/%d/%Y %H:%M") }}">
-            <label for="end">По:</label> <input class="datepicker" name="end" id="end" value="{{ task.end.strftime("%m/%d/%Y %H:%M") }}">
+
+
+
             <label for="group_interval">Интервал:</label> <select name="group_interval" id="group_interval">
                 {% for key, value in task.intervals.items() %}
                 <option value="{{ key }}" {% if task.interval == key %}selected{% endif %} >{{ value }}</option>
@@ -25,17 +32,22 @@
         </div>
 
         <div class="grid_12">
-        <label for="key_1">Ключ:</label>
-            <input type="text" name="key" id="key_1" class="key_autocomplete">
-            <div id="key_1_tag_container" class="tag_container">
+            {% for taskItem in task.items %}
+                {% include 'blocks/key_container.jinja2' %}
+            {% endfor %}
 
-            </div>
+            <div class="add_key grid_4 omega" onclick="addKey()"></div>
         </div>
 
         <div class="grid_12">
-            <input type="submit" value="Отправить">
+            <input type="submit" value="Отправить" class="awesome green">
         </div>
 
     </form>
+
+
+    <div id="myModal" class="reveal-modal">
+
+    </div>
 
 {% endblock %}

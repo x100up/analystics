@@ -1,28 +1,48 @@
 {% extends 'layout/main.jinja2' %}
 {% block content %}
-    <a href="/dashboard/new">Новая задача</a>
+    <h1>{{ app.name }}</h1>
 
+    <a href="/dashboard/app/{{ app.code }}/new" class="awesome green" style="margin-top: 10px;">Новая задача</a>
 
-    <table style="margin-top: 20px;">
-        <thead>
+    <form action="" method="post">
+        <table style="margin-top: 20px;" id="workersTable">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Начало</th>
+                    <th>Конец</th>
+                    <th>Статус</th>
+                    <th></th>
+                </tr>
+            </thead>
+
+        {% for worker in lastWorkers %}
             <tr>
-                <th>Название</th>
-                <th>Начало</th>
-                <th>Конец</th>
-                <th>Статус</th>
-                <th></th>
+                <td><a href="/dashboard/app/{{ app.code }}/result?jobId={{worker.uuid}}">{{worker.uuid}}</a></td>
+                <td>{{worker.startDate}}</td>
+                <td>{% if worker.endDate %}{{worker.endDate}}{% endif %}</td>
+                <td>{{worker.status}}</td>
+                <td class="action"><input type="checkbox" value="{{worker.uuid}}" name="jobId" /></td>
             </tr>
-        </thead>
+        {% endfor %}
+            <tfoot>
+                <tr>
+                    <td colspan="4"></td>
+                    <td><input type="submit" name="action" value="Удалить" class="awesome orange"></td>
+                </tr>
+            </tfoot>
+        </table>
 
-    {% for worker in lastWorkers %}
-        <tr>
-            <td><a href="/dashboard/result?jobId={{worker.uuid}}">{{worker.uuid}}</a></td>
-            <td>{{worker.startDate}}</td>
-            <td>{% if worker.endDate %}{{worker.endDate}}{% endif %}</td>
-            <td>{{worker.status}}</td>
-            <td><input type="checkbox" value="{{worker.uuid}}" name="actionItems[]" /></td>
-        </tr>
-    {% endfor %}
-    </table>
+        {% if pageCount > 1 %}
+                Страница:
+                {% for p in range(1, pageCount + 1) %}
+                    {% if currentPage == p %}
+                        <span> {{ p }} </span>
+                    {% else %}
+                        <a href="?page={{ p }}"> {{ p }} </a>
+                    {% endif %}
+                {% endfor %}
+        {% endif %}
+    </form>
 
 {% endblock %}

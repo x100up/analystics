@@ -1,6 +1,6 @@
 import os, tornado.web, tornado.ioloop, ConfigParser
 from controllers import DashboardController, IndexController, UserController, DashboardAjaxController, DashboardResultController
-from controllers.admin import AdminUserController, AdminIndexController, AdminAppController
+from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController
 
 config = {
     'core': {
@@ -47,9 +47,13 @@ settings = {
 application = tornado.web.Application([
     (r"/", IndexController.IndexAction),
 
-    (r"/dashboard/?", DashboardController.IndexAction),
-    (r"/dashboard/result/?", DashboardResultController.ResultAction),
-    (r"/dashboard/new/?", DashboardController.CreateAction),
+    (r"/dashboard/?", DashboardController.SwitchApp),
+    (r"/dashboard/app/([^/]+)/?", DashboardController.IndexAction),
+    (r"/dashboard/app/([^/]+)/result/?", DashboardResultController.ResultAction),
+    (r"/dashboard/app/([^/]+)/new/?", DashboardController.CreateAction),
+    (r"/dashboard/empty/?", DashboardController.EmptyAppAction),
+    (r"/dashboard/selectapp/?", DashboardController.SelectAppAction),
+
 
     (r"/user/login/?", UserController.AuthAction),
     (r"/user/logout/?", UserController.LogoutAction),
@@ -59,11 +63,18 @@ application = tornado.web.Application([
     (r"/admin/users/edit?", AdminUserController.EditUserAction),
 
     (r"/admin/apps/?", AdminAppController.IndexAction),
-    (r"/admin/app/edit.?", AdminAppController.EditAction),
+    (r"/admin/app/edit/?", AdminAppController.EditAction),
+
+    (r"/admin/rules/?", AdminRulesController.IndexAction),
+    (r"/admin/rules/switch?", AdminRulesController.SwitchAjaxAction),
+
 
 
     (r"/ajax/key_autocomplete/?", DashboardAjaxController.KeyAutocompleteAction),
     (r"/ajax/key_configuration/?", DashboardAjaxController.KeyConfigurationAction),
+    (r"/ajax/get_key_form/?", DashboardAjaxController.GetKeyForm),
+    (r"/ajax/getKeys/([^/]+)/?", DashboardAjaxController.GetKeys),
+
 
 ],   **settings)
 

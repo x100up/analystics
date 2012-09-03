@@ -21,7 +21,7 @@ class AppService():
         return json.load(open(self.folder + '/' + appName + '.json', 'r'))
 
     def getConfigTags(self, appName, keyName, prefix):
-        config = getAppKeyConfig(appName)
+        config = self.getAppKeyConfig(appName)
         keyConf = config['keys'][keyName]
 
         raw_json = {}
@@ -36,4 +36,8 @@ class AppService():
                     raw_json[prefix + 'mustHaveTags'][tag] = config['tags'][tag]
 
         return raw_json
+
+    def getKeys(self, appName):
+        config = self.getAppKeyConfig(appName)
+        return config['keys']
 

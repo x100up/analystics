@@ -15,6 +15,17 @@ class IndexAction(AdminAction):
 
         self.render('admin/apps.jinja2', {'apps': apps})
 
+    def post(self):
+        action = self.get_argument('action', False)
+        if action == u'Удалить':
+            ids = self.get_arguments('appIds')
+            db = self.getDBSession()
+            db.query(App).filter(App.appId.in_(ids)).delete(synchronize_session='fetch')
+            db.commit()
+        self.get()
+
+
+
 class EditAction(AdminAction):
     @tornado.web.authenticated
     def get(self):
@@ -33,6 +44,7 @@ class EditAction(AdminAction):
         self.adminAuthenticated()
 
         db = self.getDBSession()
+
         appId = self.get_argument('appId', '')
         if len(appId):
             app = db.query(App).filter(App.appId == appId).first()
