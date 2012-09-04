@@ -59,6 +59,10 @@ table th {
     font-weight: bold;
 }
 
+table tfoot td{
+    border: none;
+}
+
 label.canHaveTags {
     color: #333;
 }
@@ -138,4 +142,11 @@ img.findbutton{
 
 table.key_selector tr{
     cursor: pointer;
+}
+
+a.add_action {
+    color: #777;
+    font-size: 10pt;
+    border-bottom: 1px dotted #AAAAAA;
+    margin: 0px 4px;
 }

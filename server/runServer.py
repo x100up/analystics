@@ -1,6 +1,8 @@
 import os, tornado.web, tornado.ioloop, ConfigParser
-from controllers import DashboardController, IndexController, UserController, DashboardAjaxController, DashboardResultController
+from controllers import  IndexController, UserController
 from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController
+from controllers.api import APIController
+from controllers.dashboard import ResultController, AjaxController, DashboardController, CreateTaskController
 
 config = {
     'core': {
@@ -49,11 +51,10 @@ application = tornado.web.Application([
 
     (r"/dashboard/?", DashboardController.SwitchApp),
     (r"/dashboard/app/([^/]+)/?", DashboardController.IndexAction),
-    (r"/dashboard/app/([^/]+)/result/?", DashboardResultController.ResultAction),
-    (r"/dashboard/app/([^/]+)/new/?", DashboardController.CreateAction),
+    (r"/dashboard/app/([^/]+)/result/?", ResultController.ResultAction),
+    (r"/dashboard/app/([^/]+)/new/?", CreateTaskController.CreateAction),
     (r"/dashboard/empty/?", DashboardController.EmptyAppAction),
     (r"/dashboard/selectapp/?", DashboardController.SelectAppAction),
-
 
     (r"/user/login/?", UserController.AuthAction),
     (r"/user/logout/?", UserController.LogoutAction),
@@ -68,13 +69,12 @@ application = tornado.web.Application([
     (r"/admin/rules/?", AdminRulesController.IndexAction),
     (r"/admin/rules/switch?", AdminRulesController.SwitchAjaxAction),
 
+    (r"/ajax/key_autocomplete/?", AjaxController.KeyAutocompleteAction),
+    (r"/ajax/key_configuration/?", AjaxController.KeyConfigurationAction),
+    (r"/ajax/get_key_form/?", AjaxController.GetKeyForm),
+    (r"/ajax/getKeys/([^/]+)/?", AjaxController.GetKeys),
 
-
-    (r"/ajax/key_autocomplete/?", DashboardAjaxController.KeyAutocompleteAction),
-    (r"/ajax/key_configuration/?", DashboardAjaxController.KeyConfigurationAction),
-    (r"/ajax/get_key_form/?", DashboardAjaxController.GetKeyForm),
-    (r"/ajax/getKeys/([^/]+)/?", DashboardAjaxController.GetKeys),
-
+    (r"/api/putConfig/?", APIController.PutConfigAction),
 
 ],   **settings)
 

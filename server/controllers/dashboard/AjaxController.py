@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from BaseController import AjaxController
+from controllers.BaseController import AjaxController
 from service.AppService import AppService
 from models.Task import TaskItem
 from datetime import timedelta
@@ -36,7 +36,7 @@ class KeyConfigurationAction(AjaxController):
             "canHaveTags": appService.getConfigTags(appName, keyName, 'can'),
         }
 
-        self.render('blocks/tag_container.jinja2', {'tags':tags, 'key': keyName, 'index': index})
+        self.render('blocks/tag_container.jinja2', {'tags':tags, 'key': keyName, 'index': index, 'values':{}})
 
 class GetKeyForm(AjaxController):
     def post(self, *args, **kwargs):

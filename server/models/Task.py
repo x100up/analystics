@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __builtin__ import object
 from datetime import datetime
+import time
 
 class Task(object):
 
@@ -30,71 +31,48 @@ class Task(object):
         if kwargs.has_key('interval'):
             self.interval = kwargs['interval']
 
-
-
-
     def addTaskItem(self, taskItem):
         self.items.append(taskItem)
 
-    conditions = {}
+    def serialize(self):
+        si = []
+        for item in self.items:
+            si.append(item.serialize())
 
-    def addCondition(self, key, tag, values):
-        if values is None:
-            return
+        return {
+            'appname': self.appname,
+            'interval': self.interval,
+            'items': si,
+        }
 
-        if not self.conditions.has_key(key):
-            self.conditions[key] = {}
+    def unserialize(self, data):
+        self.appname = data['appname']
+        self.interval = data['interval']
+        for item in data['items']:
+            self.addTaskItem(TaskItem.unserialize(item))
 
-        if len(values) == 1:
-            values = values.pop()
 
-        self.conditions[key][tag] = values
-
-    fields = {'count':'count(1)'}
-
-    def getFields(self, key):
-        sql = []
-        for fieldName, fieldExp in self.fields.items():
-            sql.append('%(fieldExp)s AS %(fieldName)s'%{'fieldExp':fieldExp, 'fieldName':fieldName})
-
-        return ', '.join(sql)
-
-    def prepare(self):
-        self.fields['year'] = 'year'
-        self.fields['month'] = 'month'
-        self.fields['day'] = 'day'
-
-        if  self.interval == self.INTERVAL_MINUTE:
-            self.fields['hour'] = 'hour'
-            self.fields['minute'] = 'minute'
-
-        if  self.interval == self.INTERVAL_10_MINUTE:
-            self.fields['hour'] = 'hour'
-            self.fields['minute'] = 'minute'
-
-        if  self.interval == self.INTERVAL_HOUR:
-            self.fields['hour'] = 'hour'
-
-        if  self.interval == self.INTERVAL_DAY:
-            pass
-
-        if  self.interval == self.INTERVAL_WEEK:
-            pass
 
 
 class TaskItem():
-
 
     def __init__(self, *args, **kwargs):
         self.index = 0
         self.start = None
         self.end = None
-
+        self.key = None
+        self.conditions = {}
 
         if kwargs.has_key('end'):
             self.end = kwargs['end']
         else:
             self.end = datetime.now()
+
+        if kwargs.has_key('key'):
+            self.key = kwargs['key']
+
+        if kwargs.has_key('index'):
+            self.index = kwargs['index']
 
         if kwargs.has_key('start'):
             self.start = kwargs['start']
@@ -103,3 +81,30 @@ class TaskItem():
 
         if kwargs.has_key('delta'):
             self.start = self.end - kwargs['delta']
+
+        self.fields = {'value':'count(1)'}
+
+    def addCondition(self, tag, values):
+        self.conditions[tag] = values
+
+    def getFields(self):
+        return self.fields
+
+    def serialize(self):
+        return {
+            'index': self.index,
+            'start': time.mktime(self.start.timetuple()),
+            'end': time.mktime(self.end.timetuple()),
+            'key': self.key,
+            'conditions': self.conditions
+        }
+
+    @classmethod
+    def unserialize(cls, data):
+        item = TaskItem()
+        item.start = datetime.fromtimestamp(data['start'])
+        item.end = datetime.fromtimestamp(data['end'])
+        item.key = data['key']
+        item.conditions = data['conditions']
+        item.index = data['index']
+        return item

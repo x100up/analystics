@@ -1,25 +1,33 @@
 <div class="key_form_item grid_4" id="key_container_{{ taskItem.index  }}">
+    <input type="hidden" name="indexes" value="{{ taskItem.index }}">
     <h2>{{ taskItem.index  }}</h2>
 
     <ul>
         <li>
             <label for="key_{{ taskItem.index }}">Ключ:</label>
-            <input type="text" name="key" id="key_{{ taskItem.index }}" data-index="{{ taskItem.index }}" class="key_autocomplete">
+            <input type="text" name="key_{{ taskItem.index }}" id="key_{{ taskItem.index }}"
+                   data-index="{{ taskItem.index }}" class="key_autocomplete" value="{{ taskItem.key or '' }}">
             <img src="/static/img/find.png" alt="Найти" class="findbutton" onclick="findKey({{ taskItem.index }})">
         </li>
         <li>
             <label for="start_{{ taskItem.index }}">C:</label>
-            <input class="datepicker" name="start" id="start_{{ taskItem.index }}" value="{{ taskItem.start.strftime("%m/%d/%Y %H:%M") }}">
+            <input class="datepicker" name="start_{{ taskItem.index }}" id="start_{{ taskItem.index }}" value="{{ taskItem.start.strftime("%m/%d/%Y %H:%M") }}">
         </li>
 
         <li>
             <label for="end_{{ taskItem.index }}">По:</label>
-            <input class="datepicker" name="end" id="end_{{ taskItem.index }}" value="{{ taskItem.end.strftime("%m/%d/%Y %H:%M") }}">
+            <input class="datepicker" name="end_{{ taskItem.index }}" id="end_{{ taskItem.index }}" value="{{ taskItem.end.strftime("%m/%d/%Y %H:%M") }}">
         </li>
     </ul>
 
     <div id="key_{{ taskItem.index }}_tag_container" class="tag_container">
-
+        {% if taskItem.key and key_configs.has_key(taskItem.key) %}
+           {% set tags = key_configs[taskItem.key] %}
+           {% set index = taskItem.index %}
+           {% set key = taskItem.key %}
+           {% set values = taskItem.conditions %}
+           {% include 'blocks/tag_container.jinja2' %}
+        {% endif %}
     </div>
     <span class="awesome orange small" onclick="deleteKey({{ taskItem.index  }})">удалить</span>
 </div>

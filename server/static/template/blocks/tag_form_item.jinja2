@@ -6,18 +6,20 @@
 {% if data.type == 'choose' %}
 
     {% if data.variants|length < 6   %}
-        {% for value in data.variants %}
-            {{ value }}: <input type="checkbox" value="{{ value }}" name="tag_{{ index }}_{{ name }}">
+        {% for v in data.variants %}
+            {{ v }}: <input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                {% if value and v in value %} checked="checked" {% endif %}>
         {% endfor %}
     {% else %}
-        {% for value in data.variants %}
+        {% for v in data.variants %}
             <ul>
-                <li><input type="checkbox" value="{{ value }}" name="tag_{{ index }}_{{ name }}"></li>
+                <li><input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                        {% if value and v in value %} checked="checked" {% endif %} ></li>
             </ul>
         {% endfor %}
     {% endif %}
 
 {% else %}
-        <input type="text" name="tag_{{ index }}_{{ name }}">
+        <input type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}">
 {% endif %}
 </li>

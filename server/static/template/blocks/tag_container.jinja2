@@ -1,6 +1,11 @@
 <ul>{% for x in ['mustHaveTags', 'canHaveTags'] %}
     {% if tags[x] %}
         {% for name, data in tags[x].items() %}
+            {% if values.has_key(name) %}
+                {% set value = values[name] %}
+            {% else %}
+                {% set value = None %}
+            {% endif %}
             {% include 'blocks/tag_form_item.jinja2' %}
         {% endfor %}
     {% endif %}

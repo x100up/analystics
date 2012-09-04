@@ -17,7 +17,7 @@ function onSelectKey(keyName, index) {
     if (index === undefined)
         index = $(this).data('index')
     // загружаем конфигурацию
-    $('div#key_'+index+'_tag_container').load('/ajax/key_configuration', {'key':keyName, 'app': appCode})
+    $('div#key_'+index+'_tag_container').load('/ajax/key_configuration', {'key':keyName, 'app': appCode, 'index':index})
     $('#myModal').trigger('reveal:close');
 }
 

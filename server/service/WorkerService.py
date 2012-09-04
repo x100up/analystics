@@ -1,5 +1,6 @@
 
 import os, json, shutil
+from models.Task import Task
 
 class WorkerService(object):
 
@@ -18,6 +19,9 @@ class WorkerService(object):
     def setFields(self, fields):
         self.fields = fields
 
+    def setTask(self, task):
+        self.task = task
+
     def getFolder(self):
         return 'result/' + self.worker.uuid
 
@@ -25,17 +29,26 @@ class WorkerService(object):
         # create folders
         os.makedirs(self.getFolder())
 
-        j = {
+        for_json = {
             'workId': self.worker.uuid,
             'start': str(self.worker.startDate),
             'query': self.query,
-            'fields' : self.fields
+            'fields' : self.fields,
+            'task': self.task.serialize()
         }
 
-        job_json = json.dumps(j)
+        job_json = json.dumps(for_json)
         f = open(self.getFolder() + '/job.json', 'w+')
         f.write(job_json)
         f.close()
+
+    def getTask(self):
+        print self.getFolder() + '/job.json'
+        f = open(self.getFolder() + '/job.json', 'r')
+        data = json.load(f)
+        task = Task()
+        task.unserialize(data['task'])
+        return task
 
 
     def flushResult(self, result):

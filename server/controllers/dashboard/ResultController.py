@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from BaseController import BaseController
+from controllers.BaseController import BaseController
 from models.Worker import Worker
 from models.App import App
 from service.RuleService import RuleService

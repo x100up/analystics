@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from models.Task import Task
 
 class HiveQueryConstructor():
 
@@ -7,42 +8,85 @@ class HiveQueryConstructor():
 
     def getFields(self):
         '''
-        Возвращает лист названий полей, которые должен вернуть запрос
+            Возвращает лист названий полей, которые должен вернуть запрос.
+            Пока аозвращает value + dateFields
         '''
-        return self.task.fields.keys()
+        x = ['value']
+        x.extend(self.getDateFields(self.task.interval))
+        return x
 
     def getHiveQuery(self):
-        # создаем интервалы - нужны для партицирования
-        intervals = self.getIntervalCondition(self.task.start, self.task.end)
-        self.task.prepare()
-        queries = {}
-        for key in self.task.conditions:
-            queries[key] = 'SELECT ' + self.task.getFields(key) + ' FROM %(appname)s.stat_%(keyname)s '%{'appname':self.task.appname, 'keyname':key}
+        '''
+            Генерирует запрос для Hive основываясь на зачаче Task
+        '''
+        dateFields = self.getDateFields(self.task.interval)
+        queries = []
+        for taskItem in self.task.items:
+            # создаем интервалы - нужны для партицирования
+            query = 'SELECT ' + self.toSQLFields(taskItem.getFields()) + ', ' + self.toSQLFields(dateFields)\
+                    + ' FROM %(appname)s.stat_%(keyname)s '%{'appname': self.task.appname, 'keyname': taskItem.key}
 
-        for key, query in queries.items():
             # временная составляющая
-            queries[key] += ' WHERE ' + ' AND '.join(intervals)
+            intervals = self.getIntervalCondition(taskItem.start, taskItem.end)
+            query += ' WHERE ' + ' AND '.join(intervals)
 
             # условия по тегам
-            queries[key] += self.getTagsCondition(self.task.conditions)
+            query += self.getTagsCondition(taskItem.conditions)
 
             # группировка
-            queries[key] += ' GROUP BY ' + self.getGroupInterval(self.task.interval)
+            query += ' GROUP BY ' + self.getGroupInterval(self.task.interval)
+            queries.append(query)
 
-            return queries[key]
+        if len(queries) == 1:
+            return queries.pop()
+        return ' UNION ' .join(queries)
 
     def getTagsCondition(self, conditions):
+        '''
+        Условия по тегам
+        '''
         if conditions:
             where = []
             for key in conditions:
-                    for tagName, tagValue in conditions[key].items():
+                    for tagName, tagValue in conditions.items():
                         if tagValue:
                             where.append("params['%(tagName)s'] = '%(tagValue)s'"%{'tagName':tagName, 'tagValue':tagValue})
             return ' AND ' + ' AND '.join(where)
 
         return ''
 
+    def getDateFields(self, interval):
+        '''
+            Генерирует список полей дат, нужных для интервала
+        '''
+        fields = {}
+        fields['year'] = 'year'
+        fields['month'] = 'month'
+        fields['day'] = 'day'
+
+        if  interval == Task.INTERVAL_MINUTE:
+            fields['hour'] = 'hour'
+            fields['minute'] = 'minute'
+
+        elif  interval == Task.INTERVAL_10_MINUTE:
+            fields['hour'] = 'hour'
+            fields['minute'] = 'minute'
+
+        elif  interval == Task.INTERVAL_HOUR:
+            fields['hour'] = 'hour'
+
+        elif  interval == Task.INTERVAL_DAY:
+            pass
+
+        elif  interval == Task.INTERVAL_WEEK:
+            pass
+
+        return fields
+
     def getIntervalCondition(self, start, end):
+        '''
+        генерирует временные интервалы выборки
+        '''
         intervals = []
         start_year = start.date().year
         end_year = end.date().year
@@ -96,22 +140,31 @@ class HiveQueryConstructor():
         return intervals
 
     def getGroupInterval(self, group_interval):
-
-        print group_interval
-
-        if group_interval == 'minute':
+        '''
+        Генерит группировку основываясь на интервале
+        '''
+        if group_interval == Task.INTERVAL_MINUTE:
             return ' year, month, day, hour, minute '
 
-        if group_interval == '10minute':
+        if group_interval == Task.INTERVAL_10_MINUTE:
             return ' year, month, day, hour, ceil(minute / 10) '
 
-        if group_interval == 'hour':
+        if group_interval ==  Task.INTERVAL_HOUR:
             return ' year, month, day, hour'
 
-        if group_interval == 'day':
+        if group_interval == Task.INTERVAL_DAY:
             return ' year, month, day'
 
-        if group_interval == 'week':
+        if group_interval == Task.INTERVAL_WEEK:
             return ' year, month, day'
 
         raise Exception("Unknow interval")
+
+    def toSQLFields(self, fields):
+        '''
+        Список полей => SQL string
+        '''
+        sql = []
+        for fieldName, fieldExp in fields.items():
+            sql.append('%(fieldExp)s AS `%(fieldName)s`'%{'fieldExp':fieldExp, 'fieldName':fieldName})
+        return ', '.join(sql)

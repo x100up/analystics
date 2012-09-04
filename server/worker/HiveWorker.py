@@ -7,12 +7,12 @@ from service.HiveService import HiveService
 
 class HiveWorker(threading.Thread):
 
-    mysqlSessionMaker = None
-    folderForWorkerService = None
-    host = None
-    port = None
-
     def __init__ (self, workerService):
+        self.mysqlSessionMaker = None
+        self.folderForWorkerService = None
+        self.host = None
+        self.port = None
+
         threading.Thread.__init__(self)
         self.daemon = True
         self.workerService = workerService
@@ -27,13 +27,13 @@ class HiveWorker(threading.Thread):
             status = Worker.STATUS_SUCCESS
 
         except Thrift.TException, tx:
-            data = {'exception' : tx.message }
+            data = {'exception' : {'Thrift.TException' : tx.message }}
             status = Worker.STATUS_ERROR
         except HiveServerException, tx:
-            data = {'exception' : tx.message }
+            data = {'exception' : {'HiveServerException': tx.message }}
             status = Worker.STATUS_ERROR
         except Exception, tx:
-            data = {'exception' : tx.message }
+            data = {'exception' : {'Exception': tx.message }}
             status = Worker.STATUS_ERROR
         finally:
             if hiveClient:

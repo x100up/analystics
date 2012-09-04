@@ -41,3 +41,12 @@ class AppService():
         config = self.getAppKeyConfig(appName)
         return config['keys']
 
+    def saveConfig(self, data):
+        if u'appname' in data.keys():
+            appName = data[u'appname']
+            f = open(self.folder + '/' + appName + '.json', 'w+')
+            f.write(json.dumps(data))
+            f.close()
+        else:
+            raise Error('Cant find appname in config')
+
