@@ -1,4 +1,5 @@
-import os, tornado.web, tornado.ioloop, ConfigParser
+import os, tornado.web, tornado.ioloop, ConfigParser, sys
+from utils.daemon import Daemon
 from controllers import  IndexController, UserController
 from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController
 from controllers.api import APIController
@@ -40,7 +41,7 @@ for section in sections:
 settings = {
     "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",
     "login_url": "/user/login",
-    "static_path": os.path.join(os.path.dirname(__file__), "static"),
+    "static_path": os.path.abspath("static"),
     "debug" : True,
     "config" : config
 }
@@ -79,6 +80,27 @@ application = tornado.web.Application([
 ],   **settings)
 
 
+class ServerDaemon(Daemon):
+    def run(self):
+        application.listen(8888)
+        loopInstance = tornado.ioloop.IOLoop.instance()
+        loopInstance.start()
+
+
 if __name__ == "__main__":
-    application.listen(8888)
-    tornado.ioloop.IOLoop.instance().start()
+    log = os.path.abspath("log/log.log")
+    daemon = MyDaemon('/var/run/python-server.pid', stdin=log, stdout=log, stderr=log)
+    if len(sys.argv) == 2:
+        if 'start' == sys.argv[1]:
+            daemon.start()
+        elif 'stop' == sys.argv[1]:
+            daemon.stop()
+        elif 'restart' == sys.argv[1]:
+            daemon.restart()
+        else:
+            print "Unknown command"
+            sys.exit(2)
+        sys.exit(0)
+    else:
+        print "usage: %s start|stop|restart" % sys.argv[0]
+        sys.exit(2)
