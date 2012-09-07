@@ -150,3 +150,11 @@ a.add_action {
     border-bottom: 1px dotted #AAAAAA;
     margin: 0px 4px;
 }
+
+div.tag_container ul ul{
+    margin-left: 100px;
+}
+
+fieldset {
+    border: 1px solid #ccc;
+}

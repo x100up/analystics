@@ -1,12 +1,12 @@
 {
- "keys": {
-  "rates": {
-   "mustHaveTags": ["place"],
-   "autoLoadBunches": ["user", "platform"],
-   "canHaveTags": ["rate", "skip", "msg"],
-   "name": "Оценка"
-  }
- },
+    "keys": {
+        "coins": {
+            "mustHaveTags": ["place"],
+            "autoLoadBunches": ["user", "platform"],
+            "canHaveTags": ["rate", "skip", "msg"],
+            "name": "Оценка"
+        }
+    },
     "tags": {
         "place": {
             "name": "Место оценки",
@@ -108,7 +108,7 @@
                 "mbl"
             ]
         }
- },
+    },
 
- "appname": "topface"
+    "appname": "test"
 }

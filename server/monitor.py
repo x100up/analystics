@@ -61,7 +61,7 @@ if appname not in availale_apps:
 # import app settings
 appConfig = None
 try:
-    appConfig = appService.getAppKeyConfig(appname)
+    appConfig = appService.getAppConfig(appname)
 except IOError as e:
     logging.error('error reading app (%(appname)s) configuration'%{'appname':appname})
     exit()

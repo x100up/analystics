@@ -14,11 +14,6 @@
 --
 SET NAMES 'utf8';
 
--- 
--- Установка базы данных по умолчанию
---
-USE analystic;
-
 --
 -- Описание для таблицы app
 --
@@ -90,8 +85,8 @@ CREATE TABLE worker (
     REFERENCES user(userId) ON DELETE RESTRICT ON UPDATE RESTRICT
 )
 ENGINE = INNODB
-CHARACTER SET latin1
-COLLATE latin1_swedish_ci;
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
 
 -- 
 -- Вывод данных для таблицы app
@@ -104,24 +99,12 @@ INSERT INTO app VALUES
 -- Вывод данных для таблицы user
 --
 INSERT INTO user VALUES 
-  (1, 'admin', 'Админ', '96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e', 'admin'),
-  (3, 'roman', 'Роман', '96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e', 'user');
+  (1, 'admin', 'Админ', '96cae35ce8a9b0244178bf28e4966c2ce1b8385723a96a6b838858cdd6ca0a1e', 'admin');
 
 -- 
 -- Вывод данных для таблицы userAppRule
 --
 INSERT INTO userAppRule VALUES 
   (1, 1, 'ALLOW'),
-  (1, 3, 'ALLOW'),
-  (3, 3, 'DENY'),
-  (3, 1, 'DENY');
+  (1, 3, 'ALLOW');
 
--- 
--- Вывод данных для таблицы worker
---
--- Таблица analystic.worker не содержит данных
-
--- 
--- Включение внешних ключей
--- 
-/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

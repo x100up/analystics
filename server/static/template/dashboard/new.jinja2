@@ -32,7 +32,7 @@
         </div>
 
         <div class="grid_12">
-            {% for taskItem in task.items %}
+            {% for index, taskItem in task.items.items() %}
                 {% include 'blocks/key_container.jinja2' %}
             {% endfor %}
 

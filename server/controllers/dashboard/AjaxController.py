@@ -14,7 +14,7 @@ class KeyAutocompleteAction(AjaxController):
             self.send_ajax_error('Неверный запрос')
 
         appService = AppService(self.getConfig('core', 'app_config_path'))
-        config = appService.getAppKeyConfig(appName)
+        config = appService.getAppConfig(appName)
         keysList = config['keys'].keys()
 
         regexp = re.compile('^' + query + '.*')
@@ -32,8 +32,9 @@ class KeyConfigurationAction(AjaxController):
 
         appService = AppService(self.getConfig('core', 'app_config_path'))
         tags = {
-            "mustHaveTags": appService.getConfigTags(appName, keyName, 'must'),
-            "canHaveTags": appService.getConfigTags(appName, keyName, 'can'),
+            "mustHaveTags": appService.getConfigTags(appName, keyName, 'mustHave'),
+            "canHaveTags": appService.getConfigTags(appName, keyName, 'canHave'),
+            "autoLoadTags": appService.getConfigTags(appName, keyName, 'autoLoad'),
         }
 
         self.render('blocks/tag_container.jinja2', {'tags':tags, 'key': keyName, 'index': index, 'values':{}})

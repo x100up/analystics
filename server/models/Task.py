@@ -21,7 +21,7 @@ class Task(object):
     }
 
     def __init__(self, *args, **kwargs):
-        self.items = []
+        self.items = {}
         self.appname = ''
         self.interval = ''
 
@@ -32,11 +32,15 @@ class Task(object):
             self.interval = kwargs['interval']
 
     def addTaskItem(self, taskItem):
-        self.items.append(taskItem)
+        self.items[taskItem.index] = taskItem
+
+    def getTaskItem(self, index):
+        if self.items.has_key(index):
+            return self.items[index]
 
     def serialize(self):
         si = []
-        for item in self.items:
+        for index, item in self.items.items():
             si.append(item.serialize())
 
         return {
@@ -51,6 +55,9 @@ class Task(object):
         for item in data['items']:
             self.addTaskItem(TaskItem.unserialize(item))
 
+    def getFields(self, index):
+        if self.items.has_key(index):
+            return self.items[index].getFields()
 
 
 
@@ -61,6 +68,7 @@ class TaskItem():
         self.start = None
         self.end = None
         self.key = None
+        self.tagGroup = set()
         self.conditions = {}
 
         if kwargs.has_key('end'):
@@ -82,13 +90,17 @@ class TaskItem():
         if kwargs.has_key('delta'):
             self.start = self.end - kwargs['delta']
 
-        self.fields = {'value':'count(1)'}
+        self.fields = [ ('count(1)','value'), ('"' + str(self.index) + '"', 'index') ]
 
     def addCondition(self, tag, values):
         self.conditions[tag] = values
 
+    def addTagGroup(self, tagName):
+        self.tagGroup.add(tagName)
+
     def getFields(self):
-        return self.fields
+        group_param_set = [ ('params[\'{0}\']'.format(x), 'params_{0}'.format(x)) for x in self.tagGroup]
+        return self.fields + group_param_set
 
     def serialize(self):
         return {

@@ -17,5 +17,5 @@ statistic_path=/statistics
 
 [hive]
 prefix=stat_
-host=localhost
+host=192.168.2.103
 port=10000

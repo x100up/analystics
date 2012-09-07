@@ -1,25 +1,54 @@
 {# tag #}
 <li>
-    <label title="{{ data.description or 'Нет описания' }}" class="{{ x }}">{{ data.name or name }}:</label>
+    <fieldset>
+    <legend title="{{ data.description or 'Нет описания' }}" class="{{ x }}">{{ data.name or name }}:</legend>
     <input type="hidden" name="tag_{{ index }}_name" value="{{ name }}">
+
+{% if data['extra'] %}
+    {% set extra = data['extra'] %}
+{% else %}
+    {% set extra = [] %}
+{% endif %}
 
 {% if data.type == 'choose' %}
 
-    {% if data.variants|length < 6   %}
-        {% for v in data.variants %}
-            {{ v }}: <input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
-                {% if value and v in value %} checked="checked" {% endif %}>
+    {% if 'keyValues' in extra %}
+
+
+        <ul>
+        {% for v, k in data['values'].items() %}
+            <li><input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                {% if value and v in value %} checked="checked" {% endif %}> : {{ k }}
+            </li>
         {% endfor %}
+        </ul>
+
     {% else %}
-        {% for v in data.variants %}
-            <ul>
-                <li><input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
-                        {% if value and v in value %} checked="checked" {% endif %} ></li>
-            </ul>
-        {% endfor %}
+
+        {% if data['values']|length < 6   %}
+            {% for v in data.values %}
+                {{ v }}: <input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                    {% if value and v in value %} checked="checked" {% endif %}>
+            {% endfor %}
+        {% else %}
+            {% for v in data['values'] %}
+                <ul>
+                    <li><input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                            {% if value and v in value %} checked="checked" {% endif %} > {{ v }}</li>
+                </ul>
+            {% endfor %}
+        {% endif %}
     {% endif %}
 
+{% elif data.type == 'boolean' %}
+    <input type="checkbox" name="tag_{{ index }}_{{ name }}" {% if value %} checked="checked" {% endif %}>
+{% elif data.type == 'int' %}
+   <input type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}">
 {% else %}
         <input type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}">
 {% endif %}
+
+    group: <input type="checkbox" name="group_{{ index }}_{{ name }}" value="yes">
+
+    </fieldset>
 </li>

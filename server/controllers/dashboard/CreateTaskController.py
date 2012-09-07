@@ -24,12 +24,16 @@ class CreateAction(BaseController):
             workerService = WorkerService(self.getConfig('core', 'result_path'), worker)
             task = workerService.getTask()
         else:
-            taksItem = TaskItem(delta = timedelta(days = -1), index = 1)
+            now = datetime.now()
+            time = now.time()
+            start = now - timedelta(hours = time.hour, minutes = time.minute, seconds = time.second)
+            end = start + timedelta(days = 1)
+            taksItem = TaskItem(start = start, end = end, index = 1)
             task = Task(appname = app.code)
             task.addTaskItem(taksItem)
 
         keys = set()
-        for taskItem in task.items:
+        for index, taskItem in task.items.items():
             if taskItem.key:
                 keys.add(taskItem.key)
 
@@ -69,6 +73,10 @@ class CreateAction(BaseController):
                 if not values is None:
                     taskItem.addCondition(tagName, values)
 
+                group = self.get_argument('group_' + index + '_' + tagName, None)
+                if not group is None:
+                    taskItem.addTagGroup(tagName)
+
             task.addTaskItem(taskItem)
 
 
@@ -88,6 +96,8 @@ class CreateAction(BaseController):
         session.add(worker)
         session.commit()
 
+        #self.write(worker.uuid)
+
         # создаем WorkerService - он будет связывать тред с файловой системой
         workerService = WorkerService(self.getConfig('core', 'result_path'), worker)
         workerService.setQuery(query)
@@ -104,8 +114,11 @@ class CreateAction(BaseController):
         workerThread.host = self.getConfig('hive', 'host')
         workerThread.port = int(self.getConfig('hive', 'port'))
         workerThread.setName(worker.uuid)
+        workerThread.setTask(task)
         workerThread.start()
 
-        self.write(str(query))
+        self.redirect('/dashboard/app/' + app.code + '/')
+
+        #self.write(str(query))
 
         #self.redirect("/dashboard?newJob=" + str(worker.uuid))

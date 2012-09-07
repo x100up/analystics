@@ -14,8 +14,23 @@
 
     {% include 'blocks/error.jinja2' %}
 
-
-
     <a href="/dashboard/app/{{ app.code }}/">&larr; к списку задач</a>
     <div id="chart_container"></div>
+
+
+    {% for index in data %}
+        <h2>{{ nameService.getKeyNameByIndex(index) }}</h2>
+        {% for seriaIndex in data[index] %}
+            {% if data[index][seriaIndex].has_key('params') %}
+                {% for tag, value in data[index][seriaIndex]['params'].items() %}
+                    {{ nameService.getParamNameValue(tag, value) }}
+                {% endfor %}
+            {% endif %}
+        <table>
+            {% for x in data[index][seriaIndex]['data'] %}
+                <tr><td>{{ x[0] }}</td><td>{{ x[1] }}</td></tr>
+            {% endfor %}
+        </table>
+        {% endfor %}
+    {% endfor %}
 {% endblock %}
