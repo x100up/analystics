@@ -89,7 +89,7 @@ class ServerDaemon(Daemon):
 
 if __name__ == "__main__":
     log = os.path.abspath("log/log.log")
-    daemon = MyDaemon('/var/run/python-server.pid', stdin=log, stdout=log, stderr=log)
+    daemon = ServerDaemon('/var/run/python-server.pid', stdin=log, stdout=log, stderr=log)
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
             daemon.start()
