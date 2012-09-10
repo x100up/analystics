@@ -41,20 +41,24 @@ def deploy():
         run('mv tmp/analystics_server/server deploy/' + server_folder)
 
         run('rm -rf tmp ')
-        run('ln -sf deploy/' + server_folder + ' server')
+        run('ln -f -s deploy/' + server_folder + ' server')
+        run('chmod a+x server/runServer.py')
 
     # restart tornado
     with cd('/home/analystics/server'):
         if isFirst:
-            sudo('python runServer.py start')
+            run('sudo ./runServer.py start')
         else:
-            sudo('python runServer.py stop')
-            sudo('python runServer.py start')
+            run('sudo ./runServer.py stop')
+            run('sudo ./runServer.py start')
 
 
 
     # restart nginx
-    run('nginx -s reload')
+    try:
+        nginx_result = run('sudo /usr/sbin/nginx -s reload')
+    except:
+        print 'except'
 
 
 

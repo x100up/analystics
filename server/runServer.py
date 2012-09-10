@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import os, tornado.web, tornado.ioloop, ConfigParser, sys
 from utils.daemon import Daemon
 from controllers import  IndexController, UserController
