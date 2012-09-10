@@ -108,3 +108,5 @@ INSERT INTO userAppRule VALUES
   (1, 1, 'ALLOW'),
   (1, 3, 'ALLOW');
 
+
+
