@@ -13,9 +13,10 @@
     <header class="container_12">
 
     </header>
-    {% if is_login %}
     <nav class="container_12">
         <ul>
+    {% if is_login %}
+
             <li>
                 <a href="/dashboard">Статистика</a>
             </li>
@@ -27,11 +28,15 @@
             <li>
                 <a href="/user/logout/">Выйти ({{ __user__.name }})</a>
             </li>
-        </ul>
-    </nav>
+
+
     {% else %}
+       <!-- <li>
         <a href="/user/login/">Войти</a>
+        </li> -->
     {% endif %}
+    </ul>
+    </nav>
 
     <div class="container_12" id="content">
         {% block content %}{% endblock %}

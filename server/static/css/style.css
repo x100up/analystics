@@ -1,6 +1,6 @@
 body {
     background: url("../img/white_grid.png") repeat;
-    font-size: 12pt;
+    font: normal 0.95em "Trebuchet MS", "Lucida Grande", Arial, Sans-Serif;
 }
 
 h1 { font-size: 18pt; }
@@ -23,7 +23,7 @@ p.error {
 
 
 header {
-    background: #525252;
+    /*background: #525252;*/
     height: 70px;
     display: block;
     color: #FFF;

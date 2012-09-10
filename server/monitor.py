@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+import logging
+import re
+import ConfigParser
 from utils.webhdfs import WebHDFS
 from utils.listutils import listDiff
 from service.HiveService import HiveService
 from service.AppService import AppService
-import logging, re, ConfigParser
 from optparse import OptionParser
 
 # set logger
@@ -40,11 +42,11 @@ options = options.__dict__
 appService = AppService(APP_CONFIG_PATH)
 availale_apps = appService.getAppConfigList()
 
-'''
+"""
  TODO ключи конфигурации
  - удалить лишние таблицы
  - удалить папки в hdfs, для которых нет ключей
-'''
+"""
 
 if options['appname'] is None:
     print 'App name is not set'

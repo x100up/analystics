@@ -23,7 +23,7 @@ class WorkerService(object):
         self.task = task
 
     def getFolder(self):
-        return 'result/' + self.worker.uuid
+        return self.path + '/' + self.worker.uuid
 
     def init(self):
         # create folders
@@ -43,7 +43,6 @@ class WorkerService(object):
         f.close()
 
     def getTask(self):
-        print self.getFolder() + '/job.json'
         f = open(self.getFolder() + '/job.json', 'r')
         data = json.load(f)
         task = Task()

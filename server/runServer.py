@@ -77,30 +77,42 @@ application = tornado.web.Application([
 
     (r"/api/putConfig/?", APIController.PutConfigAction),
 
+
 ],   **settings)
+
+# create abs path
+config['core']['app_config_path'] = os.path.abspath(config['core']['app_config_path'])
+config['core']['result_path'] = os.path.abspath(config['core']['result_path'])
+
+def startApp():
+    application.listen(8888)
+    loopInstance = tornado.ioloop.IOLoop.instance()
+    loopInstance.start()
 
 
 class ServerDaemon(Daemon):
-    def run(self):
-        application.listen(8888)
-        loopInstance = tornado.ioloop.IOLoop.instance()
-        loopInstance.start()
+        def run(self):
+            startApp()
 
+def getDaemon():
+    log = os.path.abspath("log/log.log")
+    return ServerDaemon('/var/run/python-server.pid', stdin=log, stdout=log, stderr=log)
 
 if __name__ == "__main__":
-    log = os.path.abspath("log/log.log")
-    daemon = ServerDaemon('/var/run/python-server.pid', stdin=log, stdout=log, stderr=log)
+
     if len(sys.argv) == 2:
         if 'start' == sys.argv[1]:
-            daemon.start()
+            getDaemon().start()
         elif 'stop' == sys.argv[1]:
-            daemon.stop()
+            getDaemon().stop()
         elif 'restart' == sys.argv[1]:
-            daemon.restart()
+            getDaemon().restart()
+        elif 'debug' == sys.argv[1]:
+            startApp()
         else:
             print "Unknown command"
             sys.exit(2)
         sys.exit(0)
     else:
-        print "usage: %s start|stop|restart" % sys.argv[0]
+        print "usage: %s start|stop|restart|debug" % sys.argv[0]
         sys.exit(2)

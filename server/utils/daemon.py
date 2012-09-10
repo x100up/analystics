@@ -21,6 +21,7 @@ class Daemon:
         Programming in the UNIX Environment" for details (ISBN 0201563177)
         http://www.erlenstar.demon.co.uk/unix/faq_2.html#SEC16
         """
+        print 'daemonize'
         try:
             pid = os.fork()
             if pid > 0:

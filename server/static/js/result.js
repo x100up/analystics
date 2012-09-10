@@ -1,3 +1,14 @@
+Highcharts.setOptions({
+    lang: {
+        months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+            'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+        shortMonths: ['янв', 'фев', 'март', 'апр', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт'],
+        loading: 'Загрузка',
+        weekdays: ['Воскресение', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+    }
+});
+
+
 $(function(){
 
     var data = chartdata['data']
@@ -6,7 +17,7 @@ $(function(){
     }
     // разбираем данные серий
 
-    var series = new Array()
+    var series = [];
 
     var multy = Object.size(chartdata['data']) > 1
 
@@ -16,7 +27,7 @@ $(function(){
         var seriaGroupData = chartdata['data'][index];
         for (var seriaIndex  in seriaGroupData)
         {
-            var xdata = new Array();
+            var xdata = [];
             var seriaData = seriaGroupData[seriaIndex];
 
             for (var i in seriaData['data']) {
@@ -34,9 +45,7 @@ $(function(){
             series.push({
                 name: seriaData.name,
                 data: xdata,
-                options:{
-                    tagValues: seriaData.tagValues
-                }
+                tagValues: seriaData.tagValues
             })
         }
     }
@@ -72,10 +81,10 @@ $(function(){
         },
         tooltip: {
             formatter: function() {
-                console.log(this.series);
-                return '<b>'+ this.series.name +'</b><br/>'+
-                    + this.series.options.tagValues +
-                    Highcharts.dateFormat('%e. %b', this.x) +'<br /> Значение:'+ this.y +' ';
+                console.log(this.series, this.series.options, this.series.options.tagValues);
+                return '<b>'+ this.series.name + '</b><br/>' +
+                    this.series.options.tagValues; /* +
+                    Highcharts.dateFormat('%e. %b', this.x) +'<br /> Значение:'+ this.y +' ';*/
             }
         },
         series: series
