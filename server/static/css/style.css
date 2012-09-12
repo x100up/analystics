@@ -1,6 +1,8 @@
 body {
-    background: url("../img/white_grid.png") repeat;
+    background: url("../img/white_grid.png") repeat center;
     font: normal 0.95em "Trebuchet MS", "Lucida Grande", Arial, Sans-Serif;
+    color: #64625E;
+
 }
 
 h1 { font-size: 18pt; }

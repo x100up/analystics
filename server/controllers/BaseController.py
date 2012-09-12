@@ -4,7 +4,9 @@ import tornado.web, json
 from sqlalchemy import create_engine
 from models.User import User
 from models.App import  App
+from models.Config import Config
 from service.RuleService import RuleService
+
 
 class BaseController(tornado.web.RequestHandler):
 
@@ -13,11 +15,22 @@ class BaseController(tornado.web.RequestHandler):
 
     def getSessionMaker(self):
         if not self.dbSessionMaker:
-            mysqlConfig = self.getConfig("mysql")
-            engine = create_engine('mysql://' + mysqlConfig['user'] + ':' + mysqlConfig['password'] + '@'
-                                   + mysqlConfig['host'] + '/' + mysqlConfig['dbname']+'?init_command=set%20names%20%22utf8%22', encoding='utf8', convert_unicode=True)
-            self.dbSessionMaker = sessionmaker(bind=engine, autoflush=False)
+            mysql_user = self.getConfigValue(Config.MYSQL_USER)
+            mysql_password = self.getConfigValue(Config.MYSQL_PASSWORD)
+
+            conn_str = 'mysql://'
+            if mysql_user:
+                conn_str += mysql_user
+                if mysql_password:
+                    conn_str += ':' + mysql_password
+                conn_str += '@'
+            conn_str += self.getConfigValue(Config.MYSQL_HOST) + '/' + self.getConfigValue(Config.MYSQL_DBNAME)
+
+            engine = create_engine(conn_str + '?init_command=set%20names%20%22utf8%22', encoding = 'utf8', convert_unicode = True)
             engine.execute('SET NAMES utf8')
+
+            self.dbSessionMaker = sessionmaker(bind = engine, autoflush = False)
+
         return self.dbSessionMaker
 
     def getDBSession(self):
@@ -35,6 +48,10 @@ class BaseController(tornado.web.RequestHandler):
 
         return None
 
+    def invalidateDBSessions(self):
+        self.dbSessionMaker = False
+        self.dbSession = False
+
     def getConfig(self, section = None, property = None):
         """
         return config
@@ -50,6 +67,12 @@ class BaseController(tornado.web.RequestHandler):
             else:
                 return None
         return config
+
+    def getConfigValue(self, key):
+        '''
+        Return config value for key from app config
+        '''
+        return self.application.config.get(key)
 
     def render(self, template_name, dict = None):
         if dict is None:
@@ -88,6 +111,10 @@ class BaseController(tornado.web.RequestHandler):
 
         return app
 
+    def prepare(self):
+        if not self.application.isInstalled:
+            self.redirect('/install/')
+
 
 class AjaxController(BaseController):
 
@@ -97,3 +124,21 @@ class AjaxController(BaseController):
     def renderJSON(self, data):
         self.set_header("Content-Type", "application/json")
         self.write(json.dumps(data))
+
+class InstallController(BaseController):
+
+    def render(self, template_name, dict = None):
+        '''
+        Rewrite render without user
+        '''
+        if dict is None:
+            dict = {}
+        env = Environment(loader = PackageLoader('static', 'template'))
+        self.write(env.get_template(template_name).render(**dict))
+
+
+    def prepare(self):
+        print 'pp'
+        print self.application.isInstalled
+        if self.application.isInstalled:
+            self.redirect('/')

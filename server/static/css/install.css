@@ -1,0 +1,17 @@
+li > input{
+    font-size: 18pt;
+    width: 600px;
+    color: #333333;
+}
+
+label {
+    font-size: 16pt;
+    min-width: 220px !important;
+}
+
+h2 {
+    padding-top: 12px;
+    margin-top: 20px;
+    border-top: 1px solid #eceadf;
+    color: #1f1f1f;
+}

@@ -1,0 +1,20 @@
+{% extends 'layout/main.jinja2' %}
+
+{% block head %}
+    <link href="/static/css/install.css" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+<h1>Завершение установки</h1>
+
+    {% include 'blocks/error.jinja2' %}
+
+    {% if not errors %}
+        <p class="success">Приложение успешно установлено. Запомните данные для входа.</p>
+        <p>
+            Имя пользователя: admin <br />
+            Пароль: {{ admin_pass }}
+        </p>
+        <p><a href="/">Войти</a></p>
+    {% endif %}
+{% endblock %}

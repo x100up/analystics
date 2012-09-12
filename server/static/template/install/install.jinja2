@@ -1,0 +1,94 @@
+{% extends 'layout/main.jinja2' %}
+
+{% block head %}
+    <link href="/static/css/install.css" rel="stylesheet" type="text/css">
+{% endblock %}
+{% block content %}
+<h1>Установка приложения</h1>
+
+
+{% include 'blocks/error.jinja2' %}
+
+<form action="" method="post">
+<!--
+    <h2>Сервер</h2>
+        <ul>
+            <li>
+                <label>Хост или IP:</label>
+                <input type="test" name="core_host" value="{{ config.core_host or '' }}">
+            </li>
+
+            <li>
+                <label>Порт:</label>
+                <input type="test" name="core_port" value="{{ config.core_port or '' }}">
+            </li>
+        </ul>
+-->
+    <h2>Файловая система</h2>
+    <p class="info">
+        В файловой системе приложение хранит логи, конфигурации ключей аналитики и результаты вычислений.
+        Относительные пути будут относительно директории <span style="font-style: italic;"> {{ curdir }} </span>.
+        Директории должны быть доступны для чтения и записи. При необходимости они будут созданы.
+    </p>
+
+    <ul>
+        <li>
+            <label>Результаты:</label>
+            <input type="test" name="core_result_path" value="{{ config.core_result_path or '' }}">
+        </li>
+
+        <li>
+            <label>Конфгурации ключей:</label>
+            <input type="test" name="core_app_configs" value="{{ config.core_app_configs or '' }}">
+        </li>
+
+        <li>
+            <label>Логи:</label>
+            <input type="test" name="core_log_path" value="{{ config.core_log_path or '' }}">
+        </li>
+    </ul>
+
+    <h2>MySQL</h2>
+
+    <ul>
+        <li>
+            <label>Имя пользователя:</label>
+            <input type="test" name="mysql_user" value="{{ config.mysql_user or '' }}">
+        </li>
+        <li>
+            <label>Пароль:</label>
+            <input type="test" name="mysql_password" value="{{ config.mysql_password  or '' }}">
+        </li>
+        <li>
+            <label>Хост:</label>
+            <input type="test" name="mysql_host" value="{{ config.mysql_host  or '' }}">
+        </li>
+        <li>
+            <label>Имя БД:</label>
+            <input type="test" name="mysql_dbname" value="{{ config.mysql_dbname  or '' }}">
+        </li>
+    </ul>
+
+    <h1 style="mqrgin-top: 20px">Дополнительно</h1>
+    <p class="info">
+        Следующе настройки не являются обязательными. Вы можете установить их позже.
+    </p>
+    <h2>Hive</h2>
+    <ul>
+        <li>
+            <label>Хост:</label>
+            <input type="test" name="hive_host" value="{{ config.hive_host or '' }}">
+        </li>
+        <li>
+            <label>Порт:</label>
+            <input type="test" name="hive_port" value="{{ config.hive_port or '' }}">
+        </li>
+        <li>
+            <label>Префикс таблиц:</label>
+            <input type="test" name="hive_prefix" value="{{ config.hive_prefix or '' }}">
+        </li>
+    </ul>
+
+    <input type="submit" value="Сохранить">
+</form>
+{% endblock %}
