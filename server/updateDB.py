@@ -20,8 +20,8 @@ engine = create_engine(conn_str + '/?init_command=set%20names%20%22utf8%22', enc
 try:
     connection = engine.connect()
 except OperationalError as op_error:
-    self.errors.append(u'Ошибка соединения с MySQL: ' + op_error.message)
+    print u'Ошибка соединения с MySQL: ' + op_error.message
 except BaseException as ex:
-    self.errors.append(u'Исключение SQLALCHEMY: ' + ex.message)
+    print u'Исключение SQLALCHEMY: ' + ex.message
 else:
     dbloader.migrate(connection = connection)
