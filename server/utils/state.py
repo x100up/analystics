@@ -1,4 +1,4 @@
-import json
+import json, os, inspect
 
 class State():
     '''
@@ -6,7 +6,8 @@ class State():
     '''
 
     def __init__(self):
-        self.file = 'state.json'
+        rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+        self.file = os.path.abspath(thisPath + '/../../state.json')
 
     def get(self, varName):
         self.readData()

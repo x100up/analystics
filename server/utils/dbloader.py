@@ -24,7 +24,8 @@ def migrate(connection = None):
             filename = str(index) + '-' + name
 
             file = codecs.open(sqlPath + '/' + filename, "r", "utf-8-sig")
-            connection.flush()
+            if hasattr(connection, 'flush'):
+                connection.flush()
             sql = file.read()
             connection.execute(sql)
 
