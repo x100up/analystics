@@ -23,7 +23,7 @@ def migrate(connection = None):
         if index > currentDBVersion:
             filename = str(index) + '-' + name
 
-            file = codecs.open('sql/' + filename, "r", "utf-8-sig")
+            file = codecs.open(sqlPath + '/' + filename, "r", "utf-8-sig")
             connection.flush()
             sql = file.read()
             connection.execute(sql)
