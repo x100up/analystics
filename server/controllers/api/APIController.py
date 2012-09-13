@@ -11,7 +11,7 @@ class PutConfigAction(BaseController):
         if jsonData:
             try:
                 data = json.loads(jsonData)
-                service = AppService(self.getConfig('core', 'app_config_path'))
+                service = AppService(self.application.getAppConfigPath())
                 service.saveConfig(data)
             except :
                 self.renderJSON({'error':'exception in process data'})

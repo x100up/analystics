@@ -42,7 +42,7 @@ class IndexAction(BaseController):
                 workers = db_session.query(Worker).filter(Worker.uuid.in_(uuids)).all()
                 for worker in workers:
                     try:
-                        WorkerService(self.getConfig('core', 'result_path'), worker).delete()
+                        WorkerService(self.application.getResultPath(), worker).delete()
                     except OSError as oserror:
                         print oserror
                         pass

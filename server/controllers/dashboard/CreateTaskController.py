@@ -21,7 +21,7 @@ class CreateAction(BaseController):
         baseTask = self.get_argument('baseOn', False)
         if baseTask:
             worker = dbSession.query(Worker).filter_by(uuid = baseTask).first()
-            workerService = WorkerService(self.getConfig('core', 'result_path'), worker)
+            workerService = WorkerService(self.application.getResultPath(), worker)
             task = workerService.getTask()
         else:
             now = datetime.now()
@@ -39,7 +39,7 @@ class CreateAction(BaseController):
 
         key_configs = {}
         if len(keys):
-            appService = AppService(self.getConfig('core', 'app_config_path'))
+            appService = AppService(self.application.getAppConfigPath())
             for key in keys:
                 key_configs[key] = {
                     "mustHaveTags": appService.getConfigTags(app.code, key, 'must'),
@@ -99,7 +99,7 @@ class CreateAction(BaseController):
         #self.write(worker.uuid)
 
         # создаем WorkerService - он будет связывать тред с файловой системой
-        workerService = WorkerService(self.getConfig('core', 'result_path'), worker)
+        workerService = WorkerService(self.application.getResultPath(), worker)
         workerService.setQuery(query)
         workerService.setFields(constructor.getFields())
         workerService.setTask(task)
@@ -110,9 +110,9 @@ class CreateAction(BaseController):
 
         # передает sessionmaker т.к. он создает сеессию в пределах треда
         workerThread.mysqlSessionMaker = self.getSessionMaker()
-        workerThread.folderForWorkerService = self.getConfig('core', 'result_path')
-        workerThread.host = self.getConfig('hive', 'host')
-        workerThread.port = int(self.getConfig('hive', 'port'))
+        workerThread.folderForWorkerService = self.application.getResultPath()
+        workerThread.host = self.getConfigValue('hive_host')
+        workerThread.port = int(self.getConfigValue('hive_port'))
         workerThread.setName(worker.uuid)
         workerThread.setTask(task)
         workerThread.start()

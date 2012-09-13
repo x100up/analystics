@@ -13,7 +13,7 @@ class KeyAutocompleteAction(AjaxController):
         if appName is None:
             self.send_ajax_error('Неверный запрос')
 
-        appService = AppService(self.getConfig('core', 'app_config_path'))
+        appService = AppService(self.application.getAppConfigPath())
         config = appService.getAppConfig(appName)
         keysList = config['keys'].keys()
 
@@ -30,7 +30,7 @@ class KeyConfigurationAction(AjaxController):
         appName = self.get_argument('app', None)
         index = self.get_argument('index', 1)
 
-        appService = AppService(self.getConfig('core', 'app_config_path'))
+        appService = AppService(self.application.getAppConfigPath())
         tags = {
             "mustHaveTags": appService.getConfigTags(appName, keyName, 'mustHave'),
             "canHaveTags": appService.getConfigTags(appName, keyName, 'canHave'),
@@ -50,7 +50,7 @@ class GetKeys(AjaxController):
     def get(self, appName):
         keyIndex = self.get_argument('index')
         self.checkAppAccess(appName)
-        appService = AppService(self.getConfig('core', 'app_config_path'))
+        appService = AppService(self.application.getAppConfigPath())
         keys = appService.getKeys(appName)
         self.render('blocks/key_select.jinja2', {'_keys':keys, 'index':keyIndex})
 

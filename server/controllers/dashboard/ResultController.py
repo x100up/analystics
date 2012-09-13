@@ -33,12 +33,12 @@ class ResultAction(BaseController):
         jobId = self.get_argument('jobId')
 
         worker = dbSession.query(Worker).filter_by(uuid = jobId).first()
-        service = WorkerService(self.getConfig('core', 'result_path'), worker)
+        service = WorkerService(self.application.getResultPath(), worker)
 
 
         # configuration name service
         task = service.getTask()
-        appService = AppService(self.getConfig('core', 'app_config_path'))
+        appService = AppService(self.application.getAppConfigPath())
         appConfig = appService.getAppConfig(app.code)
         nameService = AppNameService(appConfig, task)
 

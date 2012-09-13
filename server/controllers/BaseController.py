@@ -38,6 +38,8 @@ class BaseController(tornado.web.RequestHandler):
             self.dbSession = self.getSessionMaker()()
         return self.dbSession
 
+
+
     def get_current_user(self):
         login = self.get_secure_cookie('user.login')
         if login:
@@ -52,22 +54,6 @@ class BaseController(tornado.web.RequestHandler):
         self.dbSessionMaker = False
         self.dbSession = False
 
-    def getConfig(self, section = None, property = None):
-        """
-        return config
-        """
-        config = self.settings['config']
-        if section:
-            if config.has_key(section):
-                if property:
-                    if config[section].has_key(property):
-                        return config[section][property]
-                else:
-                    return config[section]
-            else:
-                return None
-        return config
-
     def getConfigValue(self, key):
         '''
         Return config value for key from app config
@@ -77,7 +63,7 @@ class BaseController(tornado.web.RequestHandler):
     def render(self, template_name, dict = None):
         if dict is None:
             dict = {}
-
+        dict['static_url_prefix'] = self.application.settings['static_url_prefix']
         dict['is_login'] = self.get_secure_cookie('user.login')
         u = self.get_current_user();
         if u:
@@ -133,12 +119,10 @@ class InstallController(BaseController):
         '''
         if dict is None:
             dict = {}
+        dict['static_url_prefix'] = self.application.settings['static_url_prefix']
         env = Environment(loader = PackageLoader('static', 'template'))
         self.write(env.get_template(template_name).render(**dict))
 
-
     def prepare(self):
-        print 'pp'
-        print self.application.isInstalled
         if self.application.isInstalled:
             self.redirect('/')

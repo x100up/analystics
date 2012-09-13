@@ -5,9 +5,9 @@ class Config():
     Struct for app settings
     '''
 
-    CORE_LOG_PATH = 'core_log_path'
-    CORE_APP_CONFIG_PATH = 'core_app_configs'
-    CORE_RESULT_PATH = 'core_result_path'
+    HIVE_HOST = 'hive_host'
+    HIVE_PORT = 'hive_port'
+    HIVE_PREFIX = 'hive_prefix'
 
     MYSQL_USER = 'mysql_user'
     MYSQL_HOST = 'mysql_host'
@@ -17,16 +17,12 @@ class Config():
 
 
     def __init__(self, values = None):
+        # default settings
         self.values = {
-            self.CORE_LOG_PATH: 'log',
-            self.CORE_APP_CONFIG_PATH: 'app_configs',
-            self.CORE_RESULT_PATH: 'result',
-
             self.MYSQL_HOST: 'localhost',
-
-            'hive_prefix': 'stat_',
-            'hive_port': '10000',
-            'hive_host': 'localhost'
+            self.HIVE_PREFIX: 'stat_',
+            self.HIVE_PORT: '10000',
+            self.HIVE_HOST: 'localhost'
         }
 
         if values:

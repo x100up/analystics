@@ -1,9 +1,13 @@
+import inspect
 import os
 import codecs
 from state import State
 
 def migrate(connection = None):
-    dirList = os.listdir('sql')
+    thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+    sqlPath = os.path.abspath(thisPath + '/../../sql/')
+
+    dirList = os.listdir(sqlPath)
     files = []
     for fname in dirList:
         index, name = fname.split('-', 1)

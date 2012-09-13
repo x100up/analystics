@@ -15,37 +15,8 @@ class InstallAction(InstallController):
         super(InstallAction, self).prepare()
         self.errors = []
 
-    def post(self):
-
+    def post(self, *args, **kwargs):
         self.config = Config( dict([(key, value.pop()) for key, value in self.request.arguments.items()]) )
-
-        # file and folder configuration
-
-        if not self.request.arguments.has_key(Config.CORE_LOG_PATH):
-            self.errors.append(u'Вы должны определить директорию для логов')
-        else:
-            try:
-                path = self.createFolder(self.config.get(Config.CORE_LOG_PATH))
-            except BaseException as exception:
-                self.errors.append(u'Ошибка при создании директории логов: ' + exception.message)
-
-
-        if not self.request.arguments.has_key(Config.CORE_APP_CONFIG_PATH):
-            self.errors.append(u'Вы должны определить директорию конфигураций приложений')
-        else:
-            try:
-                path = self.createFolder(self.config.get(Config.CORE_APP_CONFIG_PATH))
-            except BaseException as exception:
-                self.errors.append(u'Ошибка при создании директории конфигураций приложений: ' + exception.message)
-
-
-        if not self.request.arguments.has_key(Config.CORE_RESULT_PATH):
-            self.errors.append(u'Вы должны определить директорию результатов вычислений')
-        else:
-            try:
-                path = self.createFolder(self.config.get(Config.CORE_RESULT_PATH))
-            except BaseException as exception:
-                self.errors.append(u'Ошибка при создании директории результатов вычислений: ' + exception.message)
 
         # mysql settings
         if not self.request.arguments.has_key(Config.MYSQL_HOST):
@@ -84,7 +55,7 @@ class InstallAction(InstallController):
             # save config file
             raw_config = self.config.getRawConfig()
             try:
-                configfile = open('server.cfg', 'wb')
+                configfile = open(self.application.appRoot + '/server.cfg', 'wb')
             except BaseException as exception:
                 self.errors.append(u'Ошибка при записи файла конфигурации: ' + exception.message)
             else:
@@ -99,6 +70,36 @@ class InstallAction(InstallController):
 
     def get(self, *args, **kwargs):
         self.config = Config()
+        # create folders
+
+        if not os.access(self.application.appRoot, os.W_OK):
+            self.errors.append(u'Корневая директория закрыта на запись! ('+self.application.appRoot + ')')
+
+        if not os.path.exists(self.application.getLogPath()):
+            try :
+                os.mkdir(self.application.getLogPath(),  0644)
+            except BaseException as ex:
+                self.errors.append(u'Невозможно создать директорию для логов:' + ex.message)
+        elif not os.access(self.application.getLogPath(), os.W_OK):
+            self.errors.append(u'Директория для логов создана, но закрыта на запись! (' + self.application.getLogPath() + ')')
+
+        if not os.path.exists(self.application.getAppConfigPath()):
+            try :
+                os.mkdir(self.application.getAppConfigPath(),  0644)
+            except BaseException as ex:
+                self.errors.append(u'Невозможно создать директорию для конфигураций:' + ex.message)
+        elif not os.access(self.application.getAppConfigPath(), os.W_OK):
+            self.errors.append(u'Директория для конфигураций создана, но закрыта на запись! (' + self.application.getAppConfigPath() + ')')
+
+        if not os.path.exists(self.application.getResultPath()):
+            try :
+                os.mkdir(self.application.getResultPath(),  0644)
+            except BaseException as ex:
+                self.errors.append(u'Невозможно создать директорию для результатов:' + ex.message)
+        elif not os.access(self.application.getResultPath(), os.W_OK):
+            self.errors.append(u'Директория для результатов создана, но закрыта на запись! (' + self.application.getResultPath() + ')')
+
+
         self.run()
 
 
