@@ -56,7 +56,7 @@ class AnalyticsServer(tornado.web.Application):
         '''
         Простое определение - установлено ли приложение
         '''
-        self.isInstalled =  os.path.exists('server.cfg')
+        self.isInstalled =  os.path.exists(self.appRoot + '/server.cfg')
 
 
     def getHandlers(self):
