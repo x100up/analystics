@@ -1,48 +1,27 @@
 #!/usr/bin/python
+# coding=utf-8
+from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
+from models.Config import Config
+from utils import dbloader
+config = Config()
+config.readConfigFile('server.cfg')
 
-import ConfigParser
-import os
-from utils.state import State
+conn_str = 'mysql://'
+if config.get(Config.MYSQL_USER):
+    conn_str += config.get(Config.MYSQL_USER)
+    if config.get(Config.MYSQL_PASSWORD):
+        conn_str += ':' + config.get(Config.MYSQL_PASSWORD)
 
-confPath = os.path.abspath('server.cnf')
+    conn_str += '@'
 
-configParser = ConfigParser.RawConfigParser()
-configParser.read(['server.cnf'])
-
-config = {}
-sections = configParser.sections()
-for section in sections:
-    items = configParser.items(section)
-    config[section] = {}
-    for k, v in items:
-        config[section][k] = v
-
-
-dirList=os.listdir('sql')
-files = []
-for fname in dirList:
-    index, name = fname.split('-', 1)
-    files.append((int(index), name))
-
-# sort by index
-files = sorted(files)
-
-state = State()
-state.set('currentDBVersion', 0)
-currentDBVersion = state.get('currentDBVersion')
-print currentDBVersion
-for index, name in files:
-    if index > currentDBVersion:
-        # run script
-        command = 'mysql -u{0} -p{1} {2} < {3}'.format(config['mysql']['user'], config['mysql']['password'], config['mysql']['dbname'], 'sql/' + str(index) + '-' + name)
-        print 'run: ' + command
-        os.system(command)
-
-        currentDBVersion = index
-        state.set('currentDBVersion', currentDBVersion)
-
-
-
-
-
-
+conn_str += config.get(Config.MYSQL_HOST)
+engine = create_engine(conn_str + '/?init_command=set%20names%20%22utf8%22', encoding='utf8', convert_unicode=True)
+try:
+    connection = engine.connect()
+except OperationalError as op_error:
+    self.errors.append(u'Ошибка соединения с MySQL: ' + op_error.message)
+except BaseException as ex:
+    self.errors.append(u'Исключение SQLALCHEMY: ' + ex.message)
+else:
+    dbloader.migrate(connection = connection)

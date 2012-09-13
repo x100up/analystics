@@ -55,9 +55,10 @@ class Config():
 
         return config
 
-    def readRawConfig(self, configParser):
+    def readConfigFile(self, configfile):
+        configParser = ConfigParser.RawConfigParser()
+        configParser.read([configfile])
         sections = configParser.sections()
-
         for section in sections:
             items = configParser.items(section)
             for k, v in items:

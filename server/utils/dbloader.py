@@ -2,7 +2,7 @@ import os
 import codecs
 from state import State
 
-def migrate(mysql_user = None, mysql_password = None, mysql_dbname = None, connection = None):
+def migrate(connection = None):
     dirList = os.listdir('sql')
     files = []
     for fname in dirList:
@@ -19,15 +19,10 @@ def migrate(mysql_user = None, mysql_password = None, mysql_dbname = None, conne
         if index > currentDBVersion:
             filename = str(index) + '-' + name
 
-            if connection:
-                file = codecs.open('sql/' + filename, "r", "utf-8-sig")
-                connection.flush()
-                sql = file.read()
-                connection.execute(sql)
-            else:
-                # run script
-                command = 'mysql -u{0} -p{1} {2} < {3}'.format(mysql_user, mysql_password, mysql_dbname, 'sql/' + filename)
-                os.system(command)
+            file = codecs.open('sql/' + filename, "r", "utf-8-sig")
+            connection.flush()
+            sql = file.read()
+            connection.execute(sql)
 
             currentDBVersion = index
             state.set('currentDBVersion', currentDBVersion)

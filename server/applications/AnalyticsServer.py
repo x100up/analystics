@@ -36,9 +36,7 @@ class AnalyticsServer(tornado.web.Application):
 
     def loadConfiguration(self):
         self.config = Config()
-        configParser = ConfigParser.RawConfigParser()
-        configParser.read(['server.cfg'])
-        self.config.readRawConfig(configParser)
+        self.config.readConfigFile('server.cfg')
 
     def determineIsInstall(self):
         '''
