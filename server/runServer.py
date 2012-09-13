@@ -1,7 +1,10 @@
 #!/usr/bin/python
-import os, sys
+import os, sys, inspect
 from utils.daemon import Daemon
 from applications.AnalyticsServer import AnalyticsServer
+
+rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
+
 
 def startApp(debug = False):
     application = AnalyticsServer(debug)
@@ -12,8 +15,11 @@ class ServerDaemon(Daemon):
             startApp()
 
 def getDaemon():
-    log = os.path.abspath("log/log.log")
-    return ServerDaemon('/var/run/python-server.pid', stdin=log, stdout=log, stderr=log)
+    log = os.path.abspath(os.path.abspath(rootPath + '/../log/daemon.log'))
+    if not os.path.exists(log):
+        open(log, 'w').close()
+
+    return ServerDaemon('/var/run/python-server.pid', stdin = log, stdout = log, stderr = log)
 
 if __name__ == "__main__":
 
