@@ -7,7 +7,7 @@ class State():
 
     def __init__(self):
         rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-        self.file = os.path.abspath(thisPath + '/../../state.json')
+        self.file = os.path.abspath(rootPath + '/../../state.json')
 
     def get(self, varName):
         self.readData()
