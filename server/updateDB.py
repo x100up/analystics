@@ -4,8 +4,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
 from models.Config import Config
 from utils import dbloader
+import inspect
+import os
+
+rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
+
 config = Config()
-config.readConfigFile('server.cfg')
+config.readConfigFile(os.path.abspath(os.path.abspath(rootPath + '/../server.cfg')))
 
 conn_str = 'mysql://'
 if config.get(Config.MYSQL_USER):
