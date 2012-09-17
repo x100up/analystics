@@ -23,14 +23,14 @@ class WorkerService(object):
         self.task = task
 
     def getFolder(self):
-        return self.path + '/' + self.worker.uuid
+        return self.path + '/' + str(self.worker.workerId)
 
     def init(self):
         # create folders
         os.makedirs(self.getFolder())
 
         for_json = {
-            'workId': self.worker.uuid,
+            'workId': self.worker.workerId,
             'start': str(self.worker.startDate),
             'query': self.query,
             'fields' : self.fields,

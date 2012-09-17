@@ -1,0 +1,9 @@
+form label{
+    min-width: 200px !important;
+}
+form h2{
+    padding-top: 12px;
+    margin-top: 20px;
+    border-top: 1px solid #eceadf;
+    color: #1f1f1f;
+}

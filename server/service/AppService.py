@@ -6,6 +6,7 @@ class AppService():
 
     def __init__(self, config_folder):
         self.folder = config_folder
+        self.appConfCache = {}
 
     def getAppConfigList(self):
         '''
@@ -18,39 +19,52 @@ class AppService():
         '''
         return app config dict
         '''
-        return json.load(open(self.folder + '/' + appCode + '.json', 'r'))
+        if not self.appConfCache.has_key(appCode):
+            self.appConfCache[appCode] = json.load(open(self.folder + '/' + appCode + '.json', 'r'))
+        return self.appConfCache[appCode]
 
-    def getConfigTags(self, appName, keyName, prefix):
+    def getTagList(self, appName):
+        '''
+            return list of tags
+        '''
         config = self.getAppConfig(appName)
-        keyConf = config['keys'][keyName]
+        if config.has_key('tags'):
+            return config['tags']
+        return []
 
-        raw_json = {}
-        if keyConf.has_key(prefix + 'HaveTags'):
-            for tag in keyConf[prefix + 'HaveTags']:
-                raw_json[tag] = config['tags'][tag]
+    def getTagSettings(self, appName):
+        '''
+            return list of tags
+        '''
+        config = self.getAppConfig(appName)
+        if config.has_key('tagSettings'):
+            return config['tagSettings']
+        return []
 
+    def saveTagSettings(self, appName, settings):
+        config = self.getAppConfig(appName)
+        config['tagSettings'] = settings
+        self.saveConfig(config)
 
-        if keyConf.has_key(prefix + 'HaveBunches'):
-            for slice in keyConf[prefix + 'HaveBunches']:
-                for tag in config['bunches'][slice]:
-                    raw_json[prefix + 'HaveTags'][tag] = config['tags'][tag]
-
-        return raw_json
-
-    def getConfigTags(self, appName, keyName, prefix):
+    def getAppTags(self, appName, keyName, prefix):
         config = self.getAppConfig(appName)
         keyConf = config['keys'][keyName]
 
         raw_json = {}
         if keyConf.has_key(prefix + 'Tags'):
             for tag in keyConf[prefix + 'Tags']:
-                raw_json[tag] = config['tags'][tag]
+                raw_json[tag] = None
 
         # load bunch
         if keyConf.has_key(prefix + 'Bunches'):
             for bunchName in keyConf[prefix + 'Bunches']:
                 for tag in config['bunches'][bunchName]['tags']:
-                    raw_json[tag] = config['tags'][tag]
+                    raw_json[tag] = None
+
+        settings = self.getTagSettings(appName)
+        for tag_name in raw_json.keys():
+            if settings.has_key(tag_name):
+                raw_json[tag_name] = settings[tag_name]
 
         return raw_json
 
@@ -67,6 +81,10 @@ class AppService():
             f.close()
         else:
             raise Error('Cant find appname in config')
+
+
+    def getKnowAppList(self):
+        return [ file.replace('.json', '') for file in os.listdir(self.folder)]
 
 
 class AppNameService(object):

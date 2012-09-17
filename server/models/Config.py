@@ -16,6 +16,16 @@ class Config():
     MYSQL_PASSWORD = 'mysql_password'
 
 
+    HDFS_HOST = 'hdfs_host'
+    HDFS_PORT = 'hdfs_port'
+    HDFS_USERNAME = 'hdfs_username'
+
+    HADOOP_NAMENODE = 'hadoop_namenode'
+    HADOOP_YARN_RESOURCEMANAGER = 'hadoop_yarn_resourcemanager'
+    HADOOP_NODEMANAGER = 'hadoop_nodemanager'
+
+
+
     def __init__(self, values = None):
         # default settings
         self.values = {
@@ -37,11 +47,15 @@ class Config():
             return self.values[key]
         return None
 
+    def set(self, key, value):
+        self.values[key] = value
+
     def getRawConfig(self):
         config = ConfigParser.RawConfigParser()
-        config.add_section('core')
         config.add_section('mysql')
         config.add_section('hive')
+        config.add_section('hdfs')
+        config.add_section('hadoop')
 
         for key, value in self.values.items():
             section, key = key.split('_', 1)

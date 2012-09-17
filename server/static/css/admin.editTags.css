@@ -1,0 +1,14 @@
+div.choose  input {
+    width: 195px;
+}
+
+
+div.choose td, div.choose th {
+    border: none !important;
+}
+
+
+div.choose tr.new input{
+    border: 1px dashed #91bd09;
+}
+

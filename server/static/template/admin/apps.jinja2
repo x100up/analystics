@@ -13,6 +13,7 @@
             <tr>
                 <th>Название</th>
                 <th>Код</th>
+                <th></th>
                 <th class="action"></th>
             </tr>
         </thead>
@@ -21,15 +22,22 @@
         {% for app in apps %}
             <tr>
                 <td><a href="/admin/app/edit?appId={{ app.appId }}">{{ app.name }}</a></td>
-                <td>{{ app.code }}</td>
+                <td>{{ app.code }} {% if app.code not in app_files %} <span style="color: red">Отсутствует фаил конфигурации!!!</span> {% endif %}</td>
+                <td><a href="/admin/app/{{ app.code }}/tags">Настройка тегов</a></td>
                 <td class="action"><input type="checkbox" name="appIds" value="{{ app.appId }}" /></td>
             </tr>
+        {% endfor %}
+
+        {% for app_code in new_app_codes %}
+        <tr>
+            <td colspan="3"><a href="/admin/app/edit?code={{ app_code }}">Добавить приложение с кодом {{ app_code }}</a></td>
+        </tr>
         {% endfor %}
         </tbody>
 
         <tfoot>
             <tr>
-                <td colspan="2"></td>
+                <td colspan="3"></td>
                 <td><input type="submit" name="action" value="Удалить" class="orange awesome"></td>
             </tr>
         </tfoot>

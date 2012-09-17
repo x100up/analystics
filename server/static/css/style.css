@@ -160,3 +160,10 @@ div.tag_container ul ul{
 fieldset {
     border: 1px solid #ccc;
 }
+
+.wb {
+    border-top: 1px solid #ECEADF;
+    color: #1F1F1F;
+    margin-top: 20px;
+    padding-top: 12px;
+}

@@ -1,5 +1,5 @@
 from Base import Base
-from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, DateTime, Enum
+from sqlalchemy import Column, Integer, String, ForeignKey, DateTime, Enum
 
 class Worker(Base):
     STATUS_ALIVE = 'ALIVE'
@@ -8,9 +8,10 @@ class Worker(Base):
     STATUS_ERROR = 'ERROR'
 
     __tablename__ = 'worker'
-    uuid = Column(String(50), primary_key=True)
-    startDate = Column(DateTime,  nullable=False)
+    workerId = Column(Integer, primary_key = True, autoincrement=True)
+    startDate = Column(DateTime,  nullable = False)
     endDate = Column(DateTime)
     status = Column(Enum('ALIVE', 'SUCCESS', 'DIED', 'ERROR'))
-    userId = Column(Integer, ForeignKey('user.userId'),  nullable=False)
-    appId = Column(Integer, ForeignKey('app.appId'),  nullable=False)
+    userId = Column(Integer, ForeignKey('user.userId'),  nullable = False)
+    appId = Column(Integer, ForeignKey('app.appId'),  nullable = False)
+    hadoopAppID = Column(String, nullable = True, default = None)

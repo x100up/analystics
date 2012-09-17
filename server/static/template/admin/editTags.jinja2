@@ -1,0 +1,81 @@
+{% extends 'layout/main.jinja2' %}
+
+{% block head %}
+    <link href="{{ static_url_prefix }}/css/admin.editTags.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="{{ static_url_prefix }}/js/admin.editTags.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h2>Конф</h2>
+
+    {% include 'blocks/error.jinja2' %}
+
+    <form action="" method="post">
+    <div class="grid_12">
+    {% for tag in tags %}
+        <input type="hidden" name="tags" value="{{ tag }}">
+        {% set conf = tags[tag] %}
+        <h3 class="wb">Тег: {{ tag }}</h3>
+
+        <ul>
+            <li>
+                <label for="{{ tag }}_name">Название:</label>
+                <input type="text" name="{{ tag }}_name" id="{{ tag }}_name" value="{{ conf.name or "" }}">
+            </li>
+            <li>
+                <label for="{{ tag }}_type">Тип: </label>
+                <select name="{{ tag }}_type" id="{{ tag }}_type" onchange="onChangeType(this, '{{ tag }}')">
+                    <option value="string" {% if conf.type == 'string' %}selected="selected"{% endif %}>Строка</option>
+                    <option value="int" {% if conf.type == 'int' %}selected="selected"{% endif %}>Целое (int)</option>
+                    <option value="choose" {% if conf.type == 'choose' %}selected="selected"{% endif %}>Выбор</option>
+                    <option value="boolean" {% if conf.type == 'boolean' %}selected="selected"{% endif %}>Логический (bool)</option>
+                </select>
+            </li>
+        </ul>
+
+        <div class="grid_6 choose" id="choose_{{ tag }}" {% if conf.type != 'choose' %} style="display: none" {% endif %}>
+            {% if not conf.has_key('values') %}
+                {% set tag_values = [] %}
+            {% else %}
+                {% set tag_values = conf['values'] %}
+            {% endif %}
+
+            <input type="text" name="{{ tag }}_values_count" id="{{ tag }}_values_count" value="{{ tag_values|length }}">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Варианты</th>
+                        <th>Описание</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+            {% if conf.type == 'choose' %}
+                {% set isDict = False %}
+                {% if tag_values.items %}
+                    {% set isDict = True %}
+                {% endif %}
+
+                    {% for key in tag_values %}
+                        <tr>
+                            <td><input type="text" name="{{ tag }}_values_key_{{ loop.index }}" value="{{ key }}"> :</td>
+                            <td><input type="text" name="{{ tag }}_values_value_{{ loop.index }}" value="{% if isDict %}{{ tag_values[key] }} {% endif %}"></td>
+                        </tr>
+                    {% endfor %}
+            {% endif %}
+                    <tr class="new">
+                        <td><input type="text" onkeypress="setNew('{{ tag }}')"></td>
+                        <td><input type="text" onkeypress="setNew('{{ tag }}')"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="clearfix"></div>
+
+    {% endfor %}
+    <input type="submit" value="Сохранить" class="awesome green">
+    </div>
+    </form>
+
+{% endblock %}

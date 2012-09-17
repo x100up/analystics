@@ -7,9 +7,10 @@ import tornado.ioloop
 
 from models.Config import Config
 from controllers import  IndexController, UserController
-from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController
+from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController, AdminSettingsController, AdminTagController
 from controllers.api import APIController
 from controllers.dashboard import ResultController, AjaxController, DashboardController, CreateTaskController
+from controllers.cluster import NameNodeController
 from controllers.install import InstallController
 
 class AnalyticsServer(tornado.web.Application):
@@ -39,7 +40,6 @@ class AnalyticsServer(tornado.web.Application):
         loopInstance.start()
 
     def loadConfiguration(self):
-
         self.config = Config()
         self.config.readConfigFile(os.path.abspath(self.appRoot + '/server.cfg'))
 
@@ -58,13 +58,14 @@ class AnalyticsServer(tornado.web.Application):
         '''
         self.isInstalled =  os.path.exists(self.appRoot + '/server.cfg')
 
-
     def getHandlers(self):
         thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
         #print os.path.abspath(thisPath + '/../static')
 
         return [
             (r"/", IndexController.IndexAction),
+
+            # --------- DASHBOARD -----------
 
             (r"/dashboard/?", DashboardController.SwitchApp),
             (r"/dashboard/app/([^/]+)/?", DashboardController.IndexAction),
@@ -73,8 +74,12 @@ class AnalyticsServer(tornado.web.Application):
             (r"/dashboard/empty/?", DashboardController.EmptyAppAction),
             (r"/dashboard/selectapp/?", DashboardController.SelectAppAction),
 
+            # --------- LOGIN & LOGOUT ---------
+
             (r"/user/login/?", UserController.AuthAction),
             (r"/user/logout/?", UserController.LogoutAction),
+
+            # --------- ADMIN -----------
 
             (r"/admin/?", AdminIndexController.IndexAction),
             (r"/admin/users/?", AdminUserController.UserAction),
@@ -86,6 +91,14 @@ class AnalyticsServer(tornado.web.Application):
             (r"/admin/rules/?", AdminRulesController.IndexAction),
             (r"/admin/rules/switch?", AdminRulesController.SwitchAjaxAction),
 
+            (r'/admin/settings/?', AdminSettingsController.IndexAction),
+
+            (r'/admin/app/([^/]+)/tags/?', AdminTagController.TagEditAction),
+            # --------- CLUSTER -----------
+            (r'/cluster/namenode/?', NameNodeController.IndexAction),
+
+            # --------- AJAX -----------
+
             (r"/ajax/key_autocomplete/?", AjaxController.KeyAutocompleteAction),
             (r"/ajax/key_configuration/?", AjaxController.KeyConfigurationAction),
             (r"/ajax/get_key_form/?", AjaxController.GetKeyForm),
@@ -95,6 +108,8 @@ class AnalyticsServer(tornado.web.Application):
 
             (r"/install/?", InstallController.InstallAction),
             (r"/install/final/?", InstallController.FinalInstallAction),
+
+
 
             (r"/static/(.*)", tornado.web.StaticFileHandler, {"path": os.path.abspath(thisPath + '/../static')}),
         ]

@@ -27,7 +27,7 @@ class HiveWorker(threading.Thread):
         hiveClient = None
         try:
             hiveClient = HiveService(self.host, self.port)
-            data = {'result' : self.prepareData(hiveClient.execute(self.workerService.query))}
+            data = {'result' : self.prepareData(hiveClient.execute('-- ' + str(self.getName()) + "\n" + self.workerService.query))}
             print 'worker [' + self.getName() + '] end job'
             status = Worker.STATUS_SUCCESS
 
@@ -37,9 +37,9 @@ class HiveWorker(threading.Thread):
         except HiveServerException as tx:
             data = {'exception' : {'HiveServerException': tx.message }}
             status = Worker.STATUS_ERROR
-        #except Exception as tx:
-        #    data = {'exception' : {'Exception': tx.message }}
-        #    status = Worker.STATUS_ERROR
+        except Exception as tx:
+            data = {'exception' : {'Exception': tx.message }}
+            status = Worker.STATUS_ERROR
         finally:
             if hiveClient:
                 hiveClient.close()
@@ -59,9 +59,6 @@ class HiveWorker(threading.Thread):
         multySeria = len(self.task.items) > 1
 
         for item in data:
-            print item
-
-
             interval = self.task.interval
             offset = 3
             y = 0

@@ -4,11 +4,10 @@ from service.QueryService import HiveQueryConstructor
 from worker import HiveWorker
 from models.Worker import Worker
 from models.Task import Task, TaskItem
-import uuid, tornado.web
 from datetime import datetime, timedelta
 from service.WorkerService import WorkerService
-from sqlalchemy import desc, func
 from service.AppService import AppService
+import tornado.web
 
 class CreateAction(BaseController):
     """
@@ -20,7 +19,7 @@ class CreateAction(BaseController):
         dbSession = self.getDBSession()
         baseTask = self.get_argument('baseOn', False)
         if baseTask:
-            worker = dbSession.query(Worker).filter_by(uuid = baseTask).first()
+            worker = dbSession.query(Worker).filter_by(workerId = baseTask).first()
             workerService = WorkerService(self.application.getResultPath(), worker)
             task = workerService.getTask()
         else:
@@ -42,8 +41,8 @@ class CreateAction(BaseController):
             appService = AppService(self.application.getAppConfigPath())
             for key in keys:
                 key_configs[key] = {
-                    "mustHaveTags": appService.getConfigTags(app.code, key, 'must'),
-                    "canHaveTags": appService.getConfigTags(app.code, key, 'can'),
+                    "mustHaveTags": appService.getAppTags(app.code, key, 'mustHave'),
+                    "canHaveTags": appService.getAppTags(app.code, key, 'canHave'),
                 }
 
         self.render('dashboard/new.jinja2', {'task':task, 'app':app, 'key_configs':key_configs})
@@ -87,7 +86,6 @@ class CreateAction(BaseController):
 
         # объект для записи в базу
         worker = Worker()
-        worker.uuid = str(uuid.uuid4())
         worker.userId = user.userId
         worker.startDate = datetime.now()
         worker.status = Worker.STATUS_ALIVE
@@ -95,8 +93,6 @@ class CreateAction(BaseController):
         session = self.getDBSession()
         session.add(worker)
         session.commit()
-
-        #self.write(worker.uuid)
 
         # создаем WorkerService - он будет связывать тред с файловой системой
         workerService = WorkerService(self.application.getResultPath(), worker)
@@ -113,12 +109,8 @@ class CreateAction(BaseController):
         workerThread.folderForWorkerService = self.application.getResultPath()
         workerThread.host = self.getConfigValue('hive_host')
         workerThread.port = int(self.getConfigValue('hive_port'))
-        workerThread.setName(worker.uuid)
+        workerThread.setName('worker-' + str(worker.workerId))
         workerThread.setTask(task)
         workerThread.start()
 
         self.redirect('/dashboard/app/' + app.code + '/')
-
-        #self.write(str(query))
-
-        #self.redirect("/dashboard?newJob=" + str(worker.uuid))

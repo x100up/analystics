@@ -1,0 +1,86 @@
+{% extends 'layout/main.jinja2' %}
+
+{% block head %}
+    <link href="{{ static_url_prefix }}/css/settings.css" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+    <h1>Настройки</h1>
+
+    {% include 'blocks/error.jinja2' %}
+
+    <form action="" method="post">
+
+        <h2>MySQL</h2>
+
+        <ul>
+            <li>
+                <label>Имя пользователя:</label>
+                <input type="test" name="mysql_user" value="{{ config.mysql_user or '' }}">
+            </li>
+            <li>
+                <label>Пароль:</label>
+                <input type="test" name="mysql_password" value="{{ config.mysql_password  or '' }}">
+            </li>
+            <li>
+                <label>Хост:</label>
+                <input type="test" name="mysql_host" value="{{ config.mysql_host  or '' }}">
+            </li>
+            <li>
+                <label>Имя БД:</label>
+                <input type="test" name="mysql_dbname" value="{{ config.mysql_dbname  or '' }}">
+            </li>
+        </ul>
+
+        <h2>Hive</h2>
+        <ul>
+            <li>
+                <label>Хост:</label>
+                <input type="test" name="hive_host" value="{{ config.hive_host or '' }}">
+            </li>
+            <li>
+                <label>Порт:</label>
+                <input type="test" name="hive_port" value="{{ config.hive_port or '' }}">
+            </li>
+            <li>
+                <label>Префикс таблиц:</label>
+                <input type="test" name="hive_prefix" value="{{ config.hive_prefix or '' }}">
+            </li>
+        </ul>
+
+
+        <h2>Web HDFS</h2>
+        <ul>
+            <li>
+                <label>Хост:</label>
+                <input type="test" name="hdfs_namenode_host" value="{{ config.hdfs_namenode_host or '' }}">
+            </li>
+            <li>
+                <label>Порт:</label>
+                <input type="test" name="hdfs_namenode_port" value="{{ config.hdfs_namenode_port or '' }}">
+            </li>
+            <li>
+                <label>Имя пользователя:</label>
+                <input type="test" name="hdfs_namenode_username" value="{{ config.hdfs_namenode_username or '' }}">
+            </li>
+        </ul>
+
+        <h2>Кластер</h2>
+        <ul>
+            <li>
+                <label>NameNode:</label>
+                <input type="test" name="hadoop_namenode" value="{{ config.hadoop_namenode or '' }}">
+            </li>
+            <li>
+                <label>Yarn Resource Manager:</label>
+                <input type="test" name="hadoop_yarn_resourcemanager" value="{{ config.hadoop_yarn_resourcemanager or '' }}">
+            </li>
+            <li>
+                <label>Yarn Node Manager:</label>
+                <input type="test" name="hadoop_nodemanager" value="{{ config.hadoop_nodemanager or '' }}">
+            </li>
+        </ul>
+
+        <input type="submit" value="Сохранить" class="awesome green">
+    </form>
+{% endblock %}

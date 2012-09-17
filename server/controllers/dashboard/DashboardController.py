@@ -37,9 +37,9 @@ class IndexAction(BaseController):
 
         action = self.get_argument('action', False)
         if action == u'Удалить':
-            uuids = self.get_arguments('jobId', False)
-            if uuids:
-                workers = db_session.query(Worker).filter(Worker.uuid.in_(uuids)).all()
+            workerIds = self.get_arguments('jobId', False)
+            if workerIds:
+                workers = db_session.query(Worker).filter(Worker.workerId.in_(workerIds)).all()
                 for worker in workers:
                     try:
                         WorkerService(self.application.getResultPath(), worker).delete()
@@ -52,13 +52,14 @@ class IndexAction(BaseController):
         perPage = 10
 
         # получаем количество
-        count, = db_session.query(func.count(Worker.uuid)).filter(Worker.userId == user.userId, Worker.appId == app.appId).first()
+        count, = db_session.query(func.count(Worker.workerId)).filter(Worker.userId == user.userId, Worker.appId == app.appId).first()
         pageCount = int(math.ceil(float(count) / 10))
         page = int(self.get_argument('page', 1))
 
         # получаем список последних запросов
         lastWorkers = db_session.query(Worker).filter(Worker.userId == user.userId, Worker.appId == app.appId).order_by(desc(Worker.startDate)).offset(perPage * (page - 1)).limit(perPage)
 
+        # определяем, какие воркеры уже умерли
         workers = []
         alivedWorkers= []
         for worker in lastWorkers:
@@ -69,11 +70,17 @@ class IndexAction(BaseController):
 
         aliveThreadNames = ThredService.getAliveThreads()
         for worker in alivedWorkers:
-            if not worker.uuid in aliveThreadNames:
+            if not worker.workerId in aliveThreadNames:
                 worker.status = Worker.STATUS_DIED
                 db_session.add(worker)
+                alivedWorkers.remove(worker)
 
         db_session.commit()
+
+        # запрашиваем статус воркеров
+        if alivedWorkers:
+            pass
+
         self.render('dashboard/dashboard.jinja2', {'lastWorkers' : workers, 'app':app, 'pageCount':pageCount, 'currentPage': page})
 
 class EmptyAppAction(BaseController):

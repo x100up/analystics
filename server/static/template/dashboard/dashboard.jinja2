@@ -33,14 +33,14 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="/dashboard/app/{{ app.code }}/result?jobId={{worker.uuid}}">{{worker.uuid}}</a> <br />
-                    <a class="add_action {# awesome nano green #}" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.uuid}}">create on base</a>
+                    <a href="/dashboard/app/{{ app.code }}/result?jobId={{worker.workerId}}">{{worker.workerId}}</a> <br />
+                    <a class="add_action {# awesome nano green #}" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.workerId}}">create on base</a>
                     {% if worker.status != 'ALIVE' %}
                         <a class="add_action">restart</a>
                     {% endif %}
                 </td>
                 <td>{{worker.startDate}} - {{  worker.endDate or '???' }}</td>
-                <td class="action"><input type="checkbox" value="{{worker.uuid}}" name="jobId" class="jobcb"/></td>
+                <td class="action"><input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb"></td>
             </tr>
         {% endfor %}
             <tfoot>

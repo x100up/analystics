@@ -30,9 +30,9 @@ class ResultAction(BaseController):
         if not ruleService.isAllow(user.userId, app.appId):
             raise RuntimeError('Access denied')
 
-        jobId = self.get_argument('jobId')
+        workerId = self.get_argument('jobId')
 
-        worker = dbSession.query(Worker).filter_by(uuid = jobId).first()
+        worker = dbSession.query(Worker).filter_by(workerId = workerId).first()
         service = WorkerService(self.application.getResultPath(), worker)
 
 

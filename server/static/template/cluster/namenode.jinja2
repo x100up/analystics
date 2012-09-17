@@ -1,0 +1,8 @@
+{% extends 'layout/main.jinja2' %}
+
+{% block content %}
+<h1>Cluster NameNode</h1>
+    {% for key in allData %}
+        <h2>{{ key }}</h2>
+    {% endfor %}
+{% endblock %}
