@@ -1,4 +1,4 @@
-from service.AppService import AppService
+from services.AppService import AppService
 from datetime import datetime, timedelta
 import random, sys
 app = 'topface'

@@ -1,54 +1,60 @@
-{# tag #}
-<li>
-    <fieldset>
-    <legend title="{{ data.description or 'Нет описания' }}" class="{{ x }}">{{ data.name or name }}:</legend>
-    <input type="hidden" name="tag_{{ index }}_name" value="{{ name }}">
 
-{% if data['extra'] %}
-    {% set extra = data['extra'] %}
-{% else %}
-    {% set extra = [] %}
-{% endif %}
+<h3 title="{{ data.description or 'Нет описания' }}" class="{{ x }}">{{ data.name or name }}</h3>
+<input type="hidden" name="tag_{{ index }}_name" value="{{ name }}">
+{# operation stacks #}
+<input type="hidden" name="tag_{{ index }}_{{ name }}_ops" id="tag_{{ index }}_{{ name }}_ops" values="">
+    <div class="tag_values_block {% if data.type == 'choose' and not data['values'].items and data['values']|length > 5 %} more_value{% endif %}">
 
-{% if data.type == 'choose' %}
-
-    {% if data['values'].items %}
-
-
-        <ul>
-        {% for v, k in data['values'].items() %}
-            <li><input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
-                {% if value and v in value %} checked="checked" {% endif %}> : {{ k }}
-            </li>
-        {% endfor %}
-        </ul>
-
+    {% if data['extra'] %}
+        {% set extra = data['extra'] %}
     {% else %}
-
-        {% if data['values']|length < 6   %}
-            {% for v in data['values'] %}
-                {{ v }}: <input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
-                    {% if value and v in value %} checked="checked" {% endif %}>
-            {% endfor %}
-        {% else %}
-            {% for v in data['values'] %}
-                <ul>
-                    <li><input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
-                            {% if value and v in value %} checked="checked" {% endif %} > {{ v }}</li>
-                </ul>
-            {% endfor %}
-        {% endif %}
+        {% set extra = [] %}
     {% endif %}
 
-{% elif data.type == 'boolean' %}
-    <input type="checkbox" name="tag_{{ index }}_{{ name }}" {% if value %} checked="checked" {% endif %}>
-{% elif data.type == 'int' %}
-   <input type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}">
-{% else %}
-        <input type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}">
-{% endif %}
+    {% if data.type == 'choose' %}
 
-    group: <input type="checkbox" name="group_{{ index }}_{{ name }}" value="yes">
+        {% if data['values'].items %}
+            <ul>
+            {% for v, k in data['values'].items() %}
+                <li><input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                    {% if value and v in value %} checked="checked" {% endif %}> : {{ k }}
+                </li>
+            {% endfor %}
+            </ul>
 
-    </fieldset>
-</li>
+        {% else %}
+
+            {% if data['values']|length < 6   %}
+                {% for v in data['values'] %}
+                    {{ v }}: <input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                        {% if value and v in value %} checked="checked" {% endif %}>
+                {% endfor %}
+            {% else %}
+                {% for v in data['values'] %}
+                    <ul>
+                        <li><input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                                {% if value and v in value %} checked="checked" {% endif %} > {{ v }}</li>
+                    </ul>
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+
+    {% elif data.type == 'boolean' %}
+        <input type="checkbox" name="tag_{{ index }}_{{ name }}" {% if value %} checked="checked" {% endif %}>
+    {% elif data.type == 'int' %}
+       <input type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}">
+    {% else %}
+       {# default string type #}
+       <input type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}">
+       <input class="new" type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}"
+        onclick="addTextField(this)">
+    {% endif %}
+    </div>
+
+    <div class="op_controll">
+        <span class="group" onclick="switch_key_op({{ index }}, '{{ name }}', 'group', this)">group</span>
+        {% if data.type == 'int' %}
+        <span class="sum" onclick="switch_key_op({{ index }}, '{{ name }}', 'sum', this)">sum</span>
+        <span class="avg" onclick="switch_key_op({{ index }}, '{{ name }}', 'avg', this)">avg</span>
+        {% endif %}
+    </div>

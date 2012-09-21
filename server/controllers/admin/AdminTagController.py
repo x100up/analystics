@@ -1,6 +1,6 @@
 # coding=utf-8
 from AdminIndexController import AdminAction
-from service.AppService import AppService
+from services.AppService import AppService
 
 class TagEditAction(AdminAction):
     def prepare(self):

@@ -1,19 +1,86 @@
 body {
-    background: url("../img/white_grid.png") repeat center;
-    font: normal 0.95em "Trebuchet MS", "Lucida Grande", Arial, Sans-Serif;
+    background: url("../img/white_grid.png") repeat center top;
+    font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
     color: #64625E;
+}
+
+div#wrapper {
+    width: 1000px;
+    background: #FFFFFF;
+    margin: -1px auto 0 auto;
+    min-height: 500px;
+    border: 1px solid #666666;
+    padding-bottom: 20px;
+}
+
+a#logo {
 
 }
 
-h1 { font-size: 18pt; }
-h2 { font-size: 16pt; }
+ul#mainmenu {
+}
+
+ul#mainmenu a{
+    background: url('/static/img/menu_sprite.png');
+    display: block;
+    float: left;
+    text-indent: -10000px;
+    width: 50px;
+    height: 44px;
+    padding: 0;
+    margin: 0;
+    border-bottom: none !important;
+}
+
+ul#mainmenu li  {
+    display: inline;
+    padding: 0;
+    margin: 0;
+}
+
+ul#mainmenu a.analytics {
+    width: 105px;
+}
+
+ul#mainmenu a.analytics:hover {
+    background-position: 0 -46px;
+}
+
+ul#mainmenu a.manage {
+    width: 99px;
+    background-position: -105px 0;
+}
+
+ul#mainmenu a.manage:hover {
+    background-position: -105px -46px;
+}
+
+ul#mainmenu a.logout{
+    width: 107px;
+    background-position: -203px 0;
+}
+
+ul#mainmenu a.logout:hover {
+    background-position: -203px -46px;
+}
+
+
+
+
+h1 {
+    font-size: 18pt;
+    font-weight: normal;
+}
+
+h2 {
+    font-size: 16pt;
+}
 
 a {
     border-bottom: 1px solid #B2CCF0;
     color: #0099CC;
     text-decoration: none;
 }
-
 
 p {
     margin: 5px 0;
@@ -23,13 +90,11 @@ p.error {
     color: #ff4d52;
 }
 
-
 header {
-    /*background: #525252;*/
-    height: 70px;
+    height: 50px;
     display: block;
     color: #FFF;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 header a {
@@ -41,9 +106,8 @@ header > div#user_block {
     margin-top: 10px;
 }
 
-
-div#content{
-   margin-top: 15px;
+div#content {
+    margin-top: 15px;
 }
 
 table {
@@ -52,22 +116,27 @@ table {
 }
 
 table td, table th {
-    border: 1px solid #525252;
+    border: 1px solid #CCCCCC;
     padding: 5px 10px;
+    height: 30px;
+}
+
+table td.q, table th.q {
+    width: 32px;
 }
 
 table th {
-    text-align: center;
-    font-weight: bold;
+    height: 30px;
 }
 
-table tfoot td{
+table tfoot td {
     border: none;
 }
 
 label.canHaveTags {
     color: #333;
 }
+
 /* all forms */
 
 form li {
@@ -79,7 +148,7 @@ form li > label {
     display: inline-block;
 }
 
-div.interval_form{
+div.interval_form {
     margin-bottom: 10px;
 }
 
@@ -92,57 +161,56 @@ nav li {
 div#content nav {
     margin: 10px 0px;
 }
+
 div#content nav a {
     border: none !important;
 }
 
 /* css for timepicker */
-.ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
-.ui-timepicker-div dl { text-align: left; }
-.ui-timepicker-div dl dt { height: 25px; margin-bottom: -25px; }
-.ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
-.ui-timepicker-div td { font-size: 90%; }
-.ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+.ui-timepicker-div .ui-widget-header {
+    margin-bottom: 8px;
+}
 
-div#ui-datepicker-div{
+.ui-timepicker-div dl {
+    text-align: left;
+}
+
+.ui-timepicker-div dl dt {
+    height: 25px;
+    margin-bottom: -25px;
+}
+
+.ui-timepicker-div dl dd {
+    margin: 0 10px 10px 65px;
+}
+
+.ui-timepicker-div td {
+    font-size: 90%;
+}
+
+.ui-tpicker-grid-label {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+div#ui-datepicker-div {
     font-size: 9pt !important;
 }
 
-div.tag_container label{
+div.tag_container label {
     display: inline-block;
     min-width: 100px;
 }
 
-table#workersTable td.action {
-    text-align: center;
-    width: 80px;
-}
 
-div.key_form_item {
-    border: 1px solid #CCC;
-    padding: 4px;
-    width: 283px !important;
-    margin-bottom: 10px;
-}
 
-div.key_form_item h2 {
-    text-align: center;
-}
-
-div.add_key{
-    background: url(/static/img/plus.png) no-repeat center;
-    height: 100%;
-    min-height: 200px;
-    border: 1px dotted #333;
-    cursor: pointer;
-    width: 283px !important;
-}
-
-img.findbutton{
+img.findbutton {
     cursor: pointer
 }
 
-table.key_selector tr{
+table.key_selector tr {
     cursor: pointer;
 }
 
@@ -153,7 +221,7 @@ a.add_action {
     margin: 0px 4px;
 }
 
-div.tag_container ul ul{
+div.tag_container ul ul {
     margin-left: 100px;
 }
 
@@ -166,4 +234,18 @@ fieldset {
     color: #1F1F1F;
     margin-top: 20px;
     padding-top: 12px;
+}
+
+/** ------------------ **/
+.button{
+    margin: 0;
+    padding: 0;
+    border: none !important;
+}
+.button.copy{
+    background: url("/static/img/sprite.png");
+    display: block;
+    width: 40px;
+    height: 40px;
+    text-indent: -1000px;
 }

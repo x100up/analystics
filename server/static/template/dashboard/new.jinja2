@@ -1,13 +1,14 @@
 {% extends 'layout/main.jinja2' %}
 
 {% block head %}
-    <script type="text/javascript" src="/static/js/jquery-ui-1.8.23.custom.min.js"></script>
-    <script type="text/javascript" src="/static/js/jquery.ui.picker.addon.js"></script>
-    <script type="text/javascript" src="/static/libs/autocomplete/jquery.autocomplete-min.js"></script>
-    <script type="text/javascript" src="/static/js/newWorker.js" ></script>
+    <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery-ui-1.8.23.custom.min.js"></script>
+    <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery.ui.picker.addon.js"></script>
+    <script type="text/javascript" src="{{ static_url_prefix }}/libs/autocomplete/jquery.autocomplete-min.js"></script>
+    <script type="text/javascript" src="{{ static_url_prefix }}/js/new_task.js" ></script>
 
-    <link href="/static/libs/autocomplete/styles.css" type="text/css" rel="stylesheet">
-    <link href="/static/css/pepper-grinder/jquery-ui-1.8.23.custom.css" type="text/css" rel="stylesheet">
+    <link href="{{ static_url_prefix }}/libs/autocomplete/styles.css" type="text/css" rel="stylesheet">
+    <link href="{{ static_url_prefix }}/css/pepper-grinder/jquery-ui-1.8.23.custom.css" type="text/css" rel="stylesheet">
+    <link href="{{ static_url_prefix }}/css/new_task.css" type="text/css" rel="stylesheet">
 
     <script type="text/javascript" src="/static/libs/reveal/jquery.reveal.js"></script>
     <link href="/static/libs/reveal/reveal.css" type="text/css" rel="stylesheet">
@@ -17,27 +18,32 @@
 {% endblock %}
 
 {% block content %}
-    <h1>{{ app.name }}</h1>
-    <form action="" method="post">
-        <input type="hidden" name="appname" value="topface">
-        <div class="grid_12 interval_form">
 
+<div class="grid_5">
+    <h1>Новая задача <sup>{{ app.name }}</sup></h1>
+</div>
+<form action="" method="post">
 
-
-            <label for="group_interval">Интервал:</label> <select name="group_interval" id="group_interval">
+    <div class="grid_7">
+        <input type="hidden" id="group_interval"  value="{{ task.interval }}" name="group_interval">
+            <ul id="interval_selector">
                 {% for key, value in task.intervals.items() %}
-                <option value="{{ key }}" {% if task.interval == key %}selected{% endif %} >{{ value }}</option>
+                <li data-value="{{ key }}" class="{% if loop.first %}first{% endif %}{% if loop.last %} last{% endif %}{% if task.interval == key %} selected{% endif %}" onclick="switchInterval(this)" >{{ value }}</li>
                 {% endfor %}
-            </select>
-        </div>
+            </ul>
+    </div>
 
-        <div class="grid_12">
+
+    <input type="hidden" name="appname" value="topface">
+
+
+        <div class="grid_12 alpha omega">
             {% for index, taskItem in task.items.items() %}
                 {% include 'blocks/key_container.jinja2' %}
             {% endfor %}
-
-            <div class="add_key grid_4 omega" onclick="addKey()"></div>
         </div>
+
+        <div class="add_key grid_12 alpha omega" onclick="addKey()"> еще ключ </div>
 
         <div class="grid_12">
             <input type="submit" value="Отправить" class="awesome green">

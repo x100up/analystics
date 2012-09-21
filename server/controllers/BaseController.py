@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from models.User import User
 from models.App import  App
 from models.Config import Config
-from service.RuleService import RuleService
+from services.RuleService import RuleService
 
 
 class BaseController(tornado.web.RequestHandler):
@@ -65,12 +65,11 @@ class BaseController(tornado.web.RequestHandler):
             dict = {}
         dict['static_url_prefix'] = self.application.settings['static_url_prefix']
         dict['is_login'] = self.get_secure_cookie('user.login')
-        u = self.get_current_user();
+        u = self.get_current_user()
         if u:
             dict['__user__'] = {'name': u.fullname, 'isAdmin': u.role == User.ROLE_ADMIN}
 
-        env = Environment(loader = PackageLoader('static', 'template'))
-        self.write(env.get_template(template_name).render(**dict))
+        self.write(self.application.jinjaEnvironment.get_template(template_name).render(**dict))
 
     def checkAppAccess(self, args):
         # get app code

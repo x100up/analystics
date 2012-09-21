@@ -5,10 +5,12 @@ from hive_service.ttypes import HiveServerException
 from models.Worker import Worker
 from models.Task import Task
 from datetime import datetime
-from service.HiveService import HiveService
+from services.HiveService import HiveService
 
 class HiveWorker(threading.Thread):
-
+    '''
+    Тред для выполнения запроса к hive
+    '''
     def __init__ (self, workerService):
         self.mysqlSessionMaker = None
         self.folderForWorkerService = None

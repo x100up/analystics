@@ -9,7 +9,7 @@ class HiveQueryConstructor():
     def getFields(self):
         '''
             Возвращает лист названий полей, которые должен вернуть запрос.
-            Пока аозвращает value + dateFields
+            Пока возвращает value + dateFields
         '''
         x = ['value']
         x.extend(self.getDateFields(self.task.interval))
@@ -34,7 +34,7 @@ class HiveQueryConstructor():
             query += self.getTagsCondition(taskItem.conditions)
 
             # группировка
-            query += ' GROUP BY ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsGroup(taskItem)
+            query += ' GROUP BY ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsByOperation(taskItem, 'group')
             queries.append(query)
 
         if len(queries) == 1:
@@ -48,14 +48,39 @@ class HiveQueryConstructor():
         '''
         if conditions:
             where = []
-            for key in conditions:
-                    for tagName, tagValue in conditions.items():
-                        if tagValue:
+            for tagName, tagValue in conditions.items():
+                if tagValue:
+                    # TODO by settings int
+                    if tagName == 'age':
+                        where.append(self.parseIntValue(tagName, tagValue[0]))
+                    else:
+                        if len(tagValue) == 1:
                             where.append("params['%(tagName)s'] = '%(tagValue)s'"%{'tagName':tagName, 'tagValue':tagValue})
+                        else:
+                            items = []
+                            for val in tagValue:
+                                items.append("params['%(tagName)s'] = '%(tagValue)s'"%{'tagName':tagName, 'tagValue':val})
+
+                            where.append('(' + ' OR '.join(items) + ')')
             if len(where):
                 return ' AND ' + ' AND '.join(where)
 
         return ''
+
+    def parseIntValue(self, tagName, tagValue):
+        '''
+        Преобразует интовые параметры в запрос
+        '''
+        values = tagValue.replace('- ', '-').replace(' -', '-').replace(' ', ',').replace('.', ',').split(',')
+        exp = []
+        for value in values:
+            if '-' in value:
+                value = [int(v) for v in value.split('-')]
+                exp.append("(params['{0}'] >= {1} AND params['{0}'] <= {2})".format(tagName, min(value), max(value)))
+            else:
+                exp.append("params['{}'] = {}".format(tagName, value))
+
+        return '(' + ' OR '.join(exp) + ')'
 
     def getDateFields(self, interval):
         '''
@@ -164,10 +189,11 @@ class HiveQueryConstructor():
 
         raise Exception("Unknow interval")
 
-    def getTaskTagsGroup(self, taskItem):
+    def getTaskTagsByOperation(self, taskItem, operation):
         g = set()
-        for tagName in taskItem.tagGroup:
-            g.add('params[\'{0}\']'.format(tagName))
+        for tagName, operations in taskItem.operation:
+            if operation in operations:
+                g.add('params[\'{0}\']'.format(tagName))
 
         if len(g):
             return ', ' + ', '.join(g)

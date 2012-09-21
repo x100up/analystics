@@ -1,6 +1,7 @@
 {% extends 'layout/main.jinja2' %}
 {% block head %}
     <script type="text/javascript" src="/static/js/dashboard.js"></script>
+    <link href="{{ static_url_prefix }}/css/dashboard.css" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
@@ -10,6 +11,8 @@
 
     <form action="" method="post">
         <table style="margin-top: 20px;" id="workersTable">
+
+        {#
             <thead>
                 <tr>
                     <th style="width: 26px"></th>
@@ -19,28 +22,22 @@
                 </tr>
             </thead>
 
+        #}
         {% for worker in lastWorkers %}
             <tr class="job_{{worker.status}}">
-                <td>
-                    {% if worker.status == 'SUCCESS' %}
-                        <img src="/static/img/accept.png" alt="Завершена успешно" style="width: 22px; height: 22px;">
-                    {% elif worker.status == 'ERROR' %}
-                        <img src="/static/img/error.png" alt="Завершена с ошибкой" style="width: 22px; height: 22px;">
-                    {% elif worker.status == 'DIED' %}
-                        <img src="/static/img/cancel.png" alt="Упала" style="width: 22px; height: 22px;">
-                    {% elif worker.status == 'ALIVE' %}
-                        <img src="/static/img/hourglass.png" alt="Выполняется" style="width: 22px; height: 22px;">
+                <td class="q {{ worker.status }}">
+                    {% if worker.status == 'ALIVE' %}
+                        <img src="/static/img/ajax-loader.gif" alt="Выполняется" id="loader_{{ worker.workerId  }}">
+                        <span class="alive_progress" data-appid="{{ worker.hadoopAppID }}" data-workerid="{{ worker.workerId }}" id="progress_{{ worker.workerId }}"></span>
                     {% endif %}
                 </td>
                 <td>
-                    <a href="/dashboard/app/{{ app.code }}/result?jobId={{worker.workerId}}">{{worker.workerId}}</a> <br />
-                    <a class="add_action {# awesome nano green #}" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.workerId}}">create on base</a>
-                    {% if worker.status != 'ALIVE' %}
-                        <a class="add_action">restart</a>
-                    {% endif %}
+                    <a href="/dashboard/app/{{ app.code }}/result?jobId={{worker.workerId}}">{{worker.workerId}}</a>
+                    <a class="copy_action button copy" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.workerId}}">create on base</a>
                 </td>
+
                 <td>{{worker.startDate}} - {{  worker.endDate or '???' }}</td>
-                <td class="action"><input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb"></td>
+                <td class="action q"><input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb"></td>
             </tr>
         {% endfor %}
             <tfoot>

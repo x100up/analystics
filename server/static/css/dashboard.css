@@ -1,0 +1,32 @@
+a.copy_action {
+    display: inline-block !important;
+    float: right;
+}
+
+table#workersTable td.action {
+    text-align: center;
+}
+
+table#workersTable td.action > input {
+    margin-top: 14px;
+}
+
+span.alive_progress {
+    font-size: 10pt
+}
+
+td.SUCCESS {
+    background: url('/static/img/accept.png') no-repeat center;
+}
+
+td.ERROR {
+    background: url('/static/img/cancel.png') no-repeat center;
+}
+
+td.DIED {
+    background: url('/static/img/error.png') no-repeat center;
+}
+
+tr.success_recently td {
+    background-color: #F2F9DD
+}

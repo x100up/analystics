@@ -3,7 +3,7 @@ from sqlalchemy.exc import OperationalError
 from controllers.BaseController import InstallController
 from models.Config import Config
 from sqlalchemy import create_engine
-from utils.dbloader import migrate
+from components.dbutils import migrate
 from models.User import User
 import hashlib
 import os

@@ -2,10 +2,10 @@
 import logging
 import re
 import ConfigParser
-from utils.webhdfs import WebHDFS
-from utils.listutils import listDiff
-from service.HiveService import HiveService
-from service.AppService import AppService
+from components.WebHDFS import WebHDFS
+from components.listutils import listDiff
+from services.HiveService import HiveService
+from services.AppService import AppService
 from optparse import OptionParser
 
 # set logger

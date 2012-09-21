@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
+from components import HiveWorker
+from components.HiveQueryConstructor import  HiveQueryConstructor
 from controllers.BaseController import BaseController
-from service.QueryService import HiveQueryConstructor
-from worker import HiveWorker
 from models.Worker import Worker
 from models.Task import Task, TaskItem
 from datetime import datetime, timedelta
-from service.WorkerService import WorkerService
-from service.AppService import AppService
+from services.WorkerService import WorkerService
+from services.AppService import AppService
+from components.dateutil import repMonth
 import tornado.web
 
 class CreateAction(BaseController):
@@ -27,9 +28,9 @@ class CreateAction(BaseController):
             time = now.time()
             start = now - timedelta(hours = time.hour, minutes = time.minute, seconds = time.second)
             end = start + timedelta(days = 1)
-            taksItem = TaskItem(start = start, end = end, index = 1)
+            taskItem = TaskItem(start = start, end = end, index = 1)
             task = Task(appname = app.code)
-            task.addTaskItem(taksItem)
+            task.addTaskItem(taskItem)
 
         keys = set()
         for index, taskItem in task.items.items():
@@ -58,10 +59,10 @@ class CreateAction(BaseController):
             if not key:
                 continue
 
-            start = self.get_argument('start_'+ index, False)
-            start = datetime.strptime(start, "%m/%d/%Y %H:%M")
-            end = self.get_argument('end_'+ index, False)
-            end = datetime.strptime(end, "%m/%d/%Y %H:%M")
+            start = repMonth(self.get_argument('start_'+ index, False))
+            start = datetime.strptime(start, "%d %m %Y %H:%M")
+            end = repMonth(self.get_argument('end_'+ index, False))
+            end = datetime.strptime(end, "%d %m %Y %H:%M")
 
             taskItem = TaskItem(key = key, start = start, end = end, index = index)
             # разбираем тег для ключа
@@ -71,10 +72,9 @@ class CreateAction(BaseController):
                 values = self.get_arguments('tag_' + index + '_' + tagName, None)
                 if not values is None:
                     taskItem.addCondition(tagName, values)
-
-                group = self.get_argument('group_' + index + '_' + tagName, None)
-                if not group is None:
-                    taskItem.addTagGroup(tagName)
+                ops = self.get_argument('tag_' + index + '_' + tagName + '_ops', None)
+                if not ops is None:
+                    taskItem.addTagOperations(tagName, ops.split('/'))
 
             task.addTaskItem(taskItem)
 

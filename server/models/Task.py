@@ -4,8 +4,6 @@ from datetime import datetime
 import time
 
 class Task(object):
-
-
     INTERVAL_MINUTE = 'minute'
     INTERVAL_10_MINUTE = '10minutes'
     INTERVAL_HOUR = 'hour'
@@ -23,7 +21,7 @@ class Task(object):
     def __init__(self, *args, **kwargs):
         self.items = {}
         self.appname = ''
-        self.interval = ''
+        self.interval = self.INTERVAL_HOUR
 
         if kwargs.has_key('appname'):
             self.appname = kwargs['appname']
@@ -68,7 +66,7 @@ class TaskItem():
         self.start = None
         self.end = None
         self.key = None
-        self.tagGroup = set()
+        self.operation = []
         self.conditions = {}
 
         if kwargs.has_key('end'):
@@ -95,12 +93,20 @@ class TaskItem():
     def addCondition(self, tag, values):
         self.conditions[tag] = values
 
-    def addTagGroup(self, tagName):
-        self.tagGroup.add(tagName)
+
+    def addTagOperations(self, tagName, operations):
+        self.operation.append((tagName, operations))
 
     def getFields(self):
-        group_param_set = [ ('params[\'{0}\']'.format(x), 'params_{0}'.format(x)) for x in self.tagGroup]
-        return self.fields + group_param_set
+        fields = []
+        for tag, operations in self.operation:
+            if 'sum' in operations:
+                fields.append( ('SUM(params[\'{0}\'])'.format(tag), 'params_sum_{0}'.format(tag)) )
+
+            if 'avg' in operations:
+                fields.append( ('AVG(params[\'{0}\'])'.format(tag), 'params_avg_{0}'.format(tag)) )
+
+        return self.fields + fields
 
     def serialize(self):
         return {

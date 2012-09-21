@@ -55,11 +55,29 @@ class WorkerService(object):
         f.write(json.dumps(result))
         f.close()
 
-    def getResults(self):
+    def getResultData(self):
         f = open(self.getFolder() + '/result.json', 'r')
         result = json.load(f)
         f.close()
+        return result
+
+    def getResults(self):
+        result = self.getResultData()
         return result['result']
+
+    def getError(self):
+        try:
+            result = self.getResultData()
+        except BaseException as exception:
+            return 'Cant open result of task, because: ' + str(exception.__class__.__name__) + ' :: ' + exception.message
+        else:
+            if result.has_key('exception'):
+                ex = ''
+                for key in result['exception']:
+                    ex += key + ' => ' + result['exception'][key] + ';'
+                return 'Task except: ' + ex
+            else:
+                return 'Wrong date in task result'
 
     def delete(self):
         shutil.rmtree(self.getFolder())

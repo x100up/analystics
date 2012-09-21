@@ -2,8 +2,8 @@
 # coding=utf-8
 from sqlalchemy import create_engine
 from sqlalchemy.exc import OperationalError
+from components import dbutils
 from models.Config import Config
-from utils import dbloader
 import inspect
 import os
 
@@ -29,4 +29,4 @@ except OperationalError as op_error:
 except BaseException as ex:
     print u'Исключение SQLALCHEMY: ' + ex.message
 else:
-    dbloader.migrate(connection = connection)
+    dbutils.migrate(connection = connection)

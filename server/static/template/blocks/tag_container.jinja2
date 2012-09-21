@@ -1,13 +1,15 @@
-<ul>{% for x in ['mustHaveTags', 'canHaveTags', 'autoLoadTags'] %}
-    {% if tags[x] %}
-        {% for name, data in tags[x].items() %}
-            {% if values.has_key(name) %}
-                {% set value = values[name] %}
-            {% else %}
-                {% set value = None %}
-            {% endif %}
-            {% include 'blocks/tag_form_item.jinja2' %}
-        {% endfor %}
+{% for name, data in tags['tags'].items() %}
+    {% if values.has_key(name) %}
+        {% set value = values[name] %}
+    {% else %}
+        {% set value = None %}
     {% endif %}
+            <div class="grid_2 {% if loop.first or loop.index % 6 == 1 %}alpha{% endif %} {% if loop.last or loop.index % 6 == 0 %}omega{% endif %} tag_container" >
+            {% include 'blocks/tag_form_item.jinja2' %}
+            </div>
+
+       {% if loop.index % 6 == 0 %}
+       <div class="grid_12 alpha omega tag_group_separator"></div>
+       {% endif %}
 {% endfor %}
-</ul>
+

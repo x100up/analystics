@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 from controllers.BaseController import AjaxController
-from service.AppService import AppService
+from services.AppService import AppService
 from models.Task import TaskItem
 from datetime import timedelta
+from models.Config import Config
+from services.ResourceManagerService import ResourceManagerService
+from services import ThredService
+from models.Worker import Worker
 import re
 
 class KeyAutocompleteAction(AjaxController):
@@ -32,9 +36,9 @@ class KeyConfigurationAction(AjaxController):
 
         appService = AppService(self.application.getAppConfigPath())
         tags = {
-            "mustHaveTags": appService.getAppTags(appName, keyName, 'mustHave'),
-            "canHaveTags": appService.getAppTags(appName, keyName, 'canHave'),
-            "autoLoadTags": appService.getAppTags(appName, keyName, 'autoLoad'),
+            "tags": dict(appService.getAppTags(appName, keyName, 'mustHave').items() +
+             appService.getAppTags(appName, keyName, 'canHave').items() +
+             appService.getAppTags(appName, keyName, 'autoLoad').items())
         }
 
         self.render('blocks/tag_container.jinja2', {'tags':tags, 'key': keyName, 'index': index, 'values':{}})
@@ -55,3 +59,60 @@ class GetKeys(AjaxController):
         self.render('blocks/key_select.jinja2', {'_keys':keys, 'index':keyIndex})
 
 
+class GatTasksProgress(AjaxController):
+    def post(self, *args, **kwargs):
+        arguments = []
+        appIdToWorkerId = {}
+        blank = u'None'
+
+        for workerid, appid in self.request.arguments.items():
+            arguments.append( (appid[0], int(workerid)) )
+
+
+        toFindAppId = []
+        toGetProgress = []
+        for appId, workerId in arguments:
+            if appId == blank:
+                toFindAppId.append(workerId)
+            else:
+                toGetProgress.append(appId)
+                appIdToWorkerId[appId] = workerId
+
+        # находим дентификаторы приложений
+        hyrmurl = self.getConfigValue(Config.HADOOP_YARN_RESOURCEMANAGER)
+        resourceManagerService = ResourceManagerService(hyrmurl)
+
+        appIdResult = None
+        if toFindAppId and hyrmurl:
+            appIdResult = resourceManagerService.getAppIdsForWrokers(toFindAppId)
+            for workerId, appId in appIdResult:
+                toFindAppId.remove(workerId)
+                toGetProgress.append(appId)
+                appIdToWorkerId[appId] = workerId
+
+        needCheckThread = toFindAppId # нужно проверить жив ли тред
+
+        # получаем прогресс задач
+        progressResult = None
+        diedWorkers = []
+        if toGetProgress:
+            progressResult = resourceManagerService.getAppProgresses(toGetProgress)
+
+        if  (not progressResult) or  (len(progressResult) != len(toGetProgress)):
+            print needCheckThread
+            # если количество прогрессов не совпадает
+            # то мы проверяем жив ли тред
+            if progressResult:
+                for appId, progress in progressResult:
+                    if not appId in toGetProgress:
+                        needCheckThread.append(appIdToWorkerId[appId])
+            if needCheckThread:
+                aliveThreadNames = ThredService.getAliveThreads()
+
+                for workerId in needCheckThread:
+                    if not 'worker-' + str(workerId) in aliveThreadNames:
+                        diedWorkers.append(workerId)
+
+
+        print {'appIdResult' : appIdResult, 'progressResult' : progressResult, 'diedWorkers': diedWorkers}
+        self.renderJSON({'appIdResult' : appIdResult, 'progressResult' : progressResult, 'diedWorkers': diedWorkers})

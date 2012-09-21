@@ -3,7 +3,7 @@ from __builtin__ import len
 from exceptions import RuntimeError
 from AdminIndexController import AdminAction
 from models.App import App
-from service.AppService import AppService
+from services.AppService import AppService
 import tornado.web
 
 class IndexAction(AdminAction):

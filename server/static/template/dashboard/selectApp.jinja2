@@ -1,7 +1,7 @@
 {% extends 'layout/main.jinja2' %}
 
 {% block content %}
-    <h2>Выбирите приложение</h2>
+    <h1>Выбирите приложение</h1>
     <ul>
     {% for app in apps %}
         <li><a href="/dashboard/app/{{ app.code }}/">{{ app.name }}</a></li>

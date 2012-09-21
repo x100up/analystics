@@ -2,11 +2,13 @@
 from controllers.BaseController import BaseController
 from models.Worker import Worker
 import tornado.web, math
-from service.WorkerService import WorkerService
+from services.WorkerService import WorkerService
 from sqlalchemy import desc
-from service import ThredService
+from services import ThredService
 from models.UserAppRule import RuleCollection
 from sqlalchemy import func
+from models.Config import Config
+from services.ResourceManagerService import ResourceManagerService
 
 class SwitchApp(BaseController):
     @tornado.web.authenticated
@@ -44,7 +46,6 @@ class IndexAction(BaseController):
                     try:
                         WorkerService(self.application.getResultPath(), worker).delete()
                     except OSError as oserror:
-                        print oserror
                         pass
                     db_session.delete(worker)
 
@@ -69,8 +70,10 @@ class IndexAction(BaseController):
             workers.append(worker)
 
         aliveThreadNames = ThredService.getAliveThreads()
+        unknowHadoopAppIDs = []
         for worker in alivedWorkers:
-            if not worker.workerId in aliveThreadNames:
+            # определяем мертвые воркеры
+            if not 'worker-' + str(worker.workerId) in aliveThreadNames:
                 worker.status = Worker.STATUS_DIED
                 db_session.add(worker)
                 alivedWorkers.remove(worker)

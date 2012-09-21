@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import os, sys, inspect
-from utils.daemon import Daemon
 from applications.AnalyticsServer import AnalyticsServer
+from components.Daemon import Daemon
 
 rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
 

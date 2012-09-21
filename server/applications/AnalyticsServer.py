@@ -4,6 +4,7 @@ import tornado.web
 import inspect
 import os
 import tornado.ioloop
+from components.jinja import *
 
 from models.Config import Config
 from controllers import  IndexController, UserController
@@ -12,6 +13,7 @@ from controllers.api import APIController
 from controllers.dashboard import ResultController, AjaxController, DashboardController, CreateTaskController
 from controllers.cluster import NameNodeController
 from controllers.install import InstallController
+from jinja2 import Environment, PackageLoader
 
 class AnalyticsServer(tornado.web.Application):
 
@@ -33,6 +35,8 @@ class AnalyticsServer(tornado.web.Application):
 
         self.loadConfiguration()
         self.determineIsInstall()
+        self.jinjaEnvironment = Environment(loader = PackageLoader('static', 'template'))
+        self.jinjaEnvironment.filters['datetofiled'] = datetofiled
 
     def start(self):
         self.listen(8888)
@@ -103,6 +107,8 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/key_configuration/?", AjaxController.KeyConfigurationAction),
             (r"/ajax/get_key_form/?", AjaxController.GetKeyForm),
             (r"/ajax/getKeys/([^/]+)/?", AjaxController.GetKeys),
+            (r"/ajax/getTasksProgress/?", AjaxController.GatTasksProgress),
+
 
             (r"/api/putConfig/?", APIController.PutConfigAction),
 

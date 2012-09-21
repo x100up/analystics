@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-class ChartService():
+class ChartConstructor():
     '''
     Подготавливает данные для построеня графика
     '''

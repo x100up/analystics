@@ -1,6 +1,6 @@
 __author__ = 'prog-31'
 import json
-from service.AppService import AppService
+from services.AppService import AppService
 
 from controllers.BaseController import BaseController
 

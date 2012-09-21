@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from controllers.BaseController import BaseController
-from service.NameNodeService import NameNodeService
+from services.NameNodeService import NameNodeService
 from models.Config import Config
 
 class IndexAction(BaseController):
