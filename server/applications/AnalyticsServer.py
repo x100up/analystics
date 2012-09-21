@@ -37,6 +37,10 @@ class AnalyticsServer(tornado.web.Application):
         self.determineIsInstall()
         self.jinjaEnvironment = Environment(loader = PackageLoader('static', 'template'))
         self.jinjaEnvironment.filters['datetofiled'] = datetofiled
+        self.jinjaEnvironment.filters['smartDatePeriod'] = smartDatePeriod
+        self.jinjaEnvironment.filters['smartDateInterval'] = smartDateInterval
+
+
 
     def start(self):
         self.listen(8888)
