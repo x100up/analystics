@@ -52,6 +52,7 @@ class HiveWorker(threading.Thread):
         worker.status = status
         session.merge(worker)
         session.commit()
+        session.remove()
         self.workerService.flushResult(data)
 
     def prepareData(self, data):

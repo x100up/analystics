@@ -14,9 +14,11 @@ from controllers.dashboard import ResultController, AjaxController, DashboardCon
 from controllers.cluster import NameNodeController
 from controllers.install import InstallController
 from jinja2 import Environment, PackageLoader
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 class AnalyticsServer(tornado.web.Application):
-
+    
     def __init__(self, debug = False):
         # define app root path
         thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
@@ -39,6 +41,27 @@ class AnalyticsServer(tornado.web.Application):
         self.jinjaEnvironment.filters['datetofiled'] = datetofiled
         self.jinjaEnvironment.filters['smartDatePeriod'] = smartDatePeriod
         self.jinjaEnvironment.filters['smartDateInterval'] = smartDateInterval
+        self.dbSessionMaker = None
+        self.getSessionMaker()
+
+    def getSessionMaker(self):
+        if not self.dbSessionMaker:
+            mysql_user = self.config.get(Config.MYSQL_USER)
+            mysql_password = self.config.get(Config.MYSQL_PASSWORD)
+
+            conn_str = 'mysql://'
+            if mysql_user:
+                conn_str += mysql_user
+                if mysql_password:
+                    conn_str += ':' + mysql_password
+                conn_str += '@'
+            conn_str += self.config.get(Config.MYSQL_HOST) + '/' + self.config.get(Config.MYSQL_DBNAME)
+
+            engine = create_engine(conn_str + '?init_command=set%20names%20%22utf8%22', encoding = 'utf8', convert_unicode = True)
+            engine.execute('SET NAMES utf8')
+            self.dbSessionMaker = sessionmaker(bind = engine, autoflush = False)
+
+        return self.dbSessionMaker
 
 
 

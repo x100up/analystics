@@ -9,6 +9,7 @@
 
     <form action="" method="POST">
     <table id="admin_app">
+    {#
         <thead>
             <tr>
                 <th>Название</th>
@@ -17,20 +18,28 @@
                 <th class="action"></th>
             </tr>
         </thead>
-
+     #}
         <tbody>
         {% for app in apps %}
             <tr>
                 <td><a href="/admin/app/edit?appId={{ app.appId }}">{{ app.name }}</a></td>
-                <td>{{ app.code }} {% if app.code not in app_files %} <span style="color: red">Отсутствует фаил конфигурации!!!</span> {% endif %}</td>
-                <td><a href="/admin/app/{{ app.code }}/tags">Настройка тегов</a></td>
-                <td class="action"><input type="checkbox" name="appIds" value="{{ app.appId }}" /></td>
+                <td>{{ app.code }} {% if app.code not in app_files %}
+                        <span style="color: red">Отсутствует фаил конфигурации!!!</span> {% endif %}
+                </td>
+                <td>
+                    <a href="/admin/app/{{ app.code }}/tags">Настройка тегов</a>
+                </td>
+                <td class="action">
+                    <input type="checkbox" name="appIds" value="{{ app.appId }}" />
+                </td>
             </tr>
         {% endfor %}
 
         {% for app_code in new_app_codes %}
         <tr>
-            <td colspan="3"><a href="/admin/app/edit?code={{ app_code }}">Добавить приложение с кодом {{ app_code }}</a></td>
+            <td colspan="4">
+                <a href="/admin/app/edit?code={{ app_code }}">Добавить приложение с кодом {{ app_code }}</a>
+            </td>
         </tr>
         {% endfor %}
         </tbody>
@@ -41,7 +50,7 @@
                 <td><input type="submit" name="action" value="Удалить" class="orange awesome"></td>
             </tr>
         </tfoot>
-
     </table>
+
     </form>
 {% endblock %}

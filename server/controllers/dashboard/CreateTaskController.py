@@ -105,7 +105,7 @@ class CreateAction(BaseController):
         workerThread = HiveWorker.HiveWorker(workerService)
 
         # передает sessionmaker т.к. он создает сеессию в пределах треда
-        workerThread.mysqlSessionMaker = self.getSessionMaker()
+        workerThread.mysqlSessionMaker = self.application.getSessionMaker()
         workerThread.folderForWorkerService = self.application.getResultPath()
         workerThread.host = self.getConfigValue('hive_host')
         workerThread.port = int(self.getConfigValue('hive_port'))

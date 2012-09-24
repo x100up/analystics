@@ -1,44 +1,20 @@
 from jinja2 import Template, Environment, PackageLoader
-from sqlalchemy.orm import sessionmaker
+
 import tornado.web, json
-from sqlalchemy import create_engine
+
 from models.User import User
 from models.App import  App
-from models.Config import Config
+
 from services.RuleService import RuleService
 
 
 class BaseController(tornado.web.RequestHandler):
-
-    dbSessionMaker = False
     dbSession = False
-
-    def getSessionMaker(self):
-        if not self.dbSessionMaker:
-            mysql_user = self.getConfigValue(Config.MYSQL_USER)
-            mysql_password = self.getConfigValue(Config.MYSQL_PASSWORD)
-
-            conn_str = 'mysql://'
-            if mysql_user:
-                conn_str += mysql_user
-                if mysql_password:
-                    conn_str += ':' + mysql_password
-                conn_str += '@'
-            conn_str += self.getConfigValue(Config.MYSQL_HOST) + '/' + self.getConfigValue(Config.MYSQL_DBNAME)
-
-            engine = create_engine(conn_str + '?init_command=set%20names%20%22utf8%22', encoding = 'utf8', convert_unicode = True)
-            engine.execute('SET NAMES utf8')
-
-            self.dbSessionMaker = sessionmaker(bind = engine, autoflush = False)
-
-        return self.dbSessionMaker
 
     def getDBSession(self):
         if not self.dbSession:
-            self.dbSession = self.getSessionMaker()()
+            self.dbSession = self.application.getSessionMaker()()
         return self.dbSession
-
-
 
     def get_current_user(self):
         login = self.get_secure_cookie('user.login')
@@ -51,8 +27,8 @@ class BaseController(tornado.web.RequestHandler):
         return None
 
     def invalidateDBSessions(self):
-        self.dbSessionMaker = False
-        self.dbSession = False
+        if self.dbSession:
+            self.dbSession.close()
 
     def getConfigValue(self, key):
         '''
@@ -99,6 +75,14 @@ class BaseController(tornado.web.RequestHandler):
     def prepare(self):
         if not self.application.isInstalled:
             self.redirect('/install/')
+
+    def on_finish(self):
+        if self.dbSession:
+            self.dbSession.close()
+
+        super(BaseController, self).on_finish()
+
+
 
 
 class AjaxController(BaseController):
