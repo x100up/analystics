@@ -25,24 +25,27 @@ see: https://issues.apache.org/jira/secure/attachment/12500090/WebHdfsAPI2011102
         self.namenode_port = namenode_port
         self.username = hdfs_username
 
+    def debug(self, message):
+        print message
+
 
     def mkdir(self, path):
         url_path = WEBHDFS_CONTEXT_ROOT + path +'?op=MKDIRS&user.name='+self.username
-        logger.debug("Create directory: " + url_path)
+        self.debug("Create directory: " + url_path)
         httpClient = self.__getNameNodeHTTPClient()
         httpClient.request('PUT', url_path , headers={})
         response = httpClient.getresponse()
-        logger.debug("HTTP Response: %d, %s"%(response.status, response.reason))
+        self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
         httpClient.close()
 
 
     def rmdir(self, path):
         url_path = WEBHDFS_CONTEXT_ROOT + path +'?op=DELETE&recursive=true&user.name='+self.username
-        logger.debug("Delete directory: " + url_path)
+        self.debug("Delete directory: " + url_path)
         httpClient = self.__getNameNodeHTTPClient()
         httpClient.request('DELETE', url_path , headers={})
         response = httpClient.getresponse()
-        logger.debug("HTTP Response: %d, %s"%(response.status, response.reason))
+        self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
         httpClient.close()
 
 
@@ -52,23 +55,23 @@ see: https://issues.apache.org/jira/secure/attachment/12500090/WebHdfsAPI2011102
         httpClient = self.__getNameNodeHTTPClient()
         httpClient.request('PUT', url_path , headers={})
         response = httpClient.getresponse()
-        logger.debug("HTTP Response: %d, %s"%(response.status, response.reason))
+        self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
         msg = response.msg
         redirect_location = msg["location"]
-        logger.debug("HTTP Location: %s"%(redirect_location))
+        self.debug("HTTP Location: %s"%(redirect_location))
         result = urlparse.urlparse(redirect_location)
         redirect_host = result.netloc[:result.netloc.index(":")]
         redirect_port = result.netloc[(result.netloc.index(":")+1):]
         # Bug in WebHDFS 0.20.205 => requires param otherwise a NullPointerException is thrown
         redirect_path = result.path + "?" + result.query + "&replication="+str(replication)
 
-        logger.debug("Send redirect to: host: %s, port: %s, path: %s "%(redirect_host, redirect_port, redirect_path))
+        self.debug("Send redirect to: host: %s, port: %s, path: %s "%(redirect_host, redirect_port, redirect_path))
         fileUploadClient = httplib.HTTPConnection(redirect_host,
             redirect_port, timeout=600)
         # This requires currently Python 2.6 or higher
         fileUploadClient.request('PUT', redirect_path, open(source_path, "r").read(), headers={})
         response = fileUploadClient.getresponse()
-        logger.debug("HTTP Response: %d, %s"%(response.status, response.reason))
+        self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
         httpClient.close()
         fileUploadClient.close()
         return response.status
@@ -76,7 +79,7 @@ see: https://issues.apache.org/jira/secure/attachment/12500090/WebHdfsAPI2011102
 
     def copyToLocal(self, source_path, target_path):
         url_path = WEBHDFS_CONTEXT_ROOT + "/" + source_path+'?op=OPEN&overwrite=true&user.name='+self.username
-        logger.debug("GET URL: %s"%url_path)
+        self.debug("GET URL: %s"%url_path)
         httpClient = self.__getNameNodeHTTPClient()
         httpClient.request('GET', url_path , headers={})
         response = httpClient.getresponse()
@@ -85,21 +88,21 @@ see: https://issues.apache.org/jira/secure/attachment/12500090/WebHdfsAPI2011102
         if response.length!=None:
             msg = response.msg
             redirect_location = msg["location"]
-            logger.debug("HTTP Response: %d, %s"%(response.status, response.reason))
-            logger.debug("HTTP Location: %s"%(redirect_location))
+            self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
+            self.debug("HTTP Location: %s"%(redirect_location))
             result = urlparse.urlparse(redirect_location)
             redirect_host = result.netloc[:result.netloc.index(":")]
             redirect_port = result.netloc[(result.netloc.index(":")+1):]
 
             redirect_path = result.path + "?" + result.query
 
-            logger.debug("Send redirect to: host: %s, port: %s, path: %s "%(redirect_host, redirect_port, redirect_path))
+            self.debug("Send redirect to: host: %s, port: %s, path: %s "%(redirect_host, redirect_port, redirect_path))
             fileDownloadClient = httplib.HTTPConnection(redirect_host,
                 redirect_port, timeout=600)
 
             fileDownloadClient.request('GET', redirect_path, headers={})
             response = fileDownloadClient.getresponse()
-            logger.debug("HTTP Response: %d, %s"%(response.status, response.reason))
+            self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
 
             # Write data to file
             target_file = open(target_path, "w")
@@ -116,38 +119,37 @@ see: https://issues.apache.org/jira/secure/attachment/12500090/WebHdfsAPI2011102
 
     def listdir(self, path):
         url_path = WEBHDFS_CONTEXT_ROOT +path+'?op=LISTSTATUS&user.name='+self.username
-        logger.debug("List directory: " + url_path)
+        self.debug("List directory: " + url_path)
         httpClient = self.__getNameNodeHTTPClient()
         httpClient.request('GET', url_path , headers={})
         response = httpClient.getresponse()
-        logger.debug("HTTP Response: %d, %s"%(response.status, response.reason))
+        self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
         data_dict = json.loads(response.read())
-        logger.debug("Data: " + str(data_dict))
+        self.debug("Data: " + str(data_dict))
         files=[]
         if data_dict.has_key('RemoteException'):
             raise Exception(data_dict['RemoteException']['message'])
-
         for i in data_dict["FileStatuses"]["FileStatus"]:
-            logger.debug(i["type"] + ": " + i["pathSuffix"])
+            self.debug(i["type"] + ": " + i["pathSuffix"])
             files.append(i["pathSuffix"])
         httpClient.close()
         return files
 
     def status(self, path):
         url_path = WEBHDFS_CONTEXT_ROOT +path+'?op=GETFILESTATUS&user.name='+self.username
-        logger.debug("Get file status: " + url_path)
+        self.debug("Get file status: " + url_path)
         httpClient = self.__getNameNodeHTTPClient()
         httpClient.request('GET', url_path , headers={})
         response = httpClient.getresponse()
-        logger.debug("HTTP Response: %d, %s"%(response.status, response.reason))
+        self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
         data_dict = json.loads(response.read())
         if data_dict.has_key('RemoteException'):
             raise Exception(data_dict['RemoteException']['message'])
 
-        logger.debug("Data: " + str(data_dict))
+        self.debug("Data: " + str(data_dict))
         files=[]
         for i in data_dict["FileStatuses"]["FileStatus"]:
-            logger.debug(i["type"] + ": " + i["pathSuffix"])
+            self.debug(i["type"] + ": " + i["pathSuffix"])
             files.append(i["pathSuffix"])
         httpClient.close()
         return files

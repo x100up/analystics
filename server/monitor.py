@@ -10,7 +10,7 @@ from services.AppService import AppService
 from optparse import OptionParser
 
 # set logger
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level = logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
 # set configurations
 rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
