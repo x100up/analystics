@@ -2,9 +2,8 @@
 from controllers.BaseController import AjaxController
 from services.AppService import AppService
 from models.Task import TaskItem
-from datetime import timedelta
-from models.Config import Config
-from services.ResourceManagerService import ResourceManagerService
+from models.Worker import Worker
+from models.App import App
 from services import ThredService
 from components.TaskFactory import createTaskFromRequestArguments
 import re
@@ -53,12 +52,16 @@ class GetKeyForm(AjaxController):
         self.render('blocks/key_container.jinja2', {'taskItem':taskItem})
 
 class GetKeys(AjaxController):
-    def get(self, appName):
+
+    def get(self, appCode):
         keyIndex = self.get_argument('index')
-        self.checkAppAccess(appName)
+        self.checkAppAccess(appCode)
         appService = AppService(self.application.getAppConfigPath())
-        keys = appService.getKeys(appName)
-        self.render('blocks/key_select.jinja2', {'_keys':keys, 'index':keyIndex})
+        keys = appService.getKeys(appCode)
+
+        app = self.getDBSession().query(App).filter(App.code == appCode).first()
+
+        self.render('blocks/key_select.jinja2', {'_keys':keys, 'index':keyIndex, 'appName':app.name})
 
 
 class GatTasksProgress(AjaxController):
@@ -67,55 +70,33 @@ class GatTasksProgress(AjaxController):
         appIdToWorkerId = {}
         blank = u'None'
 
-        for workerid, appid in self.request.arguments.items():
-            arguments.append( (appid[0], int(workerid)) )
+        for workerId, stageCount in self.request.arguments.items():
+            arguments.append( (int(workerId), stageCount) )
 
-        toFindAppId = []
-        toGetProgress = []
-        for appId, workerId in arguments:
-            if appId == blank:
-                toFindAppId.append(workerId)
-            else:
-                toGetProgress.append(appId)
-                appIdToWorkerId[appId] = workerId
-
-        # находим дентификаторы приложений
-        hyrmurl = self.getConfigValue(Config.HADOOP_YARN_RESOURCEMANAGER)
-        resourceManagerService = ResourceManagerService(hyrmurl)
-
-        appIdResult = None
-        if toFindAppId and hyrmurl:
-            appIdResult = resourceManagerService.getAppIdsForWorkers(toFindAppId)
-            for workerId, appId in appIdResult:
-                toFindAppId.remove(workerId)
-                toGetProgress.append(appId)
-                appIdToWorkerId[appId] = workerId
-
-        needCheckThread = toFindAppId # нужно проверить жив ли тред
+        #resourceManagerService = ResourceManagerService(self.getConfigValue(Config.HADOOP_YARN_RESOURCEMANAGER))
 
         # получаем прогресс задач
-        progressResult = None
+        #progressResult = None
+        #diedWorkers = []
+        #
+        #if toGetProgress:
+        #    progressResult = resourceManagerService.getWorkerProgresses(toGetProgress)
+
+        #print progressResult
+
         diedWorkers = []
-        if toGetProgress:
-            progressResult = resourceManagerService.getAppProgresses(toGetProgress)
+        workerIds = [workerId for workerId, stageCount in arguments]
+        aliveThreadNames = ThredService.getAliveThreads()
+        for workerId in workerIds:
+            if not 'worker-' + str(workerId) in aliveThreadNames:
+                diedWorkers.append(workerId)
 
-        if  (not progressResult) or  (len(progressResult) != len(toGetProgress)):
-            print needCheckThread
-            # если количество прогрессов не совпадает
-            # то мы проверяем жив ли тред
-            if progressResult:
-                for appId, progress in progressResult:
-                    if not appId in toGetProgress:
-                        needCheckThread.append(appIdToWorkerId[appId])
-            if needCheckThread:
-                aliveThreadNames = ThredService.getAliveThreads()
-
-                for workerId in needCheckThread:
-                    if not 'worker-' + str(workerId) in aliveThreadNames:
-                        diedWorkers.append(workerId)
-
-
-        self.renderJSON({'appIdResult' : appIdResult, 'progressResult' : progressResult, 'diedWorkers': diedWorkers})
+        workerStates = []
+        if diedWorkers:
+            db = self.getDBSession()
+            workerStates = db.query(Worker.workerId, Worker.status).filter(Worker.workerId.in_(diedWorkers)).all()
+        print workerStates
+        self.renderJSON({'workerStates':workerStates})
 
 
 class CopyTaskKey(AjaxController):

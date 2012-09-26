@@ -5,13 +5,16 @@ class WorkerService(object):
 
     RESULT_FILE = 'result.json'
 
-
-    def __init__(self, path, worker):
+    def __init__(self, path, worker = None):
         self.path = path
-        self.worker = worker
         self.task = None
         self.query = None
         self.result = None
+        if worker:
+            self.setWorker(worker)
+
+    def setWorker(self, worker):
+        self.worker = worker
 
     def getWorker(self):
         return self.worker

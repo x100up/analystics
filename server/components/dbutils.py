@@ -1,7 +1,7 @@
 import inspect
 import os
 import codecs
-from components import State
+from components.State import State
 
 def migrate(connection = None):
     thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))

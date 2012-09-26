@@ -47,6 +47,13 @@ class HiveQueryConstructor():
 
         return 'SELECT \'' + str(workerId) + '\' as `wid`, * FROM (' + ' UNION ALL ' .join(queries) +') FINAL'
 
+    def getStageCount(self):
+        count = len(self.task.items)
+        if count > 1:
+            return count + 1
+        else:
+            return 1
+
     def getTagsCondition(self, conditions):
         '''
         Условия по тегам

@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
+import tornado.web
+import math
+
 from controllers.BaseController import BaseController
 from models.Worker import Worker
-import tornado.web, math
 from services.WorkerService import WorkerService
 from sqlalchemy import desc
 from services import ThredService
 from models.UserAppRule import RuleCollection
 from sqlalchemy import func
-from models.Config import Config
-from services.ResourceManagerService import ResourceManagerService
 
 class SwitchApp(BaseController):
     @tornado.web.authenticated
@@ -24,7 +24,6 @@ class SwitchApp(BaseController):
             self.redirect("/dashboard/selectapp")
 
 class IndexAction(BaseController):
-
     def post(self, appName):
         self.get(appName)
 
@@ -49,7 +48,6 @@ class IndexAction(BaseController):
                         pass
                     db_session.delete(worker)
 
-
         perPage = 10
 
         # получаем количество
@@ -70,7 +68,6 @@ class IndexAction(BaseController):
             workers.append(worker)
 
         aliveThreadNames = ThredService.getAliveThreads()
-        unknowHadoopAppIDs = []
         for worker in alivedWorkers:
             # определяем мертвые воркеры
             if not 'worker-' + str(worker.workerId) in aliveThreadNames:
@@ -80,9 +77,12 @@ class IndexAction(BaseController):
 
         db_session.commit()
 
-        # запрашиваем статус воркеров
+        # для живых воркеров загружаем таски
         if alivedWorkers:
-            pass
+            workerService = WorkerService(self.application.getResultPath())
+            for worker in alivedWorkers:
+                workerService.setWorker(worker)
+                worker.task = workerService.getTask()
 
         self.render('dashboard/dashboard.jinja2', {'lastWorkers' : workers, 'app':app, 'pageCount':pageCount, 'currentPage': page})
 

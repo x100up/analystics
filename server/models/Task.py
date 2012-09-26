@@ -22,6 +22,7 @@ class Task(object):
         self.items = {}
         self.appname = ''
         self.interval = self.INTERVAL_HOUR
+        self.stageCount = 0
 
         if kwargs.has_key('appname'):
             self.appname = kwargs['appname']

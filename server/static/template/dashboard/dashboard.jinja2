@@ -28,7 +28,7 @@
                 <td class="q {{ worker.status }}">
                     {% if worker.status == 'ALIVE' %}
                         <img src="/static/img/ajax-loader.gif" alt="Выполняется" id="loader_{{ worker.workerId  }}">
-                        <span class="alive_progress" data-appid="{{ worker.hadoopAppID }}" data-workerid="{{ worker.workerId }}" id="progress_{{ worker.workerId }}"></span>
+                        <span class="alive_progress" data-stage_count="{{ worker.task.stageCount }}" data-workerid="{{ worker.workerId }}" id="progress_{{ worker.workerId }}"></span>
                     {% endif %}
                 </td>
                 <td>

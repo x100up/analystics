@@ -1,44 +1,34 @@
 # coding=utf-8
 from HadoopService import HadoopService
 import re
+from pprint import  pprint
 
 class ResourceManagerService(HadoopService):
     def __init__(self, rmurl):
         self.rmurl = rmurl
         self.appCache = None
 
-    def getApps(self):
+    def getApps(self, state = None):
         url = self.rmurl + '/ws/v1/cluster/apps'
+        if state:
+            url += '?state=' + state
         return self.loadJSON(url)
 
-
-    def getAppIdsForWorkers(self, workerIdList):
+    def getWorkerProgresses(self, workerIDs):
         result = []
         if self.appCache is None:
-            self.appCache = self.getApps()
+            self.appCache = self.getApps(state = 'RUNNING')
         apps = self.appCache
-        if apps.has_key('apps'):
+        if apps['apps']:
             for app in apps['apps']['app']:
-                workerId = self.parseWorkerId(app['name'])
-                if workerId and int(workerId) in workerIdList:
-                    result.append( ( int(workerId), app['id'] ) )
+                workerId, stage, progress = self.getAppData(app)
+                if workerId in workerIDs:
+                    result.append( (workerId, stage, progress) )
         return result
 
-    workerIdRe = re.compile('^SELECT \'(\d+)\' as `wid`')
+    workerIdRe = re.compile('^SELECT \'(\d+)\' as `wid`(.*)\(Stage-(\d+)\)$')
 
-    def getAppProgresses(self, appIdList):
-        result = []
-        if self.appCache is None:
-            self.appCache = self.getApps()
-        apps = self.appCache
-        for app in apps['apps']['app']:
-            appId = app['id']
-            if appId in appIdList:
-                result.append( ( appId, app['progress'] ) )
-        return result
-
-    def parseWorkerId(self, app_name):
-        matchObject = self.workerIdRe.search(app_name)
+    def getAppData(self, app):
+        matchObject = self.workerIdRe.search(app['name'])
         if matchObject:
-            return matchObject.group(1)
-
+            return (int(matchObject.group(1)), int(matchObject.group(3)), app['progress'])
