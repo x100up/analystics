@@ -9,22 +9,27 @@ class HiveQueryConstructor():
     def getFields(self):
         '''
             Возвращает лист названий полей, которые должен вернуть запрос.
-            Пока возвращает value + dateFields
         '''
-        x = ['value']
-        x.extend(self.getDateFields(self.task.interval))
-        return x
+        fields = ['wid']
+        fields.extend(self.getDateFields(self.task.interval))
+        fields.extend(['value'])
+        return fields
 
-    def getHiveQuery(self):
+    def getHiveQuery(self, workerId):
         '''
             Генерирует запрос для Hive основываясь на зачаче Task
         '''
         dateFields = self.getDateFields(self.task.interval)
         queries = []
+        isMulty = len(self.task.items) > 1
         for index, taskItem in self.task.items.items():
             # создаем интервалы - нужны для партицирования
-            query = 'SELECT ' + self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.getFields())\
-                    + ' FROM %(appname)s.stat_%(keyname)s '%{'appname': self.task.appname, 'keyname': taskItem.key}
+            query = 'SELECT '
+            if not isMulty:
+                query += '\'' + str(workerId) + '\' as `wid`,'
+
+            query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.getFields())\
+                     + ' FROM %(appname)s.stat_%(keyname)s '%{'appname': self.task.appname, 'keyname': taskItem.key}
 
             # временная составляющая
             intervals = self.getIntervalCondition(taskItem.start, taskItem.end)
@@ -37,10 +42,10 @@ class HiveQueryConstructor():
             query += ' GROUP BY ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsByOperation(taskItem, 'group')
             queries.append(query)
 
-        if len(queries) == 1:
+        if not isMulty:
             return queries.pop()
 
-        return 'SELECT * FROM (' + ' UNION ALL ' .join(queries) +') FINAL'
+        return 'SELECT \'' + str(workerId) + '\' as `wid`, * FROM (' + ' UNION ALL ' .join(queries) +') FINAL'
 
     def getTagsCondition(self, conditions):
         '''
@@ -191,7 +196,7 @@ class HiveQueryConstructor():
 
     def getTaskTagsByOperation(self, taskItem, operation):
         g = set()
-        for tagName, operations in taskItem.operation:
+        for tagName, operations in taskItem.operations.items():
             if operation in operations:
                 g.add('params[\'{0}\']'.format(tagName))
 

@@ -86,3 +86,14 @@ class AppService():
     def getKnowAppList(self):
         return [ file.replace('.json', '') for file in os.listdir(self.folder)]
 
+
+    def getKeyConfigs(self, app_code, keys):
+        key_configs = {}
+        for key in keys:
+            key_configs[key] = {
+                "tags": dict(self.getAppTags(app_code, key, 'mustHave').items() +
+                             self.getAppTags(app_code, key, 'canHave').items() +
+                             self.getAppTags(app_code, key, 'autoLoad').items())
+                }
+        return key_configs
+

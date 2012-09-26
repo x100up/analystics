@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from __builtin__ import object
-from datetime import datetime
+from datetime import datetime, timedelta
 import time
 
 class Task(object):
@@ -66,13 +66,20 @@ class TaskItem():
         self.start = None
         self.end = None
         self.key = None
-        self.operation = []
+        self.operations = {}
         self.conditions = {}
+
+        if kwargs.has_key('start'):
+            self.start = kwargs['start']
+        else:
+            now = datetime.now()
+            time = now.time()
+            self.start = now - timedelta(hours = time.hour, minutes = time.minute, seconds = time.second)
 
         if kwargs.has_key('end'):
             self.end = kwargs['end']
         else:
-            self.end = datetime.now()
+            self.end = self.start + timedelta(days = 1)
 
         if kwargs.has_key('key'):
             self.key = kwargs['key']
@@ -80,26 +87,22 @@ class TaskItem():
         if kwargs.has_key('index'):
             self.index = kwargs['index']
 
-        if kwargs.has_key('start'):
-            self.start = kwargs['start']
-        else:
-            self.start = datetime.now()
-
-        if kwargs.has_key('delta'):
-            self.start = self.end - kwargs['delta']
-
-        self.fields = [ ('count(1)','value'), ('"' + str(self.index) + '"', 'index') ]
+        self.fields = [ ('"' + str(self.index) + '"', 'index'), ('count(1)','count') ]
 
     def addCondition(self, tag, values):
         self.conditions[tag] = values
 
+    def setTagOperations(self, tagName, operations):
+        self.operations[tagName] = operations
 
-    def addTagOperations(self, tagName, operations):
-        self.operation.append((tagName, operations))
+    def getTagOperations(self, tagName):
+        if self.operations.has_key(tagName):
+            return self.operations[tagName]
+        return []
 
     def getFields(self):
         fields = []
-        for tag, operations in self.operation:
+        for tag, operations in self.operations.items():
             if 'sum' in operations:
                 fields.append( ('SUM(params[\'{0}\'])'.format(tag), 'params_sum_{0}'.format(tag)) )
 

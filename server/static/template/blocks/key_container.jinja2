@@ -1,8 +1,14 @@
+{#
+ need taskItem
+ key_configs
+ #}
+
+{% set is_loaded = (taskItem.key and key_configs.has_key(taskItem.key)) %}
 <div class="key_form_item grid_12 alpha omega" id="key_container_{{ taskItem.index  }}">
 
     <input type="hidden" name="indexes" value="{{ taskItem.index }}">
 
-    <div class="grid_12 alpha omega key_header" id="key_header_{{ taskItem.index }}">
+    <div class="grid_12 alpha omega key_header {% if is_loaded %} key_loaded {% endif %}" id="key_header_{{ taskItem.index }}">
         <div class="grid_10 alpha">
             <ul class="top_key_menu">
                 <li>
@@ -12,22 +18,28 @@
                 </li>
 
                 <li>
-                    <input type="text" class="datepicker start" name="start_{{ taskItem.index }}" id="start_{{ taskItem.index }}" value="{{ taskItem.start|datetofiled }}">
+                    <input type="text" class="datepicker start" name="start_{{ taskItem.index }}" id="start_{{ taskItem.index }}"
+                           data-index="{{ taskItem.index }}" value="{{ taskItem.start|datetofiled }}">
                     <span class="date_d"></span>
-                    <input type="text" class="datepicker end" name="end_{{ taskItem.index }}" id="end_{{ taskItem.index }}" value="{{ taskItem.end|datetofiled }}">
+                    <input type="text" class="datepicker end" name="end_{{ taskItem.index }}" id="end_{{ taskItem.index }}"
+                           data-index="{{ taskItem.index }}" value="{{ taskItem.end|datetofiled }}">
                     <input class="button lock unlock" type="button" onclick="lockDate({{ taskItem.index }})">
                 </li>
+                <li>
+                 <input class="button copy{% if not is_loaded %} invisible {% endif %}" onclick="copyKey({{ taskItem.index }})" id="copy_key_{{ taskItem.index }}">
+                </li>
             </ul>
+
+
+        </div>
+        <div class="grid_2 omega">
+            <input class="button delete" onclick="deleteKey({{ taskItem.index }})">
         </div>
     </div>
-
     <div class="clearfix"></div>
 
-
-
-
     <div id="key_{{ taskItem.index }}_tag_container" class="tag_container">
-        {% if taskItem.key and key_configs.has_key(taskItem.key) %}
+        {% if is_loaded %}
            {% set tags = key_configs[taskItem.key] %}
            {% set index = taskItem.index %}
            {% set key = taskItem.key %}

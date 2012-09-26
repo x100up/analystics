@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from components import ChartConstructor
+from components.ChartConstructor import ChartConstructor
 from controllers.BaseController import BaseController
 from models.Worker import Worker
 from models.App import App
@@ -42,9 +42,6 @@ class ResultAction(BaseController):
         elif worker.status == Worker.STATUS_DIED or worker.status == Worker.STATUS_ERROR:
             self.render('dashboard/task_failed.jinja2', {'errors': [service.getError()]})
             return
-
-
-
 
         # configuration name services
         task = service.getTask()

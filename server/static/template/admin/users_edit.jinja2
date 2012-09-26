@@ -1,14 +1,13 @@
 {% extends 'layout/main.jinja2' %}
 
 {% block content %}
-    <nav>
+    <nav class="back">
         <ul>
-            <li><a href="/admin/">Управление →</a></li>
-            <li><a href="/admin/users">пользователи →</a></li>
-            <li>{% if user.userId %}редактирование{% else %}добавление{% endif %}</li>
+            <li><a href="/admin/users"> пользователи</a></li>
         </ul>
-
     </nav>
+
+    <h1>{% if user.userId %}Редактирование{% else %}Добавление{% endif %} пользователя</h1>
 
     {% include 'blocks/error.jinja2' %}
 

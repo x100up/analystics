@@ -8,16 +8,38 @@ class NameConstructor(object):
         self.appConfig = appConfig
         self.task = task
 
-    def getKeyNameByIndex(self, index):
+    def getKeyNameByIndex(self, index, params):
         '''
         return key name by taskItem index
         '''
+
+        tagSettings = self.appConfig['tagSettings']
+
         taskItem = self.task.getTaskItem(index)
         if taskItem:
+            key_name = '#' + str(index)
+            tag_name = u'Количество'
+            operation = ''
+
             key = taskItem.key
             if self.appConfig['keys'].has_key(key) and self.appConfig['keys'][key].has_key('name'):
-                return self.appConfig['keys'][key]['name']
-        return 'not name for index ' + str(index)
+                key_name = self.appConfig['keys'][key]['name'] + key_name
+
+            if params.has_key('tag'):
+                tag_key = params['tag']
+                if tagSettings.has_key(tag_key) and tagSettings[tag_key].has_key('name'):
+                    tag_name = tagSettings[tag_key]['name']
+
+            if params.has_key('op'):
+                if params['op'] == 'avg':
+                    operation = u'среднее'
+                elif params['op'] == 'sum':
+                    operation = u'сумма'
+
+
+            return tag_name  + '(' + key_name + ')' + operation
+
+        return 'not name for task item: ' + str(index)
 
     def getParamNameValue(self, tagName, value):
         '''
@@ -26,8 +48,8 @@ class NameConstructor(object):
         tag_name = tagName
         tag_value = value
 
-        if self.appConfig['tags'].has_key(tagName):
-            tagConf = self.appConfig['tags'][tagName]
+        if tagName in self.appConfig['tags']:
+            tagConf = self.appConfig['tagSettings'][tagName]
             if tagConf.has_key('name'):
                 tag_name = tagConf['name']
 

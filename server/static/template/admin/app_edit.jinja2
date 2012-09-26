@@ -1,6 +1,15 @@
 {% extends 'layout/main.jinja2' %}
 
 {% block content %}
+
+    <h1>{% if app.appId %}Редактирование{% else %}Добавление{% endif %} приложения</h1>
+
+    <nav class="back">
+        <ul>
+            <li><a href="/admin/apps"> приложения</a></li>
+        </ul>
+    </nav>
+
     {% for error in errors %}
         <p class="error">{{ error }}</p>
     {% endfor %}

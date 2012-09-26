@@ -17,7 +17,7 @@
     <a href="/dashboard/app/{{ app.code }}/">&larr; к списку задач</a>
     <div id="chart_container"></div>
 
-
+       {#
     {% for index in data %}
         <h2>{{ nameService.getKeyNameByIndex(index) }}</h2>
         {% for seriaIndex in data[index] %}
@@ -33,4 +33,5 @@
         </table>
         {% endfor %}
     {% endfor %}
+     #}
 {% endblock %}

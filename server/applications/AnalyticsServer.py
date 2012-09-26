@@ -18,7 +18,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 class AnalyticsServer(tornado.web.Application):
-    
+
     def __init__(self, debug = False):
         # define app root path
         thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
@@ -91,8 +91,6 @@ class AnalyticsServer(tornado.web.Application):
 
     def getHandlers(self):
         thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
-        #print os.path.abspath(thisPath + '/../static')
-
         return [
             (r"/", IndexController.IndexAction),
 
@@ -135,7 +133,7 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/get_key_form/?", AjaxController.GetKeyForm),
             (r"/ajax/getKeys/([^/]+)/?", AjaxController.GetKeys),
             (r"/ajax/getTasksProgress/?", AjaxController.GatTasksProgress),
-
+            (r"/ajax/copyTaskKey/?", AjaxController.CopyTaskKey),
 
             (r"/api/putConfig/?", APIController.PutConfigAction),
 

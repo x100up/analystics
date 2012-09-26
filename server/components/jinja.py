@@ -2,7 +2,7 @@
 from components.dateutil import monthNamesShort, monthNamesB, dayCountName, hourCountName, minuteCountName, secondCountName
 
 def datetofiled(value):
-    return unicode(value.strftime('%d {0} %Y %H:%M')).format(monthNamesShort[value.date().month])
+    return unicode(value.strftime('%d {0} %Y %H:%M')).format(monthNamesShort[value.date().month - 1])
 
 def smartDatePeriod(date1, date2):
     if date2:

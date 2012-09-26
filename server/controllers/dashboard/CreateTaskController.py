@@ -7,7 +7,7 @@ from models.Task import Task, TaskItem
 from datetime import datetime, timedelta
 from services.WorkerService import WorkerService
 from services.AppService import AppService
-from components.dateutil import repMonth
+from components.TaskFactory import createTaskFromRequestArguments
 import tornado.web
 
 class CreateAction(BaseController):
@@ -20,15 +20,12 @@ class CreateAction(BaseController):
         dbSession = self.getDBSession()
         baseTask = self.get_argument('baseOn', False)
         if baseTask:
+            # задача основана на другой задаче
             worker = dbSession.query(Worker).filter_by(workerId = baseTask).first()
             workerService = WorkerService(self.application.getResultPath(), worker)
             task = workerService.getTask()
         else:
-            now = datetime.now()
-            time = now.time()
-            start = now - timedelta(hours = time.hour, minutes = time.minute, seconds = time.second)
-            end = start + timedelta(days = 1)
-            taskItem = TaskItem(start = start, end = end, index = 1)
+            taskItem = TaskItem(index = 1)
             task = Task(appname = app.code)
             task.addTaskItem(taskItem)
 
@@ -40,47 +37,16 @@ class CreateAction(BaseController):
         key_configs = {}
         if len(keys):
             appService = AppService(self.application.getAppConfigPath())
-            for key in keys:
-                key_configs[key] = {
-                    "mustHaveTags": appService.getAppTags(app.code, key, 'mustHave'),
-                    "canHaveTags": appService.getAppTags(app.code, key, 'canHave'),
-                }
+            key_configs = appService.getKeyConfigs(app.code, keys)
+
 
         self.render('dashboard/new.jinja2', {'task':task, 'app':app, 'key_configs':key_configs})
 
     def post(self, *args, **kwargs):
         app = self.checkAppAccess(args)
-        group_interval = self.get_argument('group_interval', False)
-        # создаем задачу
-        task = Task(appname = app.code, interval = group_interval)
-        indexes = self.get_arguments('indexes')
-        for index in indexes:
-            key = self.get_argument('key_' + index, False)
-            if not key:
-                continue
 
-            start = repMonth(self.get_argument('start_'+ index, False))
-            start = datetime.strptime(start, "%d %m %Y %H:%M")
-            end = repMonth(self.get_argument('end_'+ index, False))
-            end = datetime.strptime(end, "%d %m %Y %H:%M")
-
-            taskItem = TaskItem(key = key, start = start, end = end, index = index)
-            # разбираем тег для ключа
-            tagNames = self.get_arguments('tag_' + index + '_name', [])
-
-            for tagName in tagNames:
-                values = self.get_arguments('tag_' + index + '_' + tagName, None)
-                if not values is None:
-                    taskItem.addCondition(tagName, values)
-                ops = self.get_argument('tag_' + index + '_' + tagName + '_ops', None)
-                if not ops is None:
-                    taskItem.addTagOperations(tagName, ops.split('/'))
-
-            task.addTaskItem(taskItem)
-
-
-        constructor = HiveQueryConstructor(task)
-        query = constructor.getHiveQuery()
+        # создаем задачу из аргументов
+        task = createTaskFromRequestArguments(self.request.arguments)
 
         user = self.get_current_user()
 
@@ -93,6 +59,11 @@ class CreateAction(BaseController):
         session = self.getDBSession()
         session.add(worker)
         session.commit()
+
+        # конструирем запрос
+        constructor = HiveQueryConstructor(task)
+        query = constructor.getHiveQuery(worker.workerId)
+        print query
 
         # создаем WorkerService - он будет связывать тред с файловой системой
         workerService = WorkerService(self.application.getResultPath(), worker)

@@ -1,8 +1,10 @@
+var shortMonths = ['янв', 'фев', 'март', 'апр', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт'];
+
 Highcharts.setOptions({
     lang: {
         months: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
             'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-        shortMonths: ['янв', 'фев', 'март', 'апр', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт'],
+        shortMonths: shortMonths,
         loading: 'Загрузка',
         weekdays: ['Воскресение', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
     }
@@ -19,54 +21,43 @@ $(function(){
 
     var series = [];
 
-    var multy = Object.size(chartdata['data']) > 1
+    var multy = Object.size(chartdata['data']) > 1;
 
     for (var index in chartdata['data'])
     {
 
-        var seriaGroupData = chartdata['data'][index];
-        for (var seriaIndex  in seriaGroupData)
+        var seriesGroupData = chartdata['data'][index];
+        for (var seriesIndex  in seriesGroupData)
         {
             var xdata = [];
-            var seriaData = seriaGroupData[seriaIndex];
+            var seriesData = seriesGroupData[seriesIndex];
 
-            for (var i in seriaData['data']) {
-                var row = seriaData['data'][i];
+            for (var i in seriesData['data']) {
+                var row = seriesData['data'][i];
 
-                if (multy){
-                    xdata.push([parseInt(row[0]), parseInt(row[1])])
-                } else {
-                    var date = new Date();
-                    var ts = Date.parse(row[0] + ' GMT');
-                    date.setTime(ts);
-                    xdata.push([ts, parseFloat(row[1])])
-                }
+                //if (multy){
+                //    xdata.push([parseInt(row[0]), parseInt(row[1])])
+                //} else {
+                    xdata.push([row[0], parseFloat(row[1])])
+                //}
             }
             series.push({
-                name: seriaData.name,
+                name: seriesData.name,
                 data: xdata,
-                tagValues: seriaData.tagValues
+                tagValues: seriesData.tagValues
             })
         }
     }
 
-    if (multy) {
-        xAxis = {
-            allowDecimals: false,
-            labels: {
-                formatter: function() {
-                    return this.value;
-                }
-            }}
-    } else {
+
         xAxis = {
             type: 'datetime',
             showEmpty: false,
                 dateTimeLabelFormats: {
-                month: '%e. %b',
+                month: '%e %b',
                 year: '%b'
-        }}
-    }
+        }};
+
 
     var chartconf = {
         chart: {
@@ -81,19 +72,20 @@ $(function(){
         },
         tooltip: {
             formatter: function() {
-                console.log(this.series, this.series.options, this.series.options.tagValues);
                 return '<b>'+ this.series.name + '</b><br/>' +
-                    this.series.options.tagValues; /* +
-                    Highcharts.dateFormat('%e. %b', this.x) +'<br /> Значение:'+ this.y +' ';*/
+                    'Значение:' + this.y + '<br/>' +
+                    'Дата:' + formatDate(this.x);
+
             }
         },
+
         series: series
-    }
+    };
 
     $.extend(true, chartconf, chartdata['chartconf'])
 
 
-    drawColumnChart(chartconf)
+    drawSplineChart(chartconf)
 });
 
 function drawSplineChart(chartconf) {
@@ -145,4 +137,11 @@ Object.size = function(obj) {
     }
     return size;
 };
+
+function formatDate(timestamp) {
+    console.log(timestamp);
+    var date = new Date(timestamp);
+    return date.getDate() + ' ' + shortMonths[date.getMonth()] + ' ' + date.getFullYear() + ' ' + date.getHours() + ':' +
+        date.getMinutes();
+}
 

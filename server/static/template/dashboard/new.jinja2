@@ -22,7 +22,7 @@
 <div class="grid_5">
     <h1>Новая задача <sup>{{ app.name }}</sup></h1>
 </div>
-<form action="" method="post">
+<form action="" method="post" id="new_task_form">
 
     <div class="grid_7">
         <input type="hidden" id="group_interval"  value="{{ task.interval }}" name="group_interval">
@@ -44,12 +44,11 @@
         </div>
 
         <div class="add_key grid_12 alpha omega" onclick="addKey()"> еще ключ </div>
-
-        <div class="grid_12">
-            <input type="submit" value="Отправить" class="awesome green">
-        </div>
-
     </form>
+
+    <div class="grid_12">
+            <input type="button" value="Отправить" class="awesome green" onclick="sendForm()">
+    </div>
 
 
     <div id="myModal" class="reveal-modal">

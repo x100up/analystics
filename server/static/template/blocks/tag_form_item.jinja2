@@ -1,8 +1,9 @@
-
+{#
+ taskItem
+#}
 <h3 title="{{ data.description or 'Нет описания' }}" class="{{ x }}">{{ data.name or name }}</h3>
-<input type="hidden" name="tag_{{ index }}_name" value="{{ name }}">
-{# operation stacks #}
-<input type="hidden" name="tag_{{ index }}_{{ name }}_ops" id="tag_{{ index }}_{{ name }}_ops" values="">
+<input type="hidden" name="tag_{{ taskItem.index }}_name" value="{{ name }}">
+
     <div class="tag_values_block {% if data.type == 'choose' and not data['values'].items and data['values']|length > 5 %} more_value{% endif %}">
 
     {% if data['extra'] %}
@@ -16,7 +17,7 @@
         {% if data['values'].items %}
             <ul>
             {% for v, k in data['values'].items() %}
-                <li><input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                <li><input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
                     {% if value and v in value %} checked="checked" {% endif %}> : {{ k }}
                 </li>
             {% endfor %}
@@ -26,13 +27,13 @@
 
             {% if data['values']|length < 6   %}
                 {% for v in data['values'] %}
-                    {{ v }}: <input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                    {{ v }}: <input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
                         {% if value and v in value %} checked="checked" {% endif %}>
                 {% endfor %}
             {% else %}
                 {% for v in data['values'] %}
                     <ul>
-                        <li><input type="checkbox" value="{{ v }}" name="tag_{{ index }}_{{ name }}"
+                        <li><input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
                                 {% if value and v in value %} checked="checked" {% endif %} > {{ v }}</li>
                     </ul>
                 {% endfor %}
@@ -40,21 +41,36 @@
         {% endif %}
 
     {% elif data.type == 'boolean' %}
-        <input type="checkbox" name="tag_{{ index }}_{{ name }}" {% if value %} checked="checked" {% endif %}>
+        <input type="checkbox" name="tag_{{ taskItem.index }}_{{ name }}" {% if value %} checked="checked" {% endif %}>
     {% elif data.type == 'int' %}
-       <input type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}">
+       <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" value="{{ value or '' }}">
     {% else %}
        {# default string type #}
-       <input type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}">
-       <input class="new" type="text" name="tag_{{ index }}_{{ name }}" value="{{ value or '' }}"
-        onclick="addTextField(this)">
+        {% if value %}
+            {% for val in value %}
+                <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" value="{{ val or '' }}" data-index="{{ loop.index0 }}"
+                       onkeydown="tagValueChange('string', this, '{{ name }}', {{ taskItem.index }})" class="tag_{{ name }} i_{{ loop.index0 }}">
+            {% endfor %}
+        {% else %}
+            <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" value="" data-index="0" class="tag_{{ name }} i_0"
+                   onkeydown="tagValueChange('string', this, '{{ name }}', {{ taskItem.index }})">
+        {% endif %}
+       <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" id="{{ name }}_value_cloner_{{ taskItem.index }}"
+        onclick="addTextField({{ taskItem.index }}, '{{ name }}')" class="new tag_{{ name }}"
+        onkeydown="tagValueChange('string', this, '{{ name }}', {{ taskItem.index }})">
     {% endif %}
     </div>
 
     <div class="op_controll">
-        <span class="group" onclick="switch_key_op({{ index }}, '{{ name }}', 'group', this)">group</span>
+        {#
+        <span class="sync sync_{{ name }}" onclick="switchTagSync({{ taskItem.index }}, '{{ name }}', this)">sync</span>
+         #}
+        {% set operations = taskItem.getTagOperations(name)  %}
+        {# operation stacks #}
+        <input type="hidden" name="tag_{{ taskItem.index }}_{{ name }}_ops" id="tag_{{ taskItem.index }}_{{ name }}_ops" value="{{ operations|join('/') }}">
+        <span class="group{% if 'group' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'group', this)">group</span>
         {% if data.type == 'int' %}
-        <span class="sum" onclick="switch_key_op({{ index }}, '{{ name }}', 'sum', this)">sum</span>
-        <span class="avg" onclick="switch_key_op({{ index }}, '{{ name }}', 'avg', this)">avg</span>
+        <span class="sum{% if 'sum' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'sum', this)">sum</span>
+        <span class="avg{% if 'avg' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'avg', this)">avg</span>
         {% endif %}
     </div>

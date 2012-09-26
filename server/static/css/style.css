@@ -153,17 +153,21 @@ div.interval_form {
 }
 
 /* navigation */
-nav li {
+nav.back li {
     display: inline;
     padding: 5px 7px;
 }
 
-div#content nav {
-    margin: 10px 0px;
+div#content nav.back {
+    margin: 2px 0 4px 0;
 }
 
-div#content nav a {
+div#content nav.back a {
     border: none !important;
+    padding-left: 20px;
+    color: #cfcbcf;
+    font-size: 10pt;
+    background: url("/static/img/mini_back.png") no-repeat;
 }
 
 /* css for timepicker */
@@ -236,16 +240,25 @@ fieldset {
     padding-top: 12px;
 }
 
-/** ------------------ **/
+/** ---- functional buttons ---- **/
 .button{
     margin: 0;
     padding: 0;
     border: none !important;
+    cursor: pointer
 }
 .button.copy{
-    background: url("/static/img/sprite.png");
-    display: block;
-    width: 40px;
-    height: 40px;
+    background: url("/static/img/sprite.png") -6px -5px;
+    width: 25px;
+    height: 27px;
     text-indent: -1000px;
+}
+.button.invisible {
+    visibility: hidden !important;
+}
+
+.button.delete {
+    background: url("/static/img/sprite.png") -6px -39px;
+    width: 25px;
+    height: 27px;
 }

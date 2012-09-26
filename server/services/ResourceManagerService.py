@@ -12,7 +12,7 @@ class ResourceManagerService(HadoopService):
         return self.loadJSON(url)
 
 
-    def getAppIdsForWrokers(self, workerIdList):
+    def getAppIdsForWorkers(self, workerIdList):
         result = []
         if self.appCache is None:
             self.appCache = self.getApps()
@@ -24,7 +24,7 @@ class ResourceManagerService(HadoopService):
                     result.append( ( int(workerId), app['id'] ) )
         return result
 
-    workerIdRe = re.compile('^-- worker-(\d+)')
+    workerIdRe = re.compile('^SELECT \'(\d+)\' as `wid`')
 
     def getAppProgresses(self, appIdList):
         result = []

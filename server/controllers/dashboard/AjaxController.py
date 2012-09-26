@@ -6,7 +6,7 @@ from datetime import timedelta
 from models.Config import Config
 from services.ResourceManagerService import ResourceManagerService
 from services import ThredService
-from models.Worker import Worker
+from components.TaskFactory import createTaskFromRequestArguments
 import re
 
 class KeyAutocompleteAction(AjaxController):
@@ -34,6 +34,8 @@ class KeyConfigurationAction(AjaxController):
         appName = self.get_argument('app', None)
         index = self.get_argument('index', 1)
 
+        taskItem = TaskItem(index = index, key = keyName)
+
         appService = AppService(self.application.getAppConfigPath())
         tags = {
             "tags": dict(appService.getAppTags(appName, keyName, 'mustHave').items() +
@@ -41,13 +43,13 @@ class KeyConfigurationAction(AjaxController):
              appService.getAppTags(appName, keyName, 'autoLoad').items())
         }
 
-        self.render('blocks/tag_container.jinja2', {'tags':tags, 'key': keyName, 'index': index, 'values':{}})
+        self.render('blocks/tag_container.jinja2', {'tags':tags, 'taskItem': taskItem, 'values':{}})
 
 class GetKeyForm(AjaxController):
     def post(self, *args, **kwargs):
-        keyIndex = self.get_argument('index')
-        taskItem = TaskItem(delta = timedelta(days = -1))
-        taskItem.index = keyIndex
+        appCode = self.get_argument('appCode')
+        index = self.get_argument('index')
+        taskItem = TaskItem(index = index)
         self.render('blocks/key_container.jinja2', {'taskItem':taskItem})
 
 class GetKeys(AjaxController):
@@ -68,7 +70,6 @@ class GatTasksProgress(AjaxController):
         for workerid, appid in self.request.arguments.items():
             arguments.append( (appid[0], int(workerid)) )
 
-
         toFindAppId = []
         toGetProgress = []
         for appId, workerId in arguments:
@@ -84,7 +85,7 @@ class GatTasksProgress(AjaxController):
 
         appIdResult = None
         if toFindAppId and hyrmurl:
-            appIdResult = resourceManagerService.getAppIdsForWrokers(toFindAppId)
+            appIdResult = resourceManagerService.getAppIdsForWorkers(toFindAppId)
             for workerId, appId in appIdResult:
                 toFindAppId.remove(workerId)
                 toGetProgress.append(appId)
@@ -114,5 +115,21 @@ class GatTasksProgress(AjaxController):
                         diedWorkers.append(workerId)
 
 
-        print {'appIdResult' : appIdResult, 'progressResult' : progressResult, 'diedWorkers': diedWorkers}
         self.renderJSON({'appIdResult' : appIdResult, 'progressResult' : progressResult, 'diedWorkers': diedWorkers})
+
+
+class CopyTaskKey(AjaxController):
+    '''
+    remote copy task key
+    '''
+    def post(self, *args, **kwargs):
+        copy_index = self.get_argument('copy_key_index')
+        new_index = self.get_argument('new_index')
+        appname = self.get_argument('appname')
+        task = createTaskFromRequestArguments(self.request.arguments)
+        taskItem = task.getTaskItem(copy_index)
+        taskItem.index = new_index
+        appService = AppService(self.application.getAppConfigPath())
+        key_configs = appService.getKeyConfigs(appname, [taskItem.key])
+        self.render('blocks/key_container.jinja2', {'taskItem': taskItem, 'key_configs':key_configs})
+

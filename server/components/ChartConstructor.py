@@ -10,19 +10,20 @@ class ChartConstructor():
         self.prepareData()
 
     def prepareData(self):
-        # generate serias names
+
         for taskItemIndex in self.data:
             taskItemData = self.data[taskItemIndex]
-            for serasIndex in taskItemData:
-                seriaData = taskItemData[serasIndex]
-                seriaName = self.nameService.getKeyNameByIndex(taskItemIndex)
-                seriaData['name'] = seriaName
+            for seriesIndex in taskItemData:
+                seriesData = taskItemData[seriesIndex]
+                # генерирует имя серии данных
+                seriesData['name'] = self.nameService.getKeyNameByIndex(taskItemIndex, seriesData['params'])
 
                 tagValues = []
-                for tagName, tagValue in seriaData['params'].items():
-                    tagValues.append(self.nameService.getParamNameValue(tagName, tagValue))
+                #for tagName, tagValue in seriesData['params'].items():
+                #    tagValues.append(self.nameService.getParamNameValue(tagName, tagValue))
 
-                seriaData['tagValues'] = ', '.join(tagValues)
+
+                seriesData['tagValues'] = ', '.join(tagValues)
 
 
 

@@ -1,14 +1,17 @@
-
-import os, json, shutil
-from models.Task import Task
+# -*- coding: utf-8 -*-
+import os, json, shutil, cPickle
 
 class WorkerService(object):
+
+    RESULT_FILE = 'result.json'
+
 
     def __init__(self, path, worker):
         self.path = path
         self.worker = worker
-
-    query = None
+        self.task = None
+        self.query = None
+        self.result = None
 
     def getWorker(self):
         return self.worker
@@ -34,32 +37,38 @@ class WorkerService(object):
             'start': str(self.worker.startDate),
             'query': self.query,
             'fields' : self.fields,
-            'task': self.task.serialize()
+            #'task': self.task.serialize()
         }
-
         job_json = json.dumps(for_json)
         f = open(self.getFolder() + '/job.json', 'w+')
         f.write(job_json)
         f.close()
 
-    def getTask(self):
-        f = open(self.getFolder() + '/job.json', 'r')
-        data = json.load(f)
-        task = Task()
-        task.unserialize(data['task'])
-        return task
+        #  Создаем cPickle задачи, т.к. нах писать serialize и unserialize
+        picklerFile = open(self.getFolder() + '/task.pickle', 'wb')
+        pickler = cPickle.Pickler(picklerFile)
+        pickler.dump(self.task)
+        picklerFile.close()
 
+    def getTask(self):
+        if not self.task:
+            picklerFile = open(self.getFolder() + '/task.pickle', 'rb')
+            pickler = cPickle.Unpickler(picklerFile)
+            self.task = pickler.load()
+            picklerFile.close()
+        return self.task
 
     def flushResult(self, result):
-        f = open(self.getFolder() + '/result.json', 'w+')
+        f = open(self.getFolder() + '/' + self.RESULT_FILE, 'w+')
         f.write(json.dumps(result))
         f.close()
 
     def getResultData(self):
-        f = open(self.getFolder() + '/result.json', 'r')
-        result = json.load(f)
-        f.close()
-        return result
+        if not self.result:
+            f = open(self.getFolder() + '/' + self.RESULT_FILE, 'r')
+            self.result = json.load(f)
+            f.close()
+        return self.result
 
     def getResults(self):
         result = self.getResultData()
@@ -81,4 +90,3 @@ class WorkerService(object):
 
     def delete(self):
         shutil.rmtree(self.getFolder())
-
