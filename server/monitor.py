@@ -3,7 +3,7 @@
 import logging
 import re, os, inspect
 from models.Config import Config
-from components.WebHDFS import WebHDFS
+from components.webhdfs import WebHDFS
 from components.listutils import listDiff
 from services.HiveService import HiveService
 from services.AppService import AppService
