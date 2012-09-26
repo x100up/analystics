@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-from thrift import Thrift
 from thrift.transport import TSocket
 from thrift.transport import TTransport
 from thrift.protocol import TBinaryProtocol
 from hive_service import ThriftHive
+import logging
 
 class HiveService():
     '''
@@ -20,6 +20,8 @@ class HiveService():
     def open(self):
         try:
             self.transport.open()
+        except BaseException as exception:
+            logging.getLogger('AnalyticsServer').error('{}:{}'.format(exception.__class__.__name__, exception.message))
         finally:
             self.isOpen = True
 

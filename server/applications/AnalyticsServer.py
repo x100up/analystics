@@ -3,9 +3,10 @@ __author__ = 'pavlenko.roman.spb@gmail.com'
 import tornado.web
 import inspect
 import os
+import sys
 import tornado.ioloop
+import logging
 from components.jinja import *
-
 from models.Config import Config
 from controllers import  IndexController, UserController
 from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController, AdminSettingsController, AdminTagController
@@ -16,6 +17,7 @@ from controllers.install import InstallController
 from jinja2 import Environment, PackageLoader
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from datetime import datetime
 
 class AnalyticsServer(tornado.web.Application):
 
@@ -23,6 +25,28 @@ class AnalyticsServer(tornado.web.Application):
         # define app root path
         thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
         self.appRoot = os.path.abspath(thisPath + '/../../')
+
+        level = logging.WARNING
+        if debug:
+            level = logging.INFO
+
+        formatter = logging.Formatter('%(asctime)s %(filename)s(%(lineno)s)[%(funcName)s] %(threadName)s %(levelname)-8s %(message)s')
+        self.logger = logging.getLogger('AnalyticsServer')
+        self.logger.setLevel(level)
+
+        # sterr out
+        if debug:
+            handler = logging.StreamHandler(sys.stderr)
+            handler.setFormatter(formatter)
+            handler.setLevel(level)
+            self.logger.addHandler(handler)
+        handler = logging.FileHandler(self.appRoot + '/log/analyticsServer_' + datetime.now().strftime('%d-%m-%y') + '.log', 'a+')
+        handler.setLevel(level)
+        handler.setFormatter(formatter)
+        self.logger.addHandler(handler)
+
+        self.logger.info('AnalyticsServer started')
+
         # define app setting
         settings = {
             "cookie_secret": "61oETzKXQAGaYdkL5gEmGeJJFuYh7EQnp2XdTP1o/Vo=",

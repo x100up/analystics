@@ -1,4 +1,4 @@
-import json, os, inspect
+import json, os, inspect, logging
 
 class State():
     '''
@@ -25,8 +25,9 @@ class State():
     def readData(self):
         try:
             self.data = json.load(open(self.file, 'r+'))
-        except:
+        except BaseException as exception:
             self.data = {}
+            logging.getLogger('AnalyticsServer').error(exception.message)
 
     def writeData(self):
         json.dump(self.data, open(self.file, 'w+'))

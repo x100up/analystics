@@ -15,11 +15,9 @@ class ServerDaemon(Daemon):
             startApp()
 
 def getDaemon():
-    log = os.path.abspath(os.path.abspath(rootPath + '/../log/daemon.log'))
-    if not os.path.exists(log):
-        open(log, 'w').close()
-
-    return ServerDaemon('/var/run/python-server.pid', stdin = log, stdout = log, stderr = log)
+    stdout = os.path.abspath(os.path.abspath(rootPath + '/../log/daemon_out.log'))
+    stderr = os.path.abspath(os.path.abspath(rootPath + '/../log/daemon_err.log'))
+    return ServerDaemon('/var/run/python-server.pid', stdout = stdout, stderr = stderr)
 
 if __name__ == "__main__":
 

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import os, json, shutil, cPickle
+import os, json, shutil, cPickle, logging
 
 class WorkerService(object):
 
@@ -78,7 +78,9 @@ class WorkerService(object):
         try:
             result = self.getResultData()
         except BaseException as exception:
-            return 'Cant open result of task, because: ' + str(exception.__class__.__name__) + ' :: ' + exception.message
+            message = 'Cant open result of task, because:  {} :: {}'.format(exception.__class__.__name__, exception.message)
+            logging.getLogger('AnalyticsServer').error(message)
+            return message
         else:
             if result.has_key('exception'):
                 ex = ''

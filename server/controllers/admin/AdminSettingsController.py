@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import logging
 from AdminIndexController import AdminAction
 
 class IndexAction(AdminAction):
@@ -21,7 +22,9 @@ class IndexAction(AdminAction):
         try:
             configfile = open(self.application.appRoot + '/server.cfg', 'wb')
         except BaseException as exception:
-            self.errors.append(u'Ошибка при записи файла конфигурации: ' + exception.message)
+            message = u'Ошибка при записи файла конфигурации: ' + exception.message
+            self.errors.append(message)
+            logging.getLogger('AnalyticsServer').error(message)
         else:
             raw_config.write(configfile)
             configfile.close()

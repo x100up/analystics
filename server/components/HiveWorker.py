@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import threading
+import logging
 from thrift import Thrift
 from hive_service.ttypes import HiveServerException
 from models.Worker import Worker
@@ -16,7 +17,7 @@ class HiveWorker(threading.Thread):
         self.folderForWorkerService = None
         self.host = None
         self.port = None
-
+        self.logger = logging.getLogger('AnalyticsServer')
         threading.Thread.__init__(self)
         self.daemon = True
         self.workerService = workerService
@@ -25,23 +26,26 @@ class HiveWorker(threading.Thread):
         self.task = task
 
     def run(self):
-        print 'worker [' + self.getName() + '] run'
+        self.logger.debug('worker [' + self.getName() + '] run')
         hiveClient = None
         try:
             hiveClient = HiveService(self.host, self.port)
             data = {'result' : self.prepareData(hiveClient.execute(self.workerService.query))}
-            print 'worker [' + self.getName() + '] end job'
+            self.logger.debug('worker [' + self.getName() + '] end job')
             status = Worker.STATUS_SUCCESS
 
         except Thrift.TException as tx:
             data = {'exception' : {'Thrift.TException' : tx.message }}
             status = Worker.STATUS_ERROR
+            self.logger.error(tx.message)
         except HiveServerException as tx:
             data = {'exception' : {'HiveServerException': tx.message }}
             status = Worker.STATUS_ERROR
-        #except Exception as tx:
-        #    data = {'exception' : {'Exception': tx.message }}
-        #    status = Worker.STATUS_ERROR
+            self.logger.error(tx.message)
+        except Exception as tx:
+            data = {'exception' : {'Exception': tx.message }}
+            status = Worker.STATUS_ERROR
+            self.logger.error(tx.message)
         finally:
             if hiveClient:
                 hiveClient.close()
@@ -56,19 +60,14 @@ class HiveWorker(threading.Thread):
         self.workerService.flushResult(data)
 
     def prepareData(self, data):
-        print 'prepareData'
         newdata = {}
 
         multySeria = len(self.task.items) > 1
 
-        print 'is multy: ' + str(multySeria)
         interval = self.task.interval
-        print 'interval: ' + str(interval)
-        print 'rows = ' + str(len(data))
         for item in data:
             # первое значение - это номер задачи
             offset = 1
-            print item
             y = 0
             if interval == Task.INTERVAL_HOUR:
                 y = datetime(int(item[offset + 0]), int(item[offset + 1]), int(item[offset + 2]), int(item[offset + 3]))
