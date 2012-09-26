@@ -29,4 +29,5 @@ except OperationalError as op_error:
 except BaseException as ex:
     print u'Исключение SQLALCHEMY: ' + ex.message
 else:
+    print 'start DB migrate'
     dbutils.migrate(connection = connection)
