@@ -72,12 +72,14 @@ STATISTICS_ROOT = '/statistics/' + appname + '/'
 webhdfs = WebHDFS("localhost", 14000, "hdfs")
 real_keys = appConfig['keys'].keys()
 
+print 'read ' + STATISTICS_ROOT + '......'
+
 # читаем директорию
 key_folders = {}
 try:
     key_folders = webhdfs.listdir(STATISTICS_ROOT)
-except Exception as e:
-    print 'HDFS Exception: ' + e.message
+except BaseException as e:
+    print e.__class__.__name__ + ': ' + e.message
     exit()
 
 
