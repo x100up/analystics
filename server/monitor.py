@@ -76,11 +76,10 @@ print 'read ' + STATISTICS_ROOT + '......'
 
 # читаем директорию
 key_folders = {}
-try:
-    key_folders = webhdfs.listdir(STATISTICS_ROOT)
-except BaseException as e:
-    print e.__class__.__name__ + ': ' + e.message
-    exit()
+key_folders = webhdfs.listdir(STATISTICS_ROOT)
+#except BaseException as e:
+#    print e.__class__.__name__ + ': ' + e.message
+#    exit()
 
 
 # ключи есть в настройках, но нет директорий
