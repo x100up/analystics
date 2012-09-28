@@ -66,12 +66,15 @@ class AnalyticsServer(tornado.web.Application):
         self.jinjaEnvironment.filters['smartDatePeriod'] = smartDatePeriod
         self.jinjaEnvironment.filters['smartDateInterval'] = smartDateInterval
         self.dbSessionMaker = None
-        self.getSessionMaker()
+        if self.isInstalled:
+            self.getSessionMaker()
 
     def getSessionMaker(self):
         if not self.dbSessionMaker:
             mysql_user = self.config.get(Config.MYSQL_USER)
             mysql_password = self.config.get(Config.MYSQL_PASSWORD)
+            mysql_host = self.config.get(Config.MYSQL_HOST)
+            mysql_dbname = self.config.get(Config.MYSQL_DBNAME)
 
             conn_str = 'mysql://'
             if mysql_user:
@@ -79,7 +82,7 @@ class AnalyticsServer(tornado.web.Application):
                 if mysql_password:
                     conn_str += ':' + mysql_password
                 conn_str += '@'
-            conn_str += self.config.get(Config.MYSQL_HOST) + '/' + self.config.get(Config.MYSQL_DBNAME)
+            conn_str += mysql_host + '/' + mysql_dbname
 
             engine = create_engine(conn_str + '?init_command=set%20names%20%22utf8%22', encoding = 'utf8', convert_unicode = True)
             engine.execute('SET NAMES utf8')
