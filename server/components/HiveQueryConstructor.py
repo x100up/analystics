@@ -33,7 +33,7 @@ class HiveQueryConstructor():
 
             # временная составляющая
             intervals = self.getIntervalCondition(taskItem.start, taskItem.end)
-            query += ' WHERE ' + ' AND '.join(intervals)
+            query += ' WHERE (' + ' OR '.join(intervals) + ')'
 
             # условия по тегам
             query += self.getTagsCondition(taskItem.conditions)
@@ -159,7 +159,7 @@ class HiveQueryConstructor():
                 prefix = '(year = %(year)i'%{'year':start_year}
                 if yi == start_year:
 
-                    for mi in range(start_month, 13):
+                    for mi in range(start_month, 12 + 1):
                         prefix2 = prefix + ' AND month = %(month)i'%{'month':mi}
                         if mi == start_month:
                             intervals.append(prefix2 + ' AND day >= %(day)i)'%{'day':start_day})
@@ -168,7 +168,7 @@ class HiveQueryConstructor():
 
                 elif yi == end_year:
 
-                    for mi in range(1, end_month+1):
+                    for mi in range(1, end_month + 1):
                         prefix2 = prefix + ' AND month = %(month)i'%{'month':mi}
                         if mi == end_month:
                             intervals.append(prefix2 + ' AND day <= %(day)i)'%{'day':end_day})

@@ -76,10 +76,12 @@ print 'read ' + STATISTICS_ROOT + '......'
 
 # читаем директорию
 key_folders = {}
-key_folders = webhdfs.listdir(STATISTICS_ROOT)
-#except BaseException as e:
-#    print e.__class__.__name__ + ': ' + e.message
-#    exit()
+try:
+    key_folders = webhdfs.listdir(STATISTICS_ROOT)
+except BaseException as e:
+    print 'Exception at read list dir'
+    print e.__class__.__name__ + ': ' + e.message
+    exit()
 
 
 # ключи есть в настройках, но нет директорий
@@ -87,8 +89,8 @@ non_existing_folders = listDiff(real_keys, key_folders)
 
 for key_name in non_existing_folders:
     str = 'folder for key "%(key)s"  not exist'%{'key':key_name}
-    logging.info(str)
     print str
+    logging.info(str)
     webhdfs.mkdir(STATISTICS_ROOT + key_name)
 
 # есть директории, для которых нет ключей
