@@ -52,6 +52,9 @@ class ResultAction(BaseController):
 
         try:
             data = service.getResults()
+            if len(data.items()) == 0:
+                self.render('dashboard/result_no_data.jinja2', {'app': app})
+                return
             # chart data
             chartService = ChartConstructor(data, nameService, task)
         except IOError as ioerr:
