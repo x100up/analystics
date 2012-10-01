@@ -34,17 +34,12 @@ $(function(){
 
             for (var i in seriesData['data']) {
                 var row = seriesData['data'][i];
-
-                //if (multy){
-                //    xdata.push([parseInt(row[0]), parseInt(row[1])])
-                //} else {
-                    xdata.push([row[0], parseFloat(row[1])])
-                //}
+                xdata.push([row[0], parseFloat(row[1])])
             }
             series.push({
                 name: seriesData.name,
                 data: xdata,
-                tagValues: seriesData.tagValues
+                opt: seriesData.opt
             })
         }
     }
@@ -74,7 +69,7 @@ $(function(){
             formatter: function() {
                 return '<b>'+ this.series.name + '</b><br/>' +
                     'Значение:' + this.y + '<br/>' +
-                    'Дата:' + formatDate(this.x);
+                    'Дата:' + formatDate(this.x, this.series.options.opt.interval);
 
             }
         },
@@ -138,10 +133,36 @@ Object.size = function(obj) {
     return size;
 };
 
-function formatDate(timestamp) {
-    console.log(timestamp);
+/**
+ *
+ * @param timestamp
+ * @param interval
+ * @return {String}
+ */
+function formatDate(timestamp, interval) {
     var date = new Date(timestamp);
-    return date.getDate() + ' ' + shortMonths[date.getMonth()] + ' ' + date.getFullYear() + ' ' + date.getHours() + ':' +
-        date.getMinutes();
+    var result =  date.getDate() + ' ' + shortMonths[date.getMonth()] + ' ' + date.getFullYear();
+    switch (interval) {
+        case '10minutes':
+            result += ' ' + date.getHours() + ':' + date.getMinutes() + '+10 мин';
+        break;
+
+        case 'week':
+            result += ' - ' + formatDate(timestamp + (60 * 60 * 24 * 7 * 1000) , 'day');
+        break;
+
+        case 'day':
+            // result =  date.getDate() + ' ' + shortMonths[date.getMonth()] + ' ' + date.getFullYear();
+        break;
+
+        case 'hour':
+            result += ' ' + date.getHours() + ' +1час';
+        break;
+
+        case 'minute':
+            result += ' ' + date.getHours() + ':' +date.getMinutes();
+        break;
+    }
+    return result;
 }
 

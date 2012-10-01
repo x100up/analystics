@@ -67,7 +67,7 @@ class HiveQueryConstructor():
                         where.append(self.parseIntValue(tagName, tagValue[0]))
                     else:
                         if len(tagValue) == 1:
-                            where.append("params['%(tagName)s'] = '%(tagValue)s'"%{'tagName':tagName, 'tagValue':tagValue})
+                            where.append("params['%(tagName)s'] = '%(tagValue)s'"%{'tagName':tagName, 'tagValue':tagValue[0]})
                         else:
                             items = []
                             for val in tagValue:
@@ -100,9 +100,10 @@ class HiveQueryConstructor():
         '''
         fields = []
         fields.append(('year'))
-        fields.append(('month'))
-        fields.append(('day'))
 
+        if  interval != Task.INTERVAL_WEEK:
+            fields.append(('month'))
+            fields.append(('day'))
 
         if  interval == Task.INTERVAL_MINUTE:
             fields.append(('hour'))
@@ -110,7 +111,7 @@ class HiveQueryConstructor():
 
         elif  interval == Task.INTERVAL_10_MINUTE:
             fields.append(('hour'))
-            fields.append(('ceil(minute / 10)', 'minute_10'))
+            fields.append(('floor(`minute` / 10) * 10', 'minute_10'))
 
         elif  interval == Task.INTERVAL_HOUR:
             fields.append(('hour'))
@@ -119,6 +120,7 @@ class HiveQueryConstructor():
             pass
 
         elif  interval == Task.INTERVAL_WEEK:
+            fields.append(('weekofyear(`timestamp`)', 'weekofyear'))
             pass
 
         #fields.reverse()
@@ -188,7 +190,7 @@ class HiveQueryConstructor():
             return ' year, month, day, hour, minute '
 
         if group_interval == Task.INTERVAL_10_MINUTE:
-            return ' year, month, day, hour, minute_10 '
+            return ' year, month, day, hour, floor(`minute` / 10) * 10 '
 
         if group_interval ==  Task.INTERVAL_HOUR:
             return ' year, month, day, hour'
@@ -197,7 +199,7 @@ class HiveQueryConstructor():
             return ' year, month, day'
 
         if group_interval == Task.INTERVAL_WEEK:
-            return ' year, month, day'
+            return ' year, weekofyear(`timestamp`)'
 
         raise Exception("Unknow interval")
 

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import threading
 import logging
+import time
 from thrift import Thrift
 from hive_service.ttypes import HiveServerException
 from models.Worker import Worker
@@ -62,20 +63,30 @@ class HiveWorker(threading.Thread):
     def prepareData(self, data):
         newdata = {}
 
-        multySeria = len(self.task.items) > 1
+        #multySeria = len(self.task.items) > 1
 
         interval = self.task.interval
         for item in data:
             # первое значение - это номер задачи
             offset = 1
             y = 0
-            if interval == Task.INTERVAL_HOUR:
-                y = datetime(int(item[offset + 0]), int(item[offset + 1]), int(item[offset + 2]), int(item[offset + 3]))
-                offset += 4
 
-            if interval == Task.INTERVAL_MINUTE:
-                y = '%(y)s/%(m)s/%(d)s %(h)s:%(M)s:00'%{'y':item[offset + 0], 'm':item[offset + 1], 'd':item[offset + 2], 'h':item[offset + 3], 'M':item[offset + 4]}
+            if interval == Task.INTERVAL_MINUTE or interval == Task.INTERVAL_10_MINUTE:
+                y = datetime(int(item[offset + 0]), int(item[offset + 1]), int(item[offset + 2]), hour = int(item[offset + 3]),
+                             minute = int(item[offset + 4]))
                 offset += 5
+            elif interval == Task.INTERVAL_HOUR:
+                y = datetime(int(item[offset + 0]), int(item[offset + 1]), int(item[offset + 2]), hour = int(item[offset + 3]))
+                offset += 4
+            elif interval == Task.INTERVAL_DAY:
+                y = datetime(int(item[offset + 0]), int(item[offset + 1]), int(item[offset + 2]))
+                offset += 3
+            elif interval == Task.INTERVAL_WEEK:
+                y = time.strptime('{} {} 1'.format(item[offset + 0], item[offset + 1]), '%Y %W %w')
+                print time.asctime(y)
+                y = datetime.fromtimestamp(time.mktime(y))
+                print y
+                offset += 2
 
 
             # следующее поле - индекс

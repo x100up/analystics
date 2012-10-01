@@ -53,8 +53,8 @@ class ResultAction(BaseController):
         try:
             data = service.getResults()
             # chart data
-            chartService = ChartConstructor(data, nameService)
+            chartService = ChartConstructor(data, nameService, task)
         except IOError as ioerr:
             self.render('dashboard/result.jinja2', {'errors': [u'Ошибка чтения результатов выполнения работы'], 'app': app})
         else:
-            self.render('dashboard/result.jinja2', {'js_vars': json.dumps(chartService.getResult()), 'app': app, 'data':data, 'nameService':nameService})
+            self.render('dashboard/result.jinja2', {'js_vars': {'chartdata': json.dumps(chartService.getResult())}, 'app': app, 'data':data, 'nameService':nameService})

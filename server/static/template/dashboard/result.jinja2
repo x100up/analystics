@@ -1,11 +1,6 @@
 {% extends 'layout/main.jinja2' %}
 {% block head %}
 <script type="text/javascript" src="/static/libs/highcharts/highcharts.js" ></script>
-{% if js_vars %}
-<script type="text/javascript">
-    var chartdata = {{ js_vars }};
-</script>
-{% endif %}
 <script type="text/javascript" src="/static/js/result.js" ></script>
 {% endblock %}
 

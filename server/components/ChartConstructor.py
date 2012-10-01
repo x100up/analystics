@@ -4,9 +4,10 @@ class ChartConstructor():
     '''
     Подготавливает данные для построеня графика
     '''
-    def __init__(self, data, nameService):
+    def __init__(self, data, nameService, task):
         self.data = data
         self.nameService = nameService
+        self.task = task
         self.prepareData()
 
     def prepareData(self):
@@ -22,8 +23,11 @@ class ChartConstructor():
                 #for tagName, tagValue in seriesData['params'].items():
                 #    tagValues.append(self.nameService.getParamNameValue(tagName, tagValue))
 
+                seriesData['opt'] =  {
+                    'tagValues' : ', '.join(tagValues),
+                    'interval': self.task.interval
+                }
 
-                seriesData['tagValues'] = ', '.join(tagValues)
 
 
 

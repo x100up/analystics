@@ -27,7 +27,7 @@
     <div class="grid_7">
         <input type="hidden" id="group_interval"  value="{{ task.interval }}" name="group_interval">
             <ul id="interval_selector">
-                {% for key, value in task.intervals.items() %}
+                {% for key, value in task.intervals %}
                 <li data-value="{{ key }}" class="{% if loop.first %}first{% endif %}{% if loop.last %} last{% endif %}{% if task.interval == key %} selected{% endif %}" onclick="switchInterval(this)" >{{ value }}</li>
                 {% endfor %}
             </ul>

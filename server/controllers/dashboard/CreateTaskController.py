@@ -24,10 +24,12 @@ class CreateAction(BaseController):
             worker = dbSession.query(Worker).filter_by(workerId = baseTask).first()
             workerService = WorkerService(self.application.getResultPath(), worker)
             task = workerService.getTask()
+            keys_loaded = len(task.items)
         else:
             taskItem = TaskItem(index = 1)
             task = Task(appname = app.code)
             task.addTaskItem(taskItem)
+            keys_loaded = 0
 
         keys = set()
         for index, taskItem in task.items.items():
@@ -40,7 +42,7 @@ class CreateAction(BaseController):
             key_configs = appService.getKeyConfigs(app.code, keys)
 
 
-        self.render('dashboard/new.jinja2', {'task':task, 'app':app, 'key_configs':key_configs})
+        self.render('dashboard/new.jinja2', {'task':task, 'app':app, 'key_configs':key_configs, 'js_vars': {'keys_loaded':keys_loaded}})
 
     def post(self, *args, **kwargs):
         app = self.checkAppAccess(args)

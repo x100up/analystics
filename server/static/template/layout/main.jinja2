@@ -8,6 +8,13 @@
     <link href="{{ static_url_prefix }}/css/style.css" rel="stylesheet" type="text/css">
     <link rel="icon" type="image/png" href="{{ static_url_prefix }}/img/favicon.png" />
     <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery-1.8.0.min.js"></script>
+    {% if js_vars %}
+        <script type="text/javascript">
+            {% for key in js_vars %}
+            var {{ key }} = {{ js_vars[key] }};
+            {% endfor %}
+        </script>
+    {% endif %}
     {% block head %}{% endblock %}
 </head>
 <body>

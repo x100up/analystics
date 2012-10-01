@@ -10,13 +10,13 @@ class Task(object):
     INTERVAL_DAY = 'day'
     INTERVAL_WEEK = 'week'
 
-    intervals = {
-        INTERVAL_MINUTE: u'1 минута',
-        INTERVAL_10_MINUTE: u'10 минут',
-        INTERVAL_HOUR: u'час',
-        INTERVAL_DAY: u'день',
-        INTERVAL_WEEK: u'неделя'
-    }
+    intervals = (
+        (INTERVAL_MINUTE, u'1 минута'),
+        (INTERVAL_10_MINUTE, u'10 минут'),
+        (INTERVAL_HOUR, u'час'),
+        (INTERVAL_DAY, u'день'),
+        (INTERVAL_WEEK, u'неделя')
+    )
 
     def __init__(self, *args, **kwargs):
         self.items = {}

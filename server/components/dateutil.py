@@ -36,6 +36,8 @@ def minuteCountName(count):
         return u'минут'
 
 def secondCountName(count):
+    return u'сек'
+    '''
     count = int(str(count)[-1:])
     if count == 1:
         return u'секунда'
@@ -43,3 +45,4 @@ def secondCountName(count):
         return u'секунды'
     else:
         return u'секунд'
+            '''
