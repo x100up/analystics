@@ -1,7 +1,7 @@
 # coding=utf-8
 from AdminIndexController import AdminAction
 from services.AppService import AppService
-
+from components.AnalyticsException import AnalyticsException
 class TagEditAction(AdminAction):
     def prepare(self):
         self.errors = []
@@ -43,13 +43,16 @@ class TagEditAction(AdminAction):
 
 
     def showTags(self, app_code):
-        tags = self.appService.getTagList(app_code)
-        settings = self.appService.getTagSettings(app_code)
         data = {}
-        for tag in tags:
-            data[tag] = {}
+        try:
+            tags = self.appService.getTagList(app_code)
+            settings = self.appService.getTagSettings(app_code)
+            for tag in tags:
+                data[tag] = {}
             if settings.has_key(tag):
                 data[tag] = settings[tag]
+        except AnalyticsException as analyticsException:
+            self.errors.append(analyticsException.message)
 
         self.run({'tags': data})
 
