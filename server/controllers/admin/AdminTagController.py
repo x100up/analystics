@@ -2,6 +2,7 @@
 from AdminIndexController import AdminAction
 from services.AppService import AppService
 from components.AnalyticsException import AnalyticsException
+from pprint import pprint
 class TagEditAction(AdminAction):
     def prepare(self):
         self.errors = []
@@ -49,8 +50,8 @@ class TagEditAction(AdminAction):
             settings = self.appService.getTagSettings(app_code)
             for tag in tags:
                 data[tag] = {}
-            if settings.has_key(tag):
-                data[tag] = settings[tag]
+                if settings.has_key(tag):
+                    data[tag] = settings[tag]
         except AnalyticsException as analyticsException:
             self.errors.append(analyticsException.message)
 

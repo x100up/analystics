@@ -43,9 +43,8 @@ class AppService():
             return list of tags
         '''
         config = self.getAppConfig(appName)
-        pprint(config)
-        if config.has_key('tagSettings'):
-            return config['tagSettings']
+        if config.has_key(u'tagSettings'):
+            return config[u'tagSettings']
         return []
 
     def saveTagSettings(self, appName, settings):
