@@ -1,8 +1,8 @@
 import httplib
 import urlparse
 import json
-
 import logging
+
 logging.basicConfig(level=logging.ERROR, datefmt='%m/%d/%Y %I:%M:%S %p',
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(name='webhdfs')
@@ -10,15 +10,6 @@ logger = logging.getLogger(name='webhdfs')
 WEBHDFS_CONTEXT_ROOT="/webhdfs/v1"
 
 class WebHDFS(object):
-    """ Class for accessing HDFS via WebHDFS
-To enable WebHDFS in your Hadoop Installation add the following configuration
-to your hdfs_site.xml (requires Hadoop >0.20.205.0):
-<property>
-<name>dfs.webhdfs.enabled</name>
-<value>true</value>
-</property>
-see: https://issues.apache.org/jira/secure/attachment/12500090/WebHdfsAPI20111020.pdf
-"""
 
     def __init__(self, namenode_host, namenode_port, hdfs_username):
         self.namenode_host=namenode_host
@@ -26,7 +17,7 @@ see: https://issues.apache.org/jira/secure/attachment/12500090/WebHdfsAPI2011102
         self.username = hdfs_username
 
     def debug(self, message):
-        print message
+        print '     --hdfs-->' + message
 
 
     def mkdir(self, path):
@@ -118,7 +109,7 @@ see: https://issues.apache.org/jira/secure/attachment/12500090/WebHdfsAPI2011102
 
 
     def listdir(self, path):
-        url_path = WEBHDFS_CONTEXT_ROOT +path+'?op=LISTSTATUS&user.name='+self.username
+        url_path = WEBHDFS_CONTEXT_ROOT + path + '?op=LISTSTATUS&user.name=' + self.username
         self.debug("List directory: " + url_path)
         httpClient = self.__getNameNodeHTTPClient()
         httpClient.request('GET', url_path , headers={})
@@ -126,9 +117,11 @@ see: https://issues.apache.org/jira/secure/attachment/12500090/WebHdfsAPI2011102
         self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
         data_dict = json.loads(response.read())
         self.debug("Data: " + str(data_dict))
-        files=[]
+        files = []
+
         if data_dict.has_key('RemoteException'):
-            raise Exception(data_dict['RemoteException']['message'])
+            raise WebHDFSException(data_dict['RemoteException']['message'], data_dict['RemoteException']['exception'])
+
         for i in data_dict["FileStatuses"]["FileStatus"]:
             self.debug(i["type"] + ": " + i["pathSuffix"])
             files.append(i["pathSuffix"])
@@ -159,3 +152,12 @@ see: https://issues.apache.org/jira/secure/attachment/12500090/WebHdfsAPI2011102
             self.namenode_port,
             timeout=600)
         return httpClient
+
+class WebHDFSException(BaseException):
+
+    FileNotFoundException = 'FileNotFoundException'
+
+    def __init__(self, message, name):
+        super(WebHDFSException, self).__init__()
+        self.message = message
+        self.name = name
