@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json, os, re
+from components.AnalyticsException import AnalyticsException
 
 class AppService():
     nameR = re.compile('^(.*)\.json$')
@@ -20,7 +21,11 @@ class AppService():
         return app config dict
         '''
         if not self.appConfCache.has_key(appCode):
-            self.appConfCache[appCode] = json.load(open(self.folder + '/' + appCode + '.json', 'r'))
+            try:
+                f = open(self.folder + '/' + appCode + '.json', 'r')
+                self.appConfCache[appCode] = json.load(f)
+            except ValueError as valueError:
+                raise AnalyticsException(u'Ошибка при чтении конфигурации приложения {}'.format(self.folder + '/' + appCode + '.json'), valueError)
         return self.appConfCache[appCode]
 
     def getTagList(self, appName):
