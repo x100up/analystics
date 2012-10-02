@@ -121,7 +121,7 @@ class FinalInstallAction(InstallController):
         # перезагружаем конфигурацию приложения
         self.application.loadConfiguration()
 
-        self.invalidateDBSessions()
+        self.removeDBSessions()
         # миграция БД
         password = None
         try:

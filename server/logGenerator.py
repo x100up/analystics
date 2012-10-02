@@ -2,14 +2,31 @@
 from services.AppService import AppService
 from datetime import datetime, timedelta
 import random
-import sys
+from optparse import OptionParser
 import inspect
 import os
-app = 'topface'
 
-thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
+rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
 
-appService = AppService(thisPath + '/../app_configs')
+optParser = OptionParser()
+optParser.add_option("-a", "--app", dest="appname", help="application name")
+optParser.add_option("-c", "--count", dest="rows count", help="count of log rows to generate")
+
+(options, args) = optParser.parse_args()
+options = options.__dict__
+
+appService = AppService(rootPath + '/../app_configs/')
+
+
+if options['appname'] is None:
+    availale_apps = appService.getAppConfigList()
+    print 'App name is not set'
+    print 'Availale app names: ' + str(availale_apps)
+    exit()
+
+app = options['appname']
+
+print 'Generate for ' + app
 
 config = appService.getAppConfig(app)
 
@@ -49,15 +66,16 @@ def getTagValue(tag):
 et = datetime.now()
 
 
-for __day in range(0, 100):
+for __day in range(0, 500):
     et = et - timedelta(days = 1)
     date = et.date()
     time = et.time()
     et = et - timedelta(hours = time.hour, minutes = time.minute, seconds = time.second)
 
     logs = []
-
-    for i in range(300):
+    count = random.randint(200, 400)
+    print count
+    for i in range(count):
         params = {}
         key = random.choice(keys.keys())
         for tag in keys[key]['mustHaveTags']:
@@ -73,10 +91,9 @@ for __day in range(0, 100):
         userId = 0
         logstring = ','.join([tag_to_string(params), str(userId),dt.strftime('%Y-%m-%d %H:%M:%S'), str(time.hour), str(time.minute), str(time.second), str(date.year), str(date.month), str(date.day)])
 
-        print logstring
         logs.append(logstring)
 
-    folder = thisPath + '/testData/' + str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '/'
+    folder = rootPath + '/testData/' + str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '/'
     if not os.path.exists(folder):
         os.makedirs(folder)
     f = open(folder + 'data.txt', 'w')

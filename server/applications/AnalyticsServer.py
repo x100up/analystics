@@ -16,7 +16,7 @@ from controllers.cluster import NameNodeController
 from controllers.install import InstallController
 from jinja2 import Environment, PackageLoader
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from datetime import datetime
 
 class AnalyticsServer(tornado.web.Application):
@@ -65,12 +65,12 @@ class AnalyticsServer(tornado.web.Application):
         self.jinjaEnvironment.filters['datetofiled'] = datetofiled
         self.jinjaEnvironment.filters['smartDatePeriod'] = smartDatePeriod
         self.jinjaEnvironment.filters['smartDateInterval'] = smartDateInterval
-        self.dbSessionMaker = None
+        self.scoped_session = None
         if self.isInstalled:
-            self.getSessionMaker()
+            self.initDBScopedSession()
 
-    def getSessionMaker(self):
-        if not self.dbSessionMaker:
+    def initDBScopedSession(self):
+        if not self.scoped_session:
             mysql_user = self.config.get(Config.MYSQL_USER)
             mysql_password = self.config.get(Config.MYSQL_PASSWORD)
             mysql_host = self.config.get(Config.MYSQL_HOST)
@@ -84,12 +84,12 @@ class AnalyticsServer(tornado.web.Application):
                 conn_str += '@'
             conn_str += mysql_host + '/' + mysql_dbname
 
-            engine = create_engine(conn_str + '?init_command=set%20names%20%22utf8%22', encoding = 'utf8', convert_unicode = True)
+            engine = create_engine(conn_str + '?init_command=set%20names%20%22utf8%22',
+                                   encoding = 'utf8',
+                                   convert_unicode = True,
+                                   pool_recycle = 3600)
             engine.execute('SET NAMES utf8')
-            self.dbSessionMaker = sessionmaker(bind = engine, autoflush = False)
-
-        return self.dbSessionMaker
-
+            self.scoped_session = scoped_session(sessionmaker(bind = engine, autoflush = False))
 
 
     def start(self):

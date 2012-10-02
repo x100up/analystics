@@ -13,8 +13,12 @@ class BaseController(tornado.web.RequestHandler):
 
     def getDBSession(self):
         if not self.dbSession:
-            self.dbSession = self.application.getSessionMaker()()
+            self.dbSession = self.application.scoped_session()
         return self.dbSession
+
+    def removeDBSessions(self):
+        if self.dbSession:
+            self.dbSession.close()
 
     def get_current_user(self):
         login = self.get_secure_cookie('user.login')
@@ -26,9 +30,6 @@ class BaseController(tornado.web.RequestHandler):
 
         return None
 
-    def invalidateDBSessions(self):
-        if self.dbSession:
-            self.dbSession.close()
 
     def getConfigValue(self, key):
         '''
@@ -77,9 +78,7 @@ class BaseController(tornado.web.RequestHandler):
             self.redirect('/install/')
 
     def on_finish(self):
-        if self.dbSession:
-            self.dbSession.close()
-
+        self.removeDBSessions()
         super(BaseController, self).on_finish()
 
 
