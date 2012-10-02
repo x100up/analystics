@@ -66,7 +66,7 @@ class CreateAction(BaseController):
         constructor = HiveQueryConstructor(task)
         query = constructor.getHiveQuery(worker.workerId)
         task.stageCount = constructor.getStageCount()
-
+        print(query)
         # создаем WorkerService - он будет связывать тред с файловой системой
         workerService = WorkerService(self.application.getResultPath(), worker)
         workerService.setQuery(query)

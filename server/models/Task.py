@@ -48,12 +48,6 @@ class Task(object):
             'items': si,
         }
 
-    def unserialize(self, data):
-        self.appname = data['appname']
-        self.interval = data['interval']
-        for item in data['items']:
-            self.addTaskItem(TaskItem.unserialize(item))
-
     def getFields(self, index):
         if self.items.has_key(index):
             return self.items[index].getFields()
