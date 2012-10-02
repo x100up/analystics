@@ -35,10 +35,10 @@ PARTITION (year=%(year)i, month=%(month)i, day=%(day)i) location '%(path)s'
 
 optParser = OptionParser()
 optParser.add_option("-a", "--app", dest="appname", help="application name")
+optParser.add_option("-x", "--all", dest="all_apps", help="all applications", action="store_true")
 
 (options, args) = optParser.parse_args()
 options = options.__dict__
-
 appService = AppService(rootPath + '/../app_configs/')
 availale_apps = appService.getAppConfigList()
 
@@ -48,19 +48,23 @@ availale_apps = appService.getAppConfigList()
 # - удалить папки в hdfs, для которых нет ключей
 
 
-if options['appname'] is None:
+if options['appname'] is None and options['all_apps'] is None:
     print 'App name is not set'
     print 'Availale app names: ' + str(availale_apps)
     exit()
 
-appname = options['appname']
 
-if appname not in availale_apps:
-    print 'App name `{}` not available '.format(appname)
-    print 'Availale app names: ' + str(availale_apps)
-    exit()
 
 # import app settings
+if options['all_apps']:
+    appnames = availale_apps
+else:
+    appname = options['appname']
+    if appname not in availale_apps:
+        print 'App name `{}` not available '.format(appname)
+        print 'Availale app names: ' + str(availale_apps)
+        exit()
+    appnames = [appname]
 
 
 class AnalyticsMonitor():
@@ -179,4 +183,5 @@ class AnalyticsMonitor():
 hiveclient = HiveService(config.get('hive_host'), config.get('hive_port'))
 monitor = AnalyticsMonitor(appService, hiveclient)
 monitor.TABLE_PREFIX = TABLE_PREFIX
-monitor.processApp(appname)
+for appname in appnames:
+    monitor.processApp(appname)
