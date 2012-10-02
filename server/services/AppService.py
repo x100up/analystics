@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import json, os, re
+from pprint import pprint
 from components.AnalyticsException import AnalyticsException
 
 class AppService():
@@ -42,6 +43,7 @@ class AppService():
             return list of tags
         '''
         config = self.getAppConfig(appName)
+        pprint(config)
         if config.has_key('tagSettings'):
             return config['tagSettings']
         return []
