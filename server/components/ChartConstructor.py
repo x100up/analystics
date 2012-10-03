@@ -18,6 +18,8 @@ class ChartConstructor():
                 seriesData = taskItemData[seriesIndex]
                 # генерирует имя серии данных
                 seriesData['name'] = self.nameService.getKeyNameByIndex(taskItemIndex, seriesData['params'])
+                # генерирует имя таблицы
+                seriesData['table_name'] = self.nameService.getTableName(taskItemIndex, seriesData['params'])
 
                 tagValues = []
                 #for tagName, tagValue in seriesData['params'].items():

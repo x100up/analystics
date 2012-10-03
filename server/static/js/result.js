@@ -1,4 +1,4 @@
-var shortMonths = ['янв', 'фев', 'март', 'апр', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт'];
+var shortMonths = ['янв', 'фев', 'март', 'апр', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт' ,'ноя', 'дек'];
 
 Highcharts.setOptions({
     lang: {
@@ -111,9 +111,9 @@ function drawAreaChart(chartconf){
                 lineColor: '#666666',
                 lineWidth: 2,
                 marker: {
-                lineWidth: 1,
+                    lineWidth: 1,
                     lineColor: '#666666'
-            }
+                }
         }
     };
 

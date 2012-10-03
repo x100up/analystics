@@ -70,7 +70,7 @@
         <input type="hidden" name="tag_{{ taskItem.index }}_{{ name }}_ops" id="tag_{{ taskItem.index }}_{{ name }}_ops" value="{{ operations|join('/') }}">
         <span class="group{% if 'group' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'group', this)">group</span>
         {% if data.type == 'int' %}
-        <span class="sum{% if 'sum' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'sum', this)">sum</span>
-        <span class="avg{% if 'avg' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'avg', this)">avg</span>
+        <span class="sum{% if 'sum' in operations %} selected{% endif %}" id="sum_{{ taskItem.index }}_{{ name }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'sum', this)">sum</span>
+        <span class="avg{% if 'avg' in operations %} selected{% endif %}" id="avg_{{ taskItem.index }}_{{ name }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'avg', this)">avg</span>
         {% endif %}
     </div>

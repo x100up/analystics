@@ -50,13 +50,15 @@
 
         {% if pageCount > 1 %}
                 Страница:
+                <ul class="paging">
                 {% for p in range(1, pageCount + 1) %}
                     {% if currentPage == p %}
-                        <span> {{ p }} </span>
+                        <li>{{ p }}</li>
                     {% else %}
-                        <a href="?page={{ p }}"> {{ p }} </a>
+                        <li><a href="?page={{ p }}">{{ p }}</a></li>
                     {% endif %}
                 {% endfor %}
+                </ul>
         {% endif %}
     </form>
 

@@ -25,19 +25,62 @@ class NameConstructor(object):
             if self.appConfig['keys'].has_key(key) and self.appConfig['keys'][key].has_key('name'):
                 key_name = self.appConfig['keys'][key]['name'] + key_name
 
-            if params.has_key('tag'):
-                tag_key = params['tag']
-                if tagSettings.has_key(tag_key) and tagSettings[tag_key].has_key('name'):
-                    tag_name = tagSettings[tag_key]['name']
+            operation = ''
+            print params
+            for param in params:
+                print param
+                if param['op'] == 'group':
+                    tag_key = param['tag']
+                    if tagSettings.has_key(tag_key) and tagSettings[tag_key].has_key('name'):
+                        tag_name = tagSettings[tag_key]['name']
+                        operation += tag_name + '=' + str(param['value'])
 
-            if params.has_key('op'):
-                if params['op'] == 'avg':
-                    operation = u'среднее'
-                elif params['op'] == 'sum':
-                    operation = u'сумма'
+                else:
+                    if param['op'] == 'avg':
+                        operation += u'/среднее'
+                    elif param['op'] == 'sum':
+                        operation += u'/сумма'
+                    elif param['op'] == 'count':
+                        operation += u'/кол-во'
 
 
-            return tag_name  + '(' + key_name + ')' + operation
+            return  key_name + operation
+
+        return 'not name for task item: ' + str(index)
+
+    def getTableName(self, index, params):
+        '''
+        return key name by taskItem index
+        '''
+
+        tagSettings = self.appConfig['tagSettings']
+
+        taskItem = self.task.getTaskItem(index)
+        if taskItem:
+            tag_name = u'Количество'
+            operation = ''
+            key = taskItem.key
+            key_name = key
+            if self.appConfig['keys'].has_key(key) and self.appConfig['keys'][key].has_key('name'):
+                key_name = self.appConfig['keys'][key]['name']
+
+            operation = ''
+            for param in params:
+                if param['op'] == 'group':
+                    tag_key = param['tag']
+                    if tagSettings.has_key(tag_key) and tagSettings[tag_key].has_key('name'):
+                        tag_name = tagSettings[tag_key]['name']
+                        operation += ' ' + tag_name + '=' + self.getParamNameValue(tag_key, param['value'])
+                else:
+                    if param['op'] == 'avg':
+                        operation += u'/среднее'
+                    elif param['op'] == 'sum':
+                        operation += u'/сумма'
+                    elif param['op'] == 'count':
+                        operation += u'/кол-во'
+
+
+            return key_name + operation
 
         return 'not name for task item: ' + str(index)
 
@@ -45,33 +88,26 @@ class NameConstructor(object):
         '''
 
         '''
-        tag_name = tagName
         tag_value = value
 
         if tagName in self.appConfig['tags']:
             tagConf = self.appConfig['tagSettings'][tagName]
-            if tagConf.has_key('name'):
-                tag_name = tagConf['name']
 
             type = None
             if tagConf.has_key('type'):
                 type = tagConf['type']
 
-            extra = []
-            if tagConf.has_key('extra'):
-                extra = tagConf['extra']
+                if type == 'choose':
+                    if tagConf.has_key('values') and tagConf['values'].has_key(value):
+                        tag_value = tagConf['values'][value]
 
-            if type == 'choose':
-                if 'keyValues' in extra and tagConf['values'].has_key(value):
-                    tag_value = tagConf['values'][value]
+                elif type == 'boolean':
+                    if bool(value):
+                        tag_value = u'Да'
+                    else:
+                        tag_value = u'Нет'
 
-            elif type == 'boolean':
-                if bool(value):
-                    tag_value = u'Да'
-                else:
-                    tag_value = u'Нет'
-
-        return u'{0} = {1}'.format(tag_name, tag_value)
+        return tag_value
 
     def getSeriaName(self):
         return 'seria name'

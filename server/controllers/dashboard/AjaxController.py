@@ -95,7 +95,6 @@ class GatTasksProgress(AjaxController):
         if diedWorkers:
             db = self.getDBSession()
             workerStates = db.query(Worker.workerId, Worker.status).filter(Worker.workerId.in_(diedWorkers)).all()
-        print workerStates
         self.renderJSON({'workerStates':workerStates})
 
 

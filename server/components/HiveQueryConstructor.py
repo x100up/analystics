@@ -22,13 +22,22 @@ class HiveQueryConstructor():
         dateFields = self.getDateFields(self.task.interval)
         queries = []
         isMulty = len(self.task.items) > 1
+
+        # узнаем количество полей в выдаче для того, чтоыб дополнить запросы до одинакового количества
+        fieldCount = self.task.getFieldsCount()
+        print fieldCount
         for index, taskItem in self.task.items.items():
             # создаем интервалы - нужны для партицирования
             query = 'SELECT '
             if not isMulty:
                 query += '\'' + str(workerId) + '\' as `wid`,'
 
-            query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.getFields())\
+            # дополняем поля до нужного количества иначе будет FAILED: Error in semantic analysis: Schema of both sides of union should match.
+            taskFields = taskItem.getFields()
+            taskFields += ['""']*(fieldCount - len(taskFields))
+            print taskFields
+
+            query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskFields)\
                      + ' FROM %(appname)s.stat_%(keyname)s '%{'appname': self.task.appname, 'keyname': taskItem.key}
 
             # временная составляющая
@@ -45,7 +54,9 @@ class HiveQueryConstructor():
         if not isMulty:
             return queries.pop()
 
-        return 'SELECT \'' + str(workerId) + '\' as `wid`, * FROM (' + ' UNION ALL ' .join(queries) +') FINAL'
+        query = 'SELECT \'' + str(workerId) + '\' as `wid`, * FROM (' + ' UNION ALL ' .join(queries) +') FINAL'
+        print query
+        return query
 
     def getStageCount(self):
         count = len(self.task.items)
@@ -221,7 +232,7 @@ class HiveQueryConstructor():
         for field in fields:
             if isinstance(field, tuple):
                 fieldExp, fieldName = field
+                sql.append('%(fieldExp)s AS `%(fieldName)s`'%{'fieldExp':fieldExp, 'fieldName':fieldName})
             else:
-                fieldExp = fieldName = field
-            sql.append('%(fieldExp)s AS `%(fieldName)s`'%{'fieldExp':fieldExp, 'fieldName':fieldName})
+                sql.append('%(fieldExp)s'%{'fieldExp':field})
         return ', '.join(sql)

@@ -30,3 +30,8 @@ td.DIED {
 tr.success_recently td {
     background-color: #F2F9DD
 }
+
+ul.paging li {
+    display: inline;
+    padding-right: 4px;
+}

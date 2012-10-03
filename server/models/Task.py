@@ -37,20 +37,16 @@ class Task(object):
         if self.items.has_key(index):
             return self.items[index]
 
-    def serialize(self):
-        si = []
-        for index, item in self.items.items():
-            si.append(item.serialize())
-
-        return {
-            'appname': self.appname,
-            'interval': self.interval,
-            'items': si,
-        }
 
     def getFields(self, index):
         if self.items.has_key(index):
             return self.items[index].getFields()
+
+    def getFieldsCount(self):
+        '''
+        Возвращает количество полей для всего таска, которое равно макс кол-ву полей taskItem
+        '''
+        return max([len(self.items[i].getFields()) for i in self.items])
 
 
 
@@ -99,28 +95,29 @@ class TaskItem():
         fields = []
         for tag, operations in self.operations.items():
             if 'sum' in operations:
-                fields.append( ('SUM(params[\'{0}\'])'.format(tag), 'params_sum_{0}'.format(tag)) )
+                fields.append('SUM(params[\'{0}\'])'.format(tag))
 
             if 'avg' in operations:
-                fields.append( ('AVG(params[\'{0}\'])'.format(tag), 'params_avg_{0}'.format(tag)) )
+                fields.append('AVG(params[\'{0}\'])'.format(tag))
+
+            if 'group' in operations:
+                fields.append('params[\'{0}\']'.format(tag))
 
         return self.fields + fields
 
-    def serialize(self):
-        return {
-            'index': self.index,
-            'start': time.mktime(self.start.timetuple()),
-            'end': time.mktime(self.end.timetuple()),
-            'key': self.key,
-            'conditions': self.conditions
-        }
+    def getExtraFields(self):
+        '''
 
-    @classmethod
-    def unserialize(cls, data):
-        item = TaskItem()
-        item.start = datetime.fromtimestamp(data['start'])
-        item.end = datetime.fromtimestamp(data['end'])
-        item.key = data['key']
-        item.conditions = data['conditions']
-        item.index = data['index']
-        return item
+        '''
+        fields = []
+        for tag, operations in self.operations.items():
+            if 'sum' in operations:
+                fields.append(('sum', tag))
+
+            if 'avg' in operations:
+                fields.append(('avg', tag))
+
+            if 'group' in operations:
+                fields.append(('group', tag))
+
+        return fields

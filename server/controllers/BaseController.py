@@ -1,11 +1,9 @@
-from jinja2 import Template, Environment, PackageLoader
-
-import tornado.web, json
-
+# coding=utf-8
+from jinja2 import Environment, PackageLoader
 from models.User import User
 from models.App import  App
-
 from services.RuleService import RuleService
+import tornado.web, json
 
 
 class BaseController(tornado.web.RequestHandler):
@@ -46,6 +44,8 @@ class BaseController(tornado.web.RequestHandler):
         if u:
             dict['__user__'] = {'name': u.fullname, 'isAdmin': u.role == User.ROLE_ADMIN}
 
+        dict['title'] = self.title
+
         self.write(self.application.jinjaEnvironment.get_template(template_name).render(**dict))
 
     def checkAppAccess(self, args):
@@ -74,6 +74,7 @@ class BaseController(tornado.web.RequestHandler):
         return app
 
     def prepare(self):
+        self.title = u'Аналитика'
         if not self.application.isInstalled:
             self.redirect('/install/')
 

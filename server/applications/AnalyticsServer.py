@@ -65,6 +65,7 @@ class AnalyticsServer(tornado.web.Application):
         self.jinjaEnvironment.filters['datetofiled'] = datetofiled
         self.jinjaEnvironment.filters['smartDatePeriod'] = smartDatePeriod
         self.jinjaEnvironment.filters['smartDateInterval'] = smartDateInterval
+        self.jinjaEnvironment.filters['smartDate'] = smartDate
         self.scoped_session = None
         if self.isInstalled:
             self.initDBScopedSession()

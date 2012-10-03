@@ -234,21 +234,31 @@ function switchInterval(li_object){
  * @param index - key index
  * @param tag - tag name
  * @param operation - operation (sum, group, avg)
+ * ! пока нельзя выбрать сумму и среднее одновременно
  */
-function switchKeyOp(index, tag, operation, html_hode) {
+function switchKeyOp(index, tag, operation, html_node) {
     var input = $('#tag_' + index + '_' + tag + '_ops');
     var val = input.val();
-    var operations = []
+    var operations = [];
     if (val) {
         operations = val.split('/');
     }
     var op_index = jQuery.inArray(operation, operations);
     if (op_index != -1) {
+        // уже есть
         operations.splice(op_index, 1);
-        $(html_hode).removeClass('selected');
+        $(html_node).removeClass('selected');
     } else {
+        // убираем
+        if (operation == 'sum' || operation == 'avg') {
+            var remove = operation == 'sum' ? 'avg' : 'sum';
+            var op_index_r = jQuery.inArray(remove, operations);
+            if (op_index_r != -1) { operations.splice(op_index_r, 1); }
+            $('#' + remove + '_' + index + '_' + tag).removeClass('selected');
+        }
+        // ----------------
         operations.push(operation);
-        $(html_hode).addClass('selected');
+        $(html_node).addClass('selected');
     }
 
     input.val(operations.join('/'))

@@ -43,10 +43,10 @@ class HiveWorker(threading.Thread):
             data = {'exception' : {'HiveServerException': tx.message }}
             status = Worker.STATUS_ERROR
             self.logger.error(tx.message)
-        except Exception as tx:
-            data = {'exception' : {'Exception': tx.message }}
-            status = Worker.STATUS_ERROR
-            self.logger.error(tx.message)
+        #except Exception as tx:
+        #    data = {'exception' : {'Exception': tx.message }}
+        #    status = Worker.STATUS_ERROR
+        #    self.logger.error(tx.message)
         finally:
             if hiveClient:
                 hiveClient.close()
@@ -83,9 +83,7 @@ class HiveWorker(threading.Thread):
                 offset += 3
             elif interval == Task.INTERVAL_WEEK:
                 y = time.strptime('{} {} 1'.format(item[offset + 0], item[offset + 1]), '%Y %W %w')
-                print time.asctime(y)
                 y = datetime.fromtimestamp(time.mktime(y))
-                print y
                 offset += 2
 
 
@@ -94,10 +92,6 @@ class HiveWorker(threading.Thread):
 
             # следующее поле количество
             count = int(item[1 + offset])
-
-            # получем спсок полей
-            fields = self.task.getFields(index)
-            print 'data fields for ' + str(index) + ' : ' + str(fields)
 
             # формируем основу данных
             if not newdata.has_key(index):
@@ -108,24 +102,47 @@ class HiveWorker(threading.Thread):
 
             # если не выбирали друге поля, то данные равны количеству
             if not newdata[index].has_key(series_index):
-                newdata[index][series_index] = {'data':[],'params': {'op':'count'}}
+                newdata[index][series_index] = {'data':[],'params': [{'op':'count'}]}
 
             newdata[index][series_index]['data'].append([int(y.strftime("%s000")), count])
 
-            # дополнительные поля
-            if len(fields) > 2:
-                i = 2
-                for expression, val_name in fields[i:]:
-                    p_val = float(item[i + offset])
-                    series_index =  val_name
-                    _tmp, operation, tag = val_name.split('_', 2)
+            # если есть не только номер серии и количество,
+            # но и другие поля
 
-                    i += 1
-                    if not newdata[index].has_key(series_index):
-                        newdata[index][series_index] = {'data':[],'params': {'op':operation,'tag':tag}}
-                    newdata[index][series_index]['data'].append([int(y.strftime("%s000")), p_val])
+            taskItem = self.task.getTaskItem(index)
+            extraFields = taskItem.getExtraFields()
+            offset += 2
+            series_index = ''
+            print '---------------------------------'
+            print item
+            print extraFields
+            params = []
+            value = count
+            for operation, tag in extraFields:
 
-        # сортировка по дате
+                if operation == 'group':
+                    # группировка - значение по умолчанию count
+                    series_index += tag + '=' + item[offset]
+                    params.append({'op': operation, 'tag': tag, 'value':item[offset]})
+                else:
+                    # sum или avg
+                    # если выбраны обе операции, то это два разных значения в одной строке
+                    # и пока нихера не будет работать
+                    value = float(item[offset])
+                    series_index = operation + '::' + tag
+                    params.append({'op': operation, 'tag': tag})
+                offset += 1
+
+            print params
+
+            if not newdata[index].has_key(series_index):
+                newdata[index][series_index] = {'data': [], 'params': params}
+
+            newdata[index][series_index]['data'].append([int(y.strftime("%s000")), value])
+
+
+
+    # сортировка по дате
         for index in newdata:
             for series_index in newdata[index]:
                 newdata[index][series_index]['data'] = sorted(newdata[index][series_index]['data'])
