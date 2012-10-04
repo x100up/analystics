@@ -34,7 +34,7 @@ $(function(){
 
             for (var i in seriesData['data']) {
                 var row = seriesData['data'][i];
-                xdata.push([row[0], parseFloat(row[1])])
+                xdata.push([i, row])
             }
             series.push({
                 name: seriesData.name,

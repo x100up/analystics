@@ -52,11 +52,10 @@ class HiveQueryConstructor():
             queries.append(query)
 
         if not isMulty:
-            return queries.pop()
+            return queries.pop().encode('utf-8')
 
         query = 'SELECT \'' + str(workerId) + '\' as `wid`, * FROM (' + ' UNION ALL ' .join(queries) +') FINAL'
-        print query
-        return query
+        return query.encode('utf-8')
 
     def getStageCount(self):
         count = len(self.task.items)

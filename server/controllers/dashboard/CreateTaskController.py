@@ -65,6 +65,7 @@ class CreateAction(BaseController):
         # конструирем запрос
         constructor = HiveQueryConstructor(task)
         query = constructor.getHiveQuery(worker.workerId)
+
         task.stageCount = constructor.getStageCount()
         # создаем WorkerService - он будет связывать тред с файловой системой
         workerService = WorkerService(self.application.getResultPath(), worker)
@@ -83,6 +84,7 @@ class CreateAction(BaseController):
         workerThread.port = int(self.getConfigValue('hive_port'))
         workerThread.setName('worker-' + str(worker.workerId))
         workerThread.setTask(task)
+
         workerThread.start()
 
         self.redirect('/dashboard/app/' + app.code + '/')

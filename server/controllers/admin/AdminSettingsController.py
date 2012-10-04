@@ -5,6 +5,7 @@ from AdminIndexController import AdminAction
 class IndexAction(AdminAction):
 
     def prepare(self):
+        super(IndexAction, self).prepare()
         self.config = self.application.config
         self.errors = []
 

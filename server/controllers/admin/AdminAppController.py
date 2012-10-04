@@ -9,6 +9,7 @@ import tornado.web
 class IndexAction(AdminAction):
 
     def prepare(self):
+        super(IndexAction, self).prepare()
         self.adminAuthenticated()
         self.apps = []
 
@@ -49,6 +50,7 @@ class IndexAction(AdminAction):
 class EditAction(AdminAction):
 
     def prepare(self):
+        super(EditAction, self).prepare()
         self.errors = []
         self.app = None
 

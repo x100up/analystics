@@ -26,22 +26,23 @@ class NameConstructor(object):
                 key_name = self.appConfig['keys'][key]['name'] + key_name
 
             operation = ''
+            print '-----------'
             print params
-            for param in params:
-                print param
-                if param['op'] == 'group':
-                    tag_key = param['tag']
+            if params['op'] == 'group':
+                for condition in params['conditions']:
+                    tag_key = condition[0]
+                    value = condition[1]
                     if tagSettings.has_key(tag_key) and tagSettings[tag_key].has_key('name'):
                         tag_name = tagSettings[tag_key]['name']
-                        operation += tag_name + '=' + str(param['value'])
+                        operation += tag_name + '=' + str(value)
 
-                else:
-                    if param['op'] == 'avg':
-                        operation += u'/среднее'
-                    elif param['op'] == 'sum':
-                        operation += u'/сумма'
-                    elif param['op'] == 'count':
-                        operation += u'/кол-во'
+            else:
+                if params['op'] == 'avg':
+                    operation += u'/среднее'
+                elif params['op'] == 'sum':
+                    operation += u'/сумма'
+                elif params['op'] == 'count':
+                    operation += u'/кол-во'
 
 
             return  key_name + operation
@@ -65,19 +66,20 @@ class NameConstructor(object):
                 key_name = self.appConfig['keys'][key]['name']
 
             operation = ''
-            for param in params:
-                if param['op'] == 'group':
-                    tag_key = param['tag']
+            if params['op'] == 'group':
+                for condition in params['conditions']:
+                    tag_key = condition[0]
+                    value = condition[1]
                     if tagSettings.has_key(tag_key) and tagSettings[tag_key].has_key('name'):
                         tag_name = tagSettings[tag_key]['name']
-                        operation += ' ' + tag_name + '=' + self.getParamNameValue(tag_key, param['value'])
-                else:
-                    if param['op'] == 'avg':
-                        operation += u'/среднее'
-                    elif param['op'] == 'sum':
-                        operation += u'/сумма'
-                    elif param['op'] == 'count':
-                        operation += u'/кол-во'
+                        operation += ' ' + tag_name + '=' + self.getParamNameValue(tag_key, value)
+            else:
+                if params['op'] == 'avg':
+                    operation += u'/среднее'
+                elif params['op'] == 'sum':
+                    operation += u'/сумма'
+                elif params['op'] == 'count':
+                    operation += u'/кол-во'
 
 
             return key_name + operation
@@ -98,7 +100,7 @@ class NameConstructor(object):
                 type = tagConf['type']
 
                 if type == 'choose':
-                    if tagConf.has_key('values') and tagConf['values'].has_key(value):
+                    if tagConf.has_key('values') and isinstance(tagConf['values'], dict) and tagConf['values'].has_key(value):
                         tag_value = tagConf['values'][value]
 
                 elif type == 'boolean':

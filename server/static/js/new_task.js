@@ -250,12 +250,13 @@ function switchKeyOp(index, tag, operation, html_node) {
         $(html_node).removeClass('selected');
     } else {
         // убираем
+        /*
         if (operation == 'sum' || operation == 'avg') {
             var remove = operation == 'sum' ? 'avg' : 'sum';
             var op_index_r = jQuery.inArray(remove, operations);
             if (op_index_r != -1) { operations.splice(op_index_r, 1); }
             $('#' + remove + '_' + index + '_' + tag).removeClass('selected');
-        }
+        }*/
         // ----------------
         operations.push(operation);
         $(html_node).addClass('selected');
@@ -351,6 +352,17 @@ function copyKey(index){
                 $('#key_container_' + index).parent().children(':last').after(data);
                 initLoadedKey(new_index);
     });
+}
+
+function resetRadio(radio) {
+    radio = $(radio);
+    if (radio.hasClass('checked')) {
+        radio.removeAttr('checked').removeClass('checked');
+    } else {
+        radio.addClass('checked');
+        var other_id = radio.attr('name') + '_' + (radio.val() == '0' ? '1' : '0');
+        $('#' + other_id).removeClass('checked');
+    }
 }
 
 //----------------------------------------------------

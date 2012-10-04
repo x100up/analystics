@@ -6,7 +6,7 @@
         <tr><th>Дата</th><th>Значение</th></tr>
     </thead>
     <tbody>
-        {% for date, value in data[index][seriaIndex]['data'] %}
+        {% for date, value in data[index][seriaIndex]['data'].items() %}
         <tr>
             <td>
             {{ date|smartDate(data[index][seriaIndex]['opt']['interval']) }}

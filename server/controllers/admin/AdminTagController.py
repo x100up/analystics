@@ -5,6 +5,7 @@ from components.AnalyticsException import AnalyticsException
 from pprint import pprint
 class TagEditAction(AdminAction):
     def prepare(self):
+        super(TagEditAction, self).prepare()
         self.errors = []
         self.appService = AppService(self.application.getAppConfigPath())
 

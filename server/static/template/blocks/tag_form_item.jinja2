@@ -41,15 +41,20 @@
         {% endif %}
 
     {% elif data.type == 'boolean' %}
-        <input type="checkbox" name="tag_{{ taskItem.index }}_{{ name }}" {% if value %} checked="checked" {% endif %}>
+        Да: <input type="radio" name="tag_{{ taskItem.index }}_{{ name }}" id="tag_{{ taskItem.index }}_{{ name }}_1" value="1"
+                {% if value == '1' %}checked="checked" class="checked" {% endif %} onclick="resetRadio(this)">
+        Нет: <input type="radio" name="tag_{{ taskItem.index }}_{{ name }}" id="tag_{{ taskItem.index }}_{{ name }}_0" value="0"
+                {% if value == '2' %}checked="checked" class="checked" {% endif %} onclick="resetRadio(this)">
     {% elif data.type == 'int' %}
        <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" value="{{ value or '' }}">
     {% else %}
        {# default string type #}
         {% if value %}
+
             {% for val in value %}
                 <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" value="{{ val or '' }}" data-index="{{ loop.index0 }}"
-                       onkeydown="tagValueChange('string', this, '{{ name }}', {{ taskItem.index }})" class="tag_{{ name }} i_{{ loop.index0 }}">
+                       onkeydown="tagValueChange('string', this, '{{ name }}', {{ taskItem.index }})"
+                       class="tag_{{ name }} i_{{ loop.index0 }}">
             {% endfor %}
         {% else %}
             <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" value="" data-index="0" class="tag_{{ name }} i_0"

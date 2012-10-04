@@ -27,7 +27,8 @@ def createTaskFromRequestArguments(arguments):
             values = None
             val_index = 'tag_' + index + '_' + tagName
             if arguments.has_key(val_index):
-                values = arguments[val_index]
+                # convert to unicode
+                values = [val.decode('utf-8') for val in arguments[val_index]]
 
             if not values is None:
                 taskItem.addCondition(tagName, values)
