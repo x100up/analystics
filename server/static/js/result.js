@@ -10,22 +10,13 @@ Highcharts.setOptions({
     }
 });
 
+var chart = null;
+var isComapare = false;
 
-$(function(){
-
-    var data = chartdata['data']
-    if (data === undefined) {
-        return;
-    }
-    // разбираем данные серий
-
+function prepareDateSeries() {
     var series = [];
-
-    var multy = Object.size(chartdata['data']) > 1;
-
     for (var index in chartdata['data'])
     {
-
         var seriesGroupData = chartdata['data'][index];
         for (var seriesIndex  in seriesGroupData)
         {
@@ -34,58 +25,129 @@ $(function(){
 
             for (var i in seriesData['data']) {
                 var row = seriesData['data'][i];
-                xdata.push([i, row])
+                xdata.push([row[0], row[1]])
             }
             series.push({
-                name: seriesData.name,
-                data: xdata,
-                opt: seriesData.opt
-            })
+                            name: seriesData.name,
+                            data: xdata,
+                            opt: seriesData.opt
+                        })
         }
     }
+    return series;
+}
 
+var intervalsSeconds = {
+    'minute': 60000,
+    '10minutes': 600000,
+    'hour': 60 * 60000,
+    'day': 60 * 60000 * 24,
+    'week': 60 * 60000 * 24 * 7
+};
 
-        xAxis = {
-            type: 'datetime',
-            showEmpty: false,
-                dateTimeLabelFormats: {
-                month: '%e %b',
-                year: '%b'
-        }};
+/**
+ * Подготавливает данные для сравнения серий
+ * @return {Array}
+ */
+function prepareCompareSeries() {
 
+    var series = [];
+    var delta = intervalsSeconds[interval];
 
-    var chartconf = {
-        chart: {
-            renderTo: 'chart_container',
-            type: 'spline'
-        },
-
-        xAxis: xAxis,
-        yAxis: {
-            min: 0,
-            minTickInterval: 1
-        },
-        tooltip: {
-            formatter: function() {
-                return '<b>'+ this.series.name + '</b><br/>' +
-                    'Значение:' + this.y + '<br/>' +
-                    'Дата:' + formatDate(this.x, this.series.options.opt.interval);
-
+    for (var index in chartdata['data'])
+    {
+        var seriesGroupData = chartdata['data'][index];
+        var minValue = false;
+        for (var seriesIndex in seriesGroupData)
+        {
+            var _v = seriesGroupData[seriesIndex]['data'][0][0];
+            if (minValue === false || minValue > _v) {
+                minValue = _v;
             }
-        },
+        }
 
-        series: series
+        for (seriesIndex in seriesGroupData)
+        {
+            var seriesData = [];
+            var rowSeriesData = seriesGroupData[seriesIndex];
+
+            var first = false;
+            for (var i in rowSeriesData['data']) {
+                var row = rowSeriesData['data'][i];
+                var ts = (row[0] - minValue) / delta;
+                seriesData.push([ts, row[1]]);
+            }
+
+            series.push({
+                            name: rowSeriesData.name,
+                            data: seriesData,
+                            opt: rowSeriesData.opt
+                        })
+        }
+    }
+    return series;
+}
+
+$(function(){
+    chartconf = chartdata['chartconf'];
+    chartconf['yAxis'] = {
+        min: 0,
+        minTickInterval: 1
     };
 
-    $.extend(true, chartconf, chartdata['chartconf'])
+    chartconf['tooltip'] = {
+        formatter: function() {
+            return '<b>'+ this.series.name + '</b><br/>' +
+                'Значение:' + this.y + '<br/>' +
+                'Дата:' + formatDate(this.x, this.series.options.opt.interval);
 
-
-    drawSplineChart(chartconf)
+        }
+    };
+    drawChart();
 });
 
-function drawSplineChart(chartconf) {
-    chartconf['chart']['type'] = "spline";
+/**
+ * Рисует график
+ */
+function drawChart() {
+
+    if (isComapare) {
+        chartconf['chart']['type'] = "spline";
+        chartconf['xAxis']['type'] = 'linear';
+        chartconf['xAxis']['tickInterval'] = 1;
+        chartconf['series'] = prepareCompareSeries();
+
+    } else {
+        chartconf['chart'] = {
+                renderTo: 'chart_container',
+                type: 'spline'
+        };
+        chartconf['series'] = prepareDateSeries();
+
+        chartconf['xAxis'] = {
+            type: 'datetime',
+            showEmpty: false,
+            dateTimeLabelFormats: {
+                month: '%e %b',
+                year: '%b'}
+        };
+    }
+
     chart = new Highcharts.Chart(chartconf);
+}
+
+
+/**
+ * Переключает режим сравнения серий
+ */
+function switchCompare() {
+    isComapare = !isComapare;
+    if (isComapare) {
+        $('#compare_button').addClass('on');
+    } else {
+        $('#compare_button').removeClass('on');
+    }
+    drawChart();
 }
 
 function drawColumnChart(chartconf) {
@@ -123,6 +185,9 @@ function drawAreaChart(chartconf){
 
     chart = new Highcharts.Chart(chartconf);
 }
+
+
+
 
 
 Object.size = function(obj) {

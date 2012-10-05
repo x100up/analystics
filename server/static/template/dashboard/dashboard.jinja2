@@ -37,7 +37,9 @@
                 </td>
 
                 <td>{{worker.startDate|smartDatePeriod(worker.endDate)}} <sup>{{worker.startDate|smartDateInterval(worker.endDate)}}</sup></td>
-                <td class="action q"><input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb"></td>
+                <td class="action q">
+                    <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
+                </td>
             </tr>
         {% endfor %}
             <tfoot>

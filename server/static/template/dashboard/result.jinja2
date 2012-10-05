@@ -2,14 +2,25 @@
 {% block head %}
 <script type="text/javascript" src="/static/libs/highcharts/highcharts.js" ></script>
 <script type="text/javascript" src="/static/js/result.js" ></script>
+    <link href="/static/css/result.css" rel="stylesheet" type="text/css">
 {% endblock %}
 
 {% block content %}
     <h1>{{ app.name }}</h1>
 
     {% include 'blocks/error.jinja2' %}
+    <div class="grid_6">
+        <a href="/dashboard/app/{{ app.code }}/">&larr; к списку задач</a>
+    </div>
 
-    <a href="/dashboard/app/{{ app.code }}/">&larr; к списку задач</a>
+
+    <div class="grid_1 push_5">
+        {% if data|length > 1 %}
+            <span class="button compare" id="compare_button" onclick="switchCompare()" title="Режим сравнения серий"></span>
+        {% endif %}
+    </div>
+    <div class="clearfix"></div>
+
     <div id="chart_container"></div>
 
 

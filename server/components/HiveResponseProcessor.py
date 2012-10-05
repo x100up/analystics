@@ -29,7 +29,7 @@ class HiveResponseProcessor():
             end = taskItem.end
             matrix = {}
             while start < end:
-                matrix[(int(start.strftime("%s000")))] = default
+                matrix[int(start.strftime("%s000"))] = default
                 start = start + delta
             matrixes[i] = matrix
         return matrixes
@@ -121,6 +121,10 @@ class HiveResponseProcessor():
                     print 'Warning: unexpected date '
 
                 result[taskItemIndex][seria_id]['data'][date] = value[0]
+
+        for taskItemIndex in result:
+            for seria_id in result[taskItemIndex]:
+                result[taskItemIndex][seria_id]['data'] = sorted(result[taskItemIndex][seria_id]['data'].items())
 
         return result
 

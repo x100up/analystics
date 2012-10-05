@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
 from components.dateutil import monthNamesShort, monthNamesB, dayCountName, hourCountName, minuteCountName, secondCountName
 from datetime import datetime, timedelta
+import time
 from models.Task import Task
 
 def datetofiled(value, format = '%d {0} %Y %H:%M'):
-    return unicode(value.strftime(format)).format(monthNamesShort[value.date().month - 1], monthNamesB[value.date().month - 1])
+    return unicode(value.strftime(format)).format(monthNamesShort[value.date().month - 1],
+                                                  monthNamesB[value.date().month - 1],
+                                                  value.date().day)
 
 def smartDate(timestamp, precision = Task.INTERVAL_MINUTE):
     date = datetime.fromtimestamp(int(timestamp) / 1000)
-    _format = '%d {1} %Y %H:%M'
+    _format = '{2} {1} %Y %H:%M'
 
     if precision == Task.INTERVAL_DAY:
         _format = '%d {1} %Y'
@@ -57,7 +60,7 @@ def smartDatePeriod(date1, date2):
 
         return date_template.format(_from, _to)
     else:
-        return date1
+        return smartDate(time.mktime(date1.timetuple()) * 1000)
 
 
 def smartDateInterval(date1, date2):

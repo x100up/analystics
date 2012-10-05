@@ -49,7 +49,6 @@ class ResultAction(BaseController):
         appConfig = appService.getAppConfig(app.code)
         nameService = NameConstructor(appConfig, task)
 
-
         try:
             data = service.getResults()
             if len(data.items()) == 0:
@@ -60,4 +59,9 @@ class ResultAction(BaseController):
         except IOError as ioerr:
             self.render('dashboard/result.jinja2', {'errors': [u'Ошибка чтения результатов выполнения работы'], 'app': app})
         else:
-            self.render('dashboard/result.jinja2', {'js_vars': {'chartdata': json.dumps(chartService.getResult())}, 'app': app, 'data':data, 'nameService':nameService})
+            self.render('dashboard/result.jinja2',
+                    {'js_vars': {
+                           'chartdata': json.dumps(chartService.getResult()),
+                           'interval': json.dumps(task.interval)
+                        },
+                    'app': app, 'data':data, 'nameService':nameService})

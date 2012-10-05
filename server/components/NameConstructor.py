@@ -29,20 +29,21 @@ class NameConstructor(object):
             print '-----------'
             print params
             if params['op'] == 'group':
+                operation += u'/кол-во'
+            elif params['op'] == 'avg':
+                operation += u'/среднее'
+            elif params['op'] == 'sum':
+                operation += u'/сумма'
+            elif params['op'] == 'count':
+                 operation += u'/кол-во'
+
+            if params.has_key('conditions'):
                 for condition in params['conditions']:
                     tag_key = condition[0]
                     value = condition[1]
                     if tagSettings.has_key(tag_key) and tagSettings[tag_key].has_key('name'):
                         tag_name = tagSettings[tag_key]['name']
-                        operation += tag_name + '=' + str(value)
-
-            else:
-                if params['op'] == 'avg':
-                    operation += u'/среднее'
-                elif params['op'] == 'sum':
-                    operation += u'/сумма'
-                elif params['op'] == 'count':
-                    operation += u'/кол-во'
+                        operation += '[' + tag_name + '=' + str(value) + ']'
 
 
             return  key_name + operation
@@ -59,7 +60,6 @@ class NameConstructor(object):
         taskItem = self.task.getTaskItem(index)
         if taskItem:
             tag_name = u'Количество'
-            operation = ''
             key = taskItem.key
             key_name = key
             if self.appConfig['keys'].has_key(key) and self.appConfig['keys'][key].has_key('name'):
@@ -67,6 +67,7 @@ class NameConstructor(object):
 
             operation = ''
             if params['op'] == 'group':
+                operation += u'/кол-во'
                 for condition in params['conditions']:
                     tag_key = condition[0]
                     value = condition[1]

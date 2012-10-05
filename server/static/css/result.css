@@ -1,0 +1,13 @@
+span.button {
+    display: block;
+    width: 28px;
+    height: 26px;
+}
+
+.button.compare {
+    background: url('/static/img/sprite.png') -164px -2px no-repeat;
+}
+
+.button.compare.on {
+    background: url('/static/img/sprite.png') -164px -29px no-repeat;
+}
