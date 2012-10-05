@@ -1,12 +1,30 @@
 # coding=utf-8
 __author__ = 'pavlenko.roman.spb@gmail.com'
-
+from components.dateutil import smartPeriod
 
 class NameConstructor(object):
 
     def __init__(self, appConfig, task):
         self.appConfig = appConfig
         self.task = task
+
+    def generateTaskName(self):
+        '''
+        Генерирует имя задачи
+        '''
+        result = ''
+        index, taskItem = self.task.items.items()[0]
+        key = taskItem.key
+        if self.appConfig['keys'].has_key(key) and self.appConfig['keys'][key].has_key('name'):
+            result = self.appConfig['keys'][key]['name']
+        _smartPeriod = smartPeriod(taskItem.start, taskItem.end)
+        result += ' ' + _smartPeriod
+
+        if len(self.task.items) > 1:
+            result += ' (+' + str(len(self.task.items) - 1) + ')'
+
+        return result
+
 
     def getKeyNameByIndex(self, index, params):
         '''

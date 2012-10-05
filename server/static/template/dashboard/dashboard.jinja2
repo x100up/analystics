@@ -12,17 +12,6 @@
     <form action="" method="post">
         <table style="margin-top: 20px;" id="workersTable">
 
-        {#
-            <thead>
-                <tr>
-                    <th style="width: 26px"></th>
-                    <th>Название</th>
-                    <th>Время</th>
-                    <th><input type="checkbox" onclick="switchAll(this)"></th>
-                </tr>
-            </thead>
-
-        #}
         {% for worker in lastWorkers %}
             <tr class="job_{{worker.status}}">
                 <td class="q {{ worker.status }}">
@@ -32,8 +21,10 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a href="/dashboard/app/{{ app.code }}/result?jobId={{worker.workerId}}">{{worker.workerId}}</a>
-                    <a class="copy_action button copy" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.workerId}}">create on base</a>
+                    <a href="/dashboard/app/{{ app.code }}/result?jobId={{worker.workerId}}" id="link_{{worker.workerId}}">{{worker.name}}</a>
+
+                    <span class="button edit_name" onclick="editName({{worker.workerId}})"></span>
+                    <a class="copy_action button copy" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.workerId}}" title="create on base"></a>
                 </td>
 
                 <td>{{worker.startDate|smartDatePeriod(worker.endDate)}} <sup>{{worker.startDate|smartDateInterval(worker.endDate)}}</sup></td>

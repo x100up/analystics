@@ -43,3 +43,33 @@ function getProgress() {
         });
     }
 }
+
+function editName(workerId) {
+    var a = $('#link_' + workerId);
+    var editor = $('<input/>').val(a.text()).width(a.width());
+    a.after(editor).remove();
+    editor.focus();
+
+    var callback = function () {
+        if (!editor.val().trim()) {
+            editor.after(a).remove();
+            return;
+        }
+        editor.attr('disabled', 'disabled');
+        $.ajax('/ajax/saveWorkerName', {
+            type: 'POST',
+            data: {'name':editor.val(), 'workerId':workerId},
+            success: function(data, textStatus, jqXHR){
+                editor.after(a.text(editor.val())).remove()
+            }
+        });
+    };
+
+    editor.blur(callback);
+    editor.keydown(function(event){
+        if (event.keyCode == 13) {
+            event.stopPropagation();
+            callback();
+        }
+    })
+}

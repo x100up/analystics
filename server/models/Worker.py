@@ -14,3 +14,4 @@ class Worker(Base):
     status = Column(Enum('ALIVE', 'SUCCESS', 'DIED', 'ERROR'))
     userId = Column(Integer, ForeignKey('user.userId'),  nullable = False)
     appId = Column(Integer, ForeignKey('app.appId'),  nullable = False)
+    name = Column(String(255))

@@ -64,6 +64,16 @@ class GetKeys(AjaxController):
         self.render('blocks/key_select.jinja2', {'_keys':keys, 'index':keyIndex, 'appName':app.name})
 
 
+class SaveWorkerName(AjaxController):
+    def post(self):
+        session = self.getDBSession()
+        worker = session.query(Worker).filter(Worker.workerId == int(self.get_argument('workerId'))).first()
+        worker.name = self.get_argument('name')
+        session.add(worker)
+        session.commit()
+        self.renderJSON({'status':'ok'})
+
+
 class GatTasksProgress(AjaxController):
     def post(self, *args, **kwargs):
         arguments = []

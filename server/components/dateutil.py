@@ -46,3 +46,39 @@ def secondCountName(count):
     else:
         return u'секунд'
             '''
+
+
+def smartPeriod(date1, date2):
+    _date1 = date1.date()
+    _date2 = date2.date()
+    _time1 = date1.time()
+    _time2 = date2.time()
+    _from = ''
+    _to = ''
+    date_template = u'c {} по {}'
+    atOneDay = _date1.year == _date2.year and _date1.month == _date2.month and _date1.day == _date2.day
+
+    if atOneDay:
+        if _time1.hour ==  _time2.hour and _time1.minute == _time2.minute:
+            _time_to = u' в %02d:%02d' % (_time1.hour, _time1.minute)
+        else:
+            _time_to = u' с %02d:%02d до %02d:%02d' % (_time1.hour, _time1.minute, _time2.hour, _time2.minute)
+        _time_from = ''
+    else:
+        _time_from = ' %02d:%02d'% (_time1.hour, _time1.minute)
+        _time_to = ' %02d:%02d' % (_time2.hour, _time2.minute)
+
+    if (_date1.year != _date2.year):
+        _from += str(_date1.day) + ' ' + _time_from + ' ' + monthNamesB[_date1.month - 1] + ' ' +  str(_date1.day)
+        _to += str(_date2.day) + ' ' + _time_to + ' ' + monthNamesB[_date2.month - 1] + ' ' +  str(_date2.day)
+    elif (_date1.month != _date2.month):
+        _from += str(_date1.day) + ' ' + _time_from + ' ' + monthNamesB[_date1.month - 1]
+        _to += str(_date2.day) + ' ' + _time_to + ' ' + monthNamesB[_date2.month - 1] + ' ' +  str(_date2.year) + u' года'
+    elif (_date1.day != _date2.day):
+        _from += str(_date1.day)
+        _to += str(_date2.day) + ' ' + _time_to + ' ' + _time_from + ' ' + monthNamesB[_date2.month - 1] + ' ' +  str(_date2.year) + u' года'
+    else:
+        date_template = u'{}{}'
+        _to += str(_date2.day) + ' ' + _time_to + ' ' + monthNamesB[_date2.month - 1] + ' ' +  str(_date2.year) + u' года'
+
+    return date_template.format(_from, _to)

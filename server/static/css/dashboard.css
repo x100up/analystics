@@ -1,6 +1,7 @@
 a.copy_action {
     display: inline-block !important;
     float: right;
+    text-indent: 1000px;
 }
 
 table#workersTable td.action {
@@ -34,4 +35,16 @@ tr.success_recently td {
 ul.paging li {
     display: inline;
     padding-right: 4px;
+}
+
+span.button.edit_name {
+    display: inline-block;
+    background: url('/static/img/sprite.png') no-repeat -200px 0px;
+    width: 10px;
+    height: 10px;
+    visibility: hidden;
+}
+
+td:hover span.button.edit_name {
+    visibility: visible;
 }

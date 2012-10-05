@@ -51,12 +51,12 @@ def smartDatePeriod(date1, date2):
 
         if atOneDay:
             if _time1.hour ==  _time2.hour and _time1.minute == _time2.minute:
-                _to += u' в {}:{}'.format(_time1.hour, _time1.minute)
+                _to += u' в %02d:%02d' % (_time1.hour, _time1.minute)
             else:
-                _to += u' с {}:{} до {}:{}'.format(_time1.hour, _time1.minute, _time2.hour, _time2.minute)
+                _to += u' с %02d:%02d до %02d:%02d' % (_time1.hour, _time1.minute, _time2.hour, _time2.minute)
         else:
-            _from += ' {}:{}'.format(_time1.hour, _time1.minute)
-            _to += ' {}:{}'.format(_time2.hour, _time2.minute)
+            _from += ' %02d:%02d'% (_time1.hour, _time1.minute)
+            _to += ' %02d:%02d' % (_time2.hour, _time2.minute)
 
         return date_template.format(_from, _to)
     else:

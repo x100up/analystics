@@ -4,10 +4,11 @@ from components.HiveQueryConstructor import  HiveQueryConstructor
 from controllers.BaseController import BaseController
 from models.Worker import Worker
 from models.Task import Task, TaskItem
-from datetime import datetime, timedelta
+from datetime import datetime
 from services.WorkerService import WorkerService
 from services.AppService import AppService
 from components.TaskFactory import createTaskFromRequestArguments
+from components.NameConstructor import NameConstructor
 import tornado.web
 
 class CreateAction(BaseController):
@@ -58,6 +59,13 @@ class CreateAction(BaseController):
         worker.startDate = datetime.now()
         worker.status = Worker.STATUS_ALIVE
         worker.appId = app.appId
+
+        # генерируем имя запроса
+        appService = AppService(self.application.getAppConfigPath())
+        appConfig = appService.getAppConfig(app.code)
+        nameConstructor = NameConstructor(appConfig, task)
+        worker.name = nameConstructor.generateTaskName()
+
         session = self.getDBSession()
         session.add(worker)
         session.commit()

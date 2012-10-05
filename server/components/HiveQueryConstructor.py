@@ -34,8 +34,7 @@ class HiveQueryConstructor():
 
             # дополняем поля до нужного количества иначе будет FAILED: Error in semantic analysis: Schema of both sides of union should match.
             taskFields = taskItem.getFields()
-            taskFields += ['""']*(fieldCount - len(taskFields))
-            print taskFields
+            taskFields += ['0.0']*(fieldCount - len(taskFields))
 
             query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskFields)\
                      + ' FROM %(appname)s.stat_%(keyname)s '%{'appname': self.task.appname, 'keyname': taskItem.key}

@@ -21,7 +21,7 @@ class Task(object):
     def __init__(self, *args, **kwargs):
         self.items = {}
         self.appname = ''
-        self.interval = self.INTERVAL_HOUR
+        self.interval = self.INTERVAL_DAY
         self.stageCount = 0
 
         if kwargs.has_key('appname'):
@@ -121,3 +121,6 @@ class TaskItem():
                 fields.append(('group', tag))
 
         return fields
+
+    def __str__(self):
+        return 'TaskItem {}'.format(self.index)

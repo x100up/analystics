@@ -48,6 +48,8 @@ class IndexAction(BaseController):
                         pass
                     db_session.delete(worker)
 
+            db_session.commit()
+
         perPage = 10
 
         # получаем количество

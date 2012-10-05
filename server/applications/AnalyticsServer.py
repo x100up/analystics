@@ -162,6 +162,8 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/getKeys/([^/]+)/?", AjaxController.GetKeys),
             (r"/ajax/getTasksProgress/?", AjaxController.GatTasksProgress),
             (r"/ajax/copyTaskKey/?", AjaxController.CopyTaskKey),
+            (r"/ajax/saveWorkerName?", AjaxController.SaveWorkerName),
+
 
             (r"/api/putConfig/?", APIController.PutConfigAction),
 

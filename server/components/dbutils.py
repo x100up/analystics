@@ -31,3 +31,5 @@ def migrate(connection = None):
 
             currentDBVersion = index
             state.set('currentDBVersion', currentDBVersion)
+
+
