@@ -42,8 +42,6 @@ options = options.__dict__
 appService = AppService(rootPath + '/../app_configs/')
 availale_apps = appService.getAppConfigList()
 
-#
-# TODO ключи конфигурации
 # - удалить лишние таблицы
 # - удалить папки в hdfs, для которых нет ключей
 

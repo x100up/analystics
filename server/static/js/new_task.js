@@ -283,7 +283,6 @@ function switchTagSync(index, tag_name, tag) {
         $('.sync_' + tag_name).addClass('selected');
         synchronizedTags.push(tag_name);
         // первоначальное копирование значений
-        // TODO
     }
 }
 

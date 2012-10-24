@@ -9,9 +9,13 @@ def createTaskFromRequestArguments(arguments):
     task = Task(appname = appname, interval = interval)
     indexes = arguments['indexes']
     for index in indexes:
+        if not arguments.has_key('key_' + index):
+            continue
+
         key, = arguments['key_' + index]
         if not key:
             continue
+
         start = datetime.strptime(repMonth(arguments['start_'+ index][0]), "%d %m %Y %H:%M")
         end = datetime.strptime(repMonth(arguments['end_'+ index][0]), "%d %m %Y %H:%M")
 
