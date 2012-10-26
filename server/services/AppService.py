@@ -23,11 +23,26 @@ class AppService():
         '''
         if not self.appConfCache.has_key(appCode):
             try:
-                f = open(self.folder + '/' + appCode + '.json', 'r')
+                f = open(self._getFilePath(appCode), 'r')
                 self.appConfCache[appCode] = json.load(f)
             except ValueError as valueError:
                 raise AnalyticsException(u'Ошибка при чтении конфигурации приложения {}'.format(self.folder + '/' + appCode + '.json'), valueError)
         return self.appConfCache[appCode]
+
+    def isConfigExist(self, appCode):
+        return os.path.exists(self._getFilePath(appCode))
+
+    def createEmptyConfig(self, appCode):
+        config = {
+            'appname': appCode,
+            'keys' : {}
+        }
+        self.appConfCache[appCode] = config
+        self.saveConfig(config)
+        pass
+
+    def _getFilePath(self, appCode):
+        return self.folder + '/' + appCode + '.json'
 
     def getTagList(self, appName):
         '''
@@ -47,9 +62,12 @@ class AppService():
             return config[u'tagSettings']
         return []
 
-    def saveTagSettings(self, appName, settings):
+    def saveSettings(self, appName, tagSettings = None, keyConfig = None):
         config = self.getAppConfig(appName)
-        config['tagSettings'] = settings
+        config['tagSettings'] = tagSettings
+        if keyConfig:
+            config['keys'] = keyConfig
+        config['tags'] = tagSettings.keys()
         self.saveConfig(config)
 
     def getAppTags(self, appName, keyName, prefix):

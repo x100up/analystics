@@ -38,7 +38,13 @@ class ChartConstructor():
             'chartconf': {
                 'subtitle' : {'text' :  'job '},
                 'title' : { 'text': 'График'},
-                'yAxis': { 'title': {'text': 'Количество'}},
+                'yAxis': {
+                    'min': 0,
+                    'minTickInterval': 1,
+                    'title': {
+                        'text': 'Значения'
+                        }
+                    }
                 },
             'data': self.data
         }

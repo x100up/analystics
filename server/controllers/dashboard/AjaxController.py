@@ -73,6 +73,23 @@ class SaveWorkerName(AjaxController):
         session.commit()
         self.renderJSON({'status':'ok'})
 
+class AddNewKey(AjaxController):
+    def post(self):
+        data = {
+            'index': self.get_argument('index'),
+            'key':'',
+            'values':{}
+        }
+        self.render('blocks/edit_key.jinja2', data)
+
+class AddNewTag(AjaxController):
+    def post(self):
+        data = {
+            'index': self.get_argument('index'),
+            'tag_name':'',
+            'values':{}
+        }
+        self.render('blocks/edit_tag.jinja2', data)
 
 class GatTasksProgress(AjaxController):
     def post(self, *args, **kwargs):

@@ -10,6 +10,7 @@ rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe(
 
 optParser = OptionParser()
 optParser.add_option("-a", "--app", dest="appname", help="application name")
+optParser.add_option("-k", "--key", dest="key", help="key code")
 optParser.add_option("-c", "--count", dest="rows count", help="count of log rows to generate")
 
 (options, args) = optParser.parse_args()
@@ -24,6 +25,12 @@ if options['appname'] is None:
     print 'Availale app names: ' + str(availale_apps)
     exit()
 
+if options['key'] is None:
+    availale_apps = appService.getAppConfigList()
+    print 'key code is not set'
+    exit()
+
+key = options['key']
 app = options['appname']
 
 print 'Generate for ' + app
@@ -33,7 +40,18 @@ config = appService.getAppConfig(app)
 keys = config['keys']
 tags = config['tags']
 tagSettings = config['tagSettings']
-bunches = config['bunches']
+if config.has_key('bunches'):
+    bunches = config['bunches']
+else:
+    bunches = []
+
+_string_vals = {
+    '_default':['string1', 'string2', 'string3']
+    'cnt': [],
+    'ad':['advmaker', 'energyGift2B', 'energyGiftB', 'newmain', 'oldmain'],
+    'app':[],
+    'cit':[]
+}
 
 def tag_to_string(tags):
     x = []
@@ -61,7 +79,10 @@ def getTagValue(tag):
             max = tagSetting['max']
         return random.randint(min, max)
     else:
-        return random.choice(['string1', 'string2', 'string3'])
+        if _string_vals.has_key(tag):
+            return random.choice(_string_vals[tag])
+        else:
+            return random.choice(_string_vals['_default'])
 
 et = datetime.now()
 
@@ -77,13 +98,13 @@ for __day in range(0, 500):
     print count
     for i in range(count):
         params = {}
-        key = random.choice(keys.keys())
         for tag in keys[key]['mustHaveTags']:
             params[tag] = getTagValue(tag)
 
-        for bunch in keys[key]['autoLoadBunches']:
-            for tag in bunches[bunch]['tags']:
-                params[tag] = getTagValue(tag)
+        if keys[key].has_key('autoLoadBunches'):
+            for bunch in keys[key]['autoLoadBunches']:
+                for tag in bunches[bunch]['tags']:
+                    params[tag] = getTagValue(tag)
 
         dt = et + timedelta(hours = random.randint(0, 23), minutes = random.randint(0, 59), seconds = random.randint(0, 59))
         date = dt.date()
@@ -94,6 +115,7 @@ for __day in range(0, 500):
         logs.append(logstring)
 
     folder = rootPath + '/testData/' + str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '/'
+    print folder
     if not os.path.exists(folder):
         os.makedirs(folder)
     f = open(folder + 'data.txt', 'w')

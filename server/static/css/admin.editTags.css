@@ -12,3 +12,37 @@ div.choose tr.new input{
     border: 1px dashed #91bd09;
 }
 
+div#tabber {
+    padding-bottom: 20px;
+}
+
+div#tabber > div {
+    display: none;
+}
+
+div#tabber > div.active {
+    display: block !important;
+}
+
+
+div#tabber > ul > li{
+    display: inline;
+    font-size: 13pt;
+    cursor: pointer;
+}
+
+div#tabber > ul > li.active {
+    font-size: 14pt;
+    font-weight: bold;
+}
+
+div#tabber > ul {
+    margin-bottom: 15px;
+}
+
+form h3 {
+    border-top: 1px solid #ECEADF;
+    color: #1F1F1F;
+    margin-top: 20px;
+    padding-top: 12px;
+}

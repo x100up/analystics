@@ -90,10 +90,6 @@ function prepareCompareSeries() {
 
 $(function(){
     chartconf = chartdata['chartconf'];
-    chartconf['yAxis'] = {
-        min: 0,
-        minTickInterval: 1
-    };
 
     chartconf['tooltip'] = {
         formatter: function() {
