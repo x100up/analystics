@@ -94,7 +94,7 @@ class AnalyticsServer(tornado.web.Application):
 
 
     def start(self):
-        self.listen(8888)
+        self.listen(48888)
         loopInstance = tornado.ioloop.IOLoop.instance()
         loopInstance.start()
 
