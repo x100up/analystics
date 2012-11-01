@@ -17,7 +17,7 @@ class ServerDaemon(Daemon):
 def getDaemon():
     stdout = os.path.abspath(os.path.abspath(rootPath + '/../log/daemon_out.log'))
     stderr = os.path.abspath(os.path.abspath(rootPath + '/../log/daemon_err.log'))
-    return ServerDaemon('/var/run/python-server.pid', stdout = stdout, stderr = stderr)
+    return ServerDaemon(rootPath + '/python-server.pid', stdout = stdout, stderr = stderr)
 
 if __name__ == "__main__":
 
