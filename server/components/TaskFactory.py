@@ -8,6 +8,10 @@ def createTaskFromRequestArguments(arguments):
     interval, = arguments['group_interval']
     task = Task(appname = appname, interval = interval)
     indexes = arguments['indexes']
+    userUniques = []
+    if arguments.has_key('userUnique'):
+        userUniques = arguments['userUnique']
+
     for index in indexes:
         if not arguments.has_key('key_' + index):
             continue
@@ -20,6 +24,8 @@ def createTaskFromRequestArguments(arguments):
         end = datetime.strptime(repMonth(arguments['end_'+ index][0]), "%d %m %Y %H:%M")
 
         taskItem = TaskItem(key = key, start = start, end = end, index = index)
+        if index in userUniques:
+            taskItem.userUnique = True
         # разбираем тег для ключа
         tagNames = []
         tag_name = 'tag_' + index + '_name'

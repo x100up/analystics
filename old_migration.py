@@ -32,6 +32,7 @@ def dumpLines(lines, path, filename):
         path = 'dump/' + path
         if not os.path.exists(path):
             os.makedirs(path)
+        print 'write to {}'.format(path)
         f = open(path + '/' + filename, 'w')
         f.write("\n".join(lines))
         f.close()

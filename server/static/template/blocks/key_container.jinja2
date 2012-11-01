@@ -7,6 +7,7 @@
 <div class="key_form_item grid_12 alpha omega" id="key_container_{{ taskItem.index  }}">
 
     <input type="hidden" name="indexes" value="{{ taskItem.index }}">
+    <input type="checkbox" style="display: none" name="userUnique" id="userUnique{{ taskItem.index }}" value="{{ taskItem.index }}" {% if taskItem.userUnique %}checked="checked"{% endif %}>
 
     <div class="grid_12 alpha omega key_header {% if is_loaded %} key_loaded {% endif %}" id="key_header_{{ taskItem.index }}">
         <div class="grid_10 alpha">
@@ -24,6 +25,8 @@
                     <input type="text" class="datepicker end" name="end_{{ taskItem.index }}" id="end_{{ taskItem.index }}"
                            data-index="{{ taskItem.index }}" value="{{ taskItem.end|datetofiled }}">
                     <input class="button lock unlock" type="button" onclick="lockDate({{ taskItem.index }})">
+
+                    <input class="button userUnique {% if taskItem.userUnique %}checked{% endif %}" type="button" onclick="switchUserUnique({{ taskItem.index }}, this)">
                 </li>
                 <li>
                  <input class="button copy{% if not is_loaded %} invisible {% endif %}" onclick="copyKey({{ taskItem.index }})" id="copy_key_{{ taskItem.index }}">

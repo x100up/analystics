@@ -19,35 +19,52 @@ class HiveQueryConstructor():
         '''
             Генерирует запрос для Hive основываясь на зачаче Task
         '''
-        dateFields = self.getDateFields(self.task.interval)
+        self.dateFields = self.getDateFields(self.task.interval)
         queries = []
         isMulty = len(self.task.items) > 1
 
         # узнаем количество полей в выдаче для того, чтоыб дополнить запросы до одинакового количества
-        fieldCount = self.task.getFieldsCount()
-        print fieldCount
+        # self.fieldCount = self.task.getFieldsCount()
+        # какие поля должны быть в запросе, для синхронизации UNION
+        self.fieldsName = self.task.getFieldsNames()
+        fieldsTemplates = []
+        for default, name in self.fieldsName:
+            fieldsTemplates.append('%({0})s as {0}'.format(name))
+
+        fieldsTemplate = ','.join(fieldsTemplates)
+        if fieldsTemplate:
+            fieldsTemplate = ', ' + fieldsTemplate
+
         for index, taskItem in self.task.items.items():
+            fields = taskItem._getFields(not taskItem.userUnique)
+            for default, fieldsName in self.fieldsName:
+                if not fieldsName in fields:
+                    fields[fieldsName] =default
+
             # создаем интервалы - нужны для партицирования
             query = 'SELECT '
             if not isMulty:
                 query += '\'' + str(workerId) + '\' as `wid`,'
 
+            #taskFields = taskItem.getFields(not taskItem.userUnique)
             # дополняем поля до нужного количества иначе будет FAILED: Error in semantic analysis: Schema of both sides of union should match.
-            taskFields = taskItem.getFields()
-            taskFields += ['0.0']*(fieldCount - len(taskFields))
+            #taskFields += ['0.0']*(self.fieldCount - len(taskFields))
 
-            query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskFields)\
-                     + ' FROM %(appname)s.stat_%(keyname)s '%{'appname': self.task.appname, 'keyname': taskItem.key}
+            query += self.toSQLFields(self.dateFields) + ', ' +self.toSQLFields(taskItem.fields) + fieldsTemplate%fields\
+                     + ' FROM {}'.format(self.getSelectSource(taskItem))
 
-            # временная составляющая
-            intervals = self.getIntervalCondition(taskItem.start, taskItem.end)
-            query += ' WHERE (' + ' OR '.join(intervals) + ')'
-
-            # условия по тегам
-            query += self.getTagsCondition(taskItem.conditions)
+            if not taskItem.userUnique:
+                # временная составляющая
+                intervals = self.getIntervalCondition(taskItem.start, taskItem.end)
+                query += ' WHERE (' + ' OR '.join(intervals) + ')'
+                # условия по тегам
+                query += self.getTagsCondition(taskItem.conditions)
+            else:
+                # при уникальном юзере все селектим из подзапроса
+                pass
 
             # группировка
-            query += ' GROUP BY ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsByOperation(taskItem, 'group')
+            query += ' GROUP BY ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsByOperation(taskItem, 'group', not taskItem.userUnique)
             queries.append(query)
 
         if not isMulty:
@@ -55,6 +72,28 @@ class HiveQueryConstructor():
 
         query = 'SELECT \'' + str(workerId) + '\' as `wid`, * FROM (' + ' UNION ALL ' .join(queries) +') FINAL'
         return query.encode('utf-8')
+
+    def getSelectSource(self, taskItem):
+        '''
+        Из чего выбираем - из таблицы или из выражения
+        '''
+        if (taskItem.userUnique):
+            subquery = 'SELECT {}, userId '.format(self.toSQLFields(self.dateFields))
+
+            taskFields = taskItem.getFields(topQuery = True, isSubquery = True)
+            # дополняем поля до нужного количества иначе будет FAILED: Error in semantic analysis: Schema of both sides of union should match.
+            # taskFields += ['0.0'] * (self.fieldCount - len(taskFields) - len(taskItem.fields))
+            if taskFields:
+                subquery += ', ' + self.toSQLFields(taskFields)
+
+            subquery += ' FROM {}.stat_{}'.format(self.task.appname, taskItem.key)
+            intervals = self.getIntervalCondition(taskItem.start, taskItem.end)
+            subquery += ' WHERE (' + ' OR '.join(intervals) + ')'
+            subquery += self.getTagsCondition(taskItem.conditions)
+            subquery += ' GROUP BY userId, ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsByOperation(taskItem, 'group')
+            return '(' + subquery + ') `sq_{}`'.format(taskItem.index)
+        else:
+            return '{}.stat_{} '.format(self.task.appname, taskItem.key)
 
     def getStageCount(self):
         count = len(self.task.items)
@@ -212,11 +251,14 @@ class HiveQueryConstructor():
 
         raise Exception("Unknow interval")
 
-    def getTaskTagsByOperation(self, taskItem, operation):
+    def getTaskTagsByOperation(self, taskItem, operation, isTopQuery = True):
         g = set()
         for tagName, operations in taskItem.operations.items():
             if operation in operations:
-                g.add('params[\'{0}\']'.format(tagName))
+                if isTopQuery:
+                    g.add('params[\'{0}\']'.format(tagName))
+                else:
+                    g.add('`group_{0}`'.format(tagName))
 
         if len(g):
             return ', ' + ', '.join(g)

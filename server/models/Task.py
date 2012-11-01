@@ -45,8 +45,20 @@ class Task(object):
     def getFieldsCount(self):
         '''
         Возвращает количество полей для всего таска, которое равно макс кол-ву полей taskItem
+        @deprecated
         '''
         return max([len(self.items[i].getFields()) for i in self.items])
+
+    def getFieldsNames(self):
+        fieldsName = []
+        for i in self.items:
+            item = self.items[i]
+            fieldsNames = item.getFieldsNames()
+            for default, name in fieldsNames:
+                if not name in fieldsName:
+                    fieldsName.append((default, name))
+
+        return fieldsName
 
 
 
@@ -59,6 +71,8 @@ class TaskItem():
         self.key = None
         self.operations = {}
         self.conditions = {}
+        # считать уникальную статистику
+        self.userUnique = False
 
         if kwargs.has_key('start'):
             self.start = kwargs['start']
@@ -80,6 +94,8 @@ class TaskItem():
 
         self.fields = [ ('"' + str(self.index) + '"', 'index'), ('count(1)','count') ]
 
+
+
     def addCondition(self, tag, values):
         self.conditions[tag] = values
 
@@ -91,19 +107,71 @@ class TaskItem():
             return self.operations[tagName]
         return []
 
-    def getFields(self):
+    def getFields(self, topQuery = True, isSubquery = False):
+        '''
+        depreatede
+        '''
         fields = []
         for tag, operations in self.operations.items():
             if 'sum' in operations:
-                fields.append('SUM(params[\'{0}\'])'.format(tag))
+                if topQuery:
+                    fields.append('SUM(params[\'{0}\']) AS `sum_{0}`'.format(tag))
+                else:
+                    fields.append('SUM(`sum_{0}`) AS `sum_{0}`'.format(tag))
 
             if 'avg' in operations:
-                fields.append('AVG(params[\'{0}\'])'.format(tag))
+                if topQuery:
+                    fields.append('AVG(params[\'{0}\']) AS `avg_{0}`'.format(tag))
+                else:
+                    fields.append('AVG(`avg_{0}`) AS `avg_{0}`'.format(tag))
 
             if 'group' in operations:
-                fields.append('params[\'{0}\']'.format(tag))
+                if topQuery:
+                    fields.append('params[\'{0}\'] AS `group_{0}`'.format(tag))
+                else:
+                    fields.append('`group_{0}` AS `group_{0}`'.format(tag))
+
+        if isSubquery:
+            return fields
 
         return self.fields + fields
+
+    def _getFields(self, topQuery = True, isSubquery = False):
+        fields = {}
+        for tag, operations in self.operations.items():
+            if 'sum' in operations:
+                if topQuery:
+                    fields['`sum_{0}`'.format(tag)] = 'SUM(params[\'{0}\'])'.format(tag)
+                else:
+                    fields['`sum_{0}`'.format(tag)] = 'SUM(`sum_{0}`)'.format(tag)
+
+            if 'avg' in operations:
+                if topQuery:
+                    fields['`avg_{0}`'.format(tag)] = 'AVG(params[\'{0}\'])'.format(tag)
+                else:
+                    fields['`avg_{0}`'.format(tag)] = 'AVG(`avg_{0}`)'.format(tag)
+
+            if 'group' in operations:
+                if topQuery:
+                    fields['`group_{0}`'.format(tag)] =  'params[\'{0}\']'.format(tag)
+                else:
+                    fields['`group_{0}`'.format(tag)] = '`group_{0}`'.format(tag)
+
+        return fields
+
+    def getFieldsNames(self):
+        names = []
+        for tag, operations in self.operations.items():
+            if 'sum' in operations:
+                names.append(('0.0', '`sum_{0}`'.format(tag)))
+
+            if 'avg' in operations:
+                names.append(('0.0', '`avg_{0}`'.format(tag)))
+
+            if 'group' in operations:
+                names.append(('\'\'', '`group_{0}`'.format(tag)))
+
+        return names
 
     def getExtraFields(self):
         '''
@@ -112,13 +180,13 @@ class TaskItem():
         fields = []
         for tag, operations in self.operations.items():
             if 'sum' in operations:
-                fields.append(('sum', tag))
+                fields.append(('sum', tag, '`sum_{0}`'.format(tag)))
 
             if 'avg' in operations:
-                fields.append(('avg', tag))
+                fields.append(('avg', tag, '`avg_{0}`'.format(tag)))
 
             if 'group' in operations:
-                fields.append(('group', tag))
+                fields.append(('group', tag, '`group_{0}`'.format(tag)))
 
         return fields
 

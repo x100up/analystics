@@ -8,6 +8,7 @@ class HiveResponseProcessor():
     def __init__(self, task):
         self.task = task
         self.operationsCache = {}
+        self.fieldsNames = self.task.getFieldsNames()
 
     def getDateMatrix(self, default = 0):
         '''
@@ -72,12 +73,21 @@ class HiveResponseProcessor():
 
             taskItem = self.task.getTaskItem(taskItemIndex)
             extraFields = taskItem.getExtraFields()
+
             # если есть операции то есть и дополнительные поля
             if extraFields:
-                params = [] # параметры выборк для этой строки
-                for operation, tag in extraFields:
+                # мапим оставшиеся поля на названия столбцов
+                lineValues = {}
+
+                for _i, value in enumerate(line[offset:]):
+                    if _i < len(self.fieldsNames):
+                        _default, name = self.fieldsNames[_i]
+                        lineValues[name] = value
+
+                params = [] # параметры выборка для этой строки
+                for operation, tag, fieldsName in extraFields:
                     # операция, тег, значение
-                    params.append((operation, tag, line[offset]))
+                    params.append((operation, tag, lineValues[fieldsName]))
                     offset += 1
 
                 conditions = [] # список условий, применимых для этой строки

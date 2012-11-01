@@ -46,11 +46,14 @@ else:
     bunches = []
 
 _string_vals = {
-    '_default':['string1', 'string2', 'string3']
-    'cnt': [],
+    '_default':['string1', 'string2', 'string3'],
+    'cnt': ['MX','PT', 'RU', 'UA', 'US'],
     'ad':['advmaker', 'energyGift2B', 'energyGiftB', 'newmain', 'oldmain'],
-    'app':[],
-    'cit':[]
+    'app':['licemer', 'standalonetf', 'topface'],
+    'cit':['msk', 'o1', 'oth', 'spb', 'ufa'],
+    'page':['dummy', 'feed', 'gifts', 'javascript', 'leaders', 'messageSender', 'messenger', 'messengergetNewMessages', 'money',
+            'pepsi', 'photos', 'puma', 'search', 'sexuality', 'spam', 'statistics', 'stats', 'test', 'top', 'topface', 'user',
+            'visitors', 'vk', 'vkAdminMessagesLimitation', 'vkAdminPartners', 'voting', 'wish']
 }
 
 def tag_to_string(tags):
@@ -109,12 +112,12 @@ for __day in range(0, 500):
         dt = et + timedelta(hours = random.randint(0, 23), minutes = random.randint(0, 59), seconds = random.randint(0, 59))
         date = dt.date()
         time = dt.time()
-        userId = 0
+        userId = random.randint(0, 1000)
         logstring = ','.join([tag_to_string(params), str(userId),dt.strftime('%Y-%m-%d %H:%M:%S'), str(time.hour), str(time.minute), str(time.second), str(date.year), str(date.month), str(date.day)])
 
         logs.append(logstring)
 
-    folder = rootPath + '/testData/' + str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '/'
+    folder = rootPath + '/testData/' + key + '/' + str(date.year) + '/' + str(date.month) + '/' + str(date.day) + '/'
     print folder
     if not os.path.exists(folder):
         os.makedirs(folder)

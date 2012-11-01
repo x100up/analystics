@@ -212,3 +212,14 @@ div.op_controll span.sync:hover, div.op_controll span.sync.selected{
     float: right;
 }
 
+
+.button.userUnique {
+     background: url(/static/img/sprite.png) no-repeat -218px -4px;
+     width: 27px;
+     height: 24px;
+     display: inline-block;
+ }
+
+.button.userUnique.checked {
+    background: url(/static/img/sprite.png) no-repeat -218px -32px;
+}

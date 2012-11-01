@@ -161,7 +161,18 @@ function initLoadedKeyForm(index) {
         $("#end_" + index).val(isLockDate[1]);
         $('.button.lock').removeClass('unlock');
     }
+}
 
+function switchUserUnique(index, button) {
+    var input = $('#userUnique' + index);
+    var isChecked = input.attr('checked') != undefined;
+    if (isChecked){
+        input.removeAttr('checked');
+        $(button).removeClass('checked');
+    } else {
+        input.attr('checked', 'checked');
+        $(button).addClass('checked');
+    }
 }
 
 /**

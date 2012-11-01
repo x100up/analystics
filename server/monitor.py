@@ -51,8 +51,6 @@ if options['appname'] is None and options['all_apps'] is None:
     print 'Availale app names: ' + str(availale_apps)
     exit()
 
-
-
 # import app settings
 if options['all_apps']:
     appnames = availale_apps
