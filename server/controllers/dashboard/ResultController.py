@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from components.ChartConstructor import ChartConstructor
+from components.TableConstructor import TableConstructor
 from controllers.BaseController import BaseController
 from models.Worker import Worker
 from models.App import App
@@ -56,6 +57,7 @@ class ResultAction(BaseController):
                 return
             # chart data
             chartService = ChartConstructor(data, nameService, task)
+            tableService = TableConstructor(data, nameService, task)
         except IOError as ioerr:
             self.render('dashboard/result.jinja2', {'errors': [u'Ошибка чтения результатов выполнения работы'], 'app': app})
         else:
@@ -64,4 +66,4 @@ class ResultAction(BaseController):
                            'chartdata': json.dumps(chartService.getResult()),
                            'interval': json.dumps(task.interval)
                         },
-                    'app': app, 'data':data, 'nameService':nameService})
+                    'app': app, 'data':data, 'tabledata': tableService.getData(), 'nameService':nameService})

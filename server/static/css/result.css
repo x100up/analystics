@@ -11,3 +11,25 @@ span.button {
 .button.compare.on {
     background: url('/static/img/sprite.png') -164px -29px no-repeat;
 }
+
+table.data_table td.value {
+    text-align: right;
+}
+
+table.data_table th.date{
+    text-align: left;
+    width: 150px;
+}
+
+table.data_table th{
+    text-align: center
+}
+
+table.data_table th.op{
+    text-align: right;
+    font-weight: bold;
+}
+
+table.data_table th span.op{
+    font-size: 10pt;
+}

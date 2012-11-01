@@ -1,0 +1,49 @@
+{% for index in tabledata %}
+    {% set data = tabledata[index] %}
+    <h2>{{ data['table_name'] }}</h2>
+
+    <table class="data_table">
+    {# заголовок #}
+        <thead>
+            <tr>
+                <th class="date">Дата</th>
+                {% for i, header in data['table_headers'] %}
+                <th>
+                    {{ header }}
+                    {% for _cond in data['table_headers_adds'][i] %}
+                        <br /><span class="op">{{ _cond }}</span>
+                    {% endfor %}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+
+    {# строки #}
+        <tbody>
+            {% for ts in data['data'] %}
+                <tr>
+                    <td>{{ ts|smartDate(data['interval']) }}</td>
+                    {%  for value in data['data'][ts] %}
+
+                        <td class="value">{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    <tfoot>
+        <tr>
+            <th>Сумма</th>
+            {% for i in data['ops'] %}
+            <th class="op">{{ i['sum'] }}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            <th>Среднее</th>
+            {% for i in data['ops'] %}
+                <th class="op">{{ i['avg'] }}</th>
+            {% endfor %}
+        </tr>
+    </tfoot>
+    </table>
+{% endfor %}

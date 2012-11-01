@@ -72,40 +72,14 @@ class NameConstructor(object):
 
         return 'not name for task item: ' + str(index)
 
-    def getTableName(self, index, params):
-        '''
-        return key name by taskItem index
-        '''
-
-        tagSettings = self.appConfig['tagSettings']
-
+    def getTableName(self, index):
         taskItem = self.task.getTaskItem(index)
         if taskItem:
-            tag_name = u'Количество'
             key = taskItem.key
             key_name = key
             if self.appConfig['keys'].has_key(key) and self.appConfig['keys'][key].has_key('name'):
                 key_name = self.appConfig['keys'][key]['name']
-
-            operation = ''
-            if params['op'] == 'group':
-                operation += u'/кол-во'
-                for condition in params['conditions']:
-                    tag_key = condition[0]
-                    value = condition[1]
-                    if tagSettings.has_key(tag_key) and tagSettings[tag_key].has_key('name'):
-                        tag_name = tagSettings[tag_key]['name']
-                        operation += ' ' + tag_name + '=' + self.getParamNameValue(tag_key, value)
-            else:
-                if params['op'] == 'avg':
-                    operation += u'/среднее'
-                elif params['op'] == 'sum':
-                    operation += u'/сумма'
-                elif params['op'] == 'count':
-                    operation += u'/кол-во'
-
-
-            return key_name + operation
+            return key_name
 
         return 'not name for task item: ' + str(index)
 
