@@ -65,13 +65,19 @@ class HiveResponseProcessor():
             taskItemIndex = str(line[offset])
             offset += 1
 
+            #
+            taskItem = self.task.getTaskItem(taskItemIndex)
+            _count_extra = 'all'
+            if (taskItem.userUnique):
+                _count_extra = 'userunique'
+
             # следующее поле всегда количество, общее или группы
             count = int(line[offset])
-            values['count'] = [count, {'op':'count'}]
+            values['count'] = [count, {'op':'count', 'extra':_count_extra}]
             offset += 1
 
 
-            taskItem = self.task.getTaskItem(taskItemIndex)
+
             extraFields = taskItem.getExtraFields()
 
             # если есть операции то есть и дополнительные поля
@@ -97,7 +103,7 @@ class HiveResponseProcessor():
                         # в строке всегда одна запись кол-во в группе
                         if values.has_key('count'):
                             del values['count']
-                            values['group'] = [count, {'op' : 'group'}]
+                            values['group'] = [count, {'op' : 'group', 'extra':_count_extra}]
 
                         conditions.append((tag, value))
                     else:

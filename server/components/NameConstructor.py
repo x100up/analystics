@@ -48,12 +48,16 @@ class NameConstructor(object):
             print params
             if params['op'] == 'group':
                 operation += u'/кол-во'
+                if params.has_key('extra') and params['extra'] == 'userunique':
+                    operation += u' поль.'
             elif params['op'] == 'avg':
                 operation += u'/среднее'
             elif params['op'] == 'sum':
                 operation += u'/сумма'
             elif params['op'] == 'count':
-                 operation += u'/кол-во'
+                operation += u'/кол-во'
+                if params.has_key('extra') and params['extra'] == 'userunique':
+                    operation += u' поль.'
 
             if params.has_key('conditions'):
                 for condition in params['conditions']:
