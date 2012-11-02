@@ -19,6 +19,9 @@ config = Config()
 config.readConfigFile(os.path.abspath(os.path.abspath(rootPath + '/../server.cfg')))
 
 STATISTICS_ROOT = config.get('hdfs_statistic_path')
+HDFS_HOST = config.get('hdfs_host')
+HDFS_PORT = int(config.get('hdfs_port'))
+HDFS_USER = config.get('hdfs_user')
 TABLE_PREFIX = config.get('hive_prefix')
 
 CREATE_TABLE_QUERY = """CREATE TABLE %(table_name)s (params MAP<STRING, STRING>, `userId` INT, `timestamp` TIMESTAMP, hour INT, minute INT, second INT)
@@ -67,9 +70,9 @@ class AnalyticsMonitor():
     TABLE_PREFIX = ''
     partNameR = re.compile('^year=(\d+)/month=(\d+)/day=(\d+)$')
 
-    def __init__(self, appService, hiveclient):
+    def __init__(self, appService, hiveclient, host = 'localhost', port = 14000, username = 'hdfs'):
         self.appService = appService
-        self.webhdfs = WebHDFS("localhost", 14000, "hdfs")
+        self.webhdfs = WebHDFS(host, port, username)
         self.real_keys = []
         self.remove_dir_not_equal_key = False
         self.hiveclient = hiveclient
@@ -177,7 +180,7 @@ class AnalyticsMonitor():
 
 
 hiveclient = HiveService(config.get('hive_host'), config.get('hive_port'))
-monitor = AnalyticsMonitor(appService, hiveclient)
+monitor = AnalyticsMonitor(appService, hiveclient, host=HDFS_HOST, port=HDFS_PORT, username=HDFS_USER)
 monitor.TABLE_PREFIX = TABLE_PREFIX
 for appname in appnames:
     monitor.processApp(appname)
