@@ -17,7 +17,8 @@ class WebHDFS(object):
         self.username = hdfs_username
 
     def debug(self, message):
-        print '     --hdfs-->' + message
+        #print '     --hdfs-->' + message
+        pass
 
 
     def mkdir(self, path):
