@@ -151,6 +151,7 @@ class AnalyticsMonitor():
                         'path': '{}/{}/{}/{}/{}/'.format(self.getStatRoot(appCode), key, year, month, day)
                     }
                     self.log('create partition ' + str(part_folder) + ' for ' + table_name)
+                    self.log(query)
                     self.hiveclient.execute(query)
 
     def getExistPartitionFolders(self, appCode, key):
