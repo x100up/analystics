@@ -102,7 +102,7 @@ class AnalyticsMonitor():
 
         for key_name in non_existing_folders:
             self.log('folder for key "{}" app {} not exist'.format(key_name, appCode))
-            return
+            
 
         # есть директории, для которых нет ключей
         excess_keys = listDiff(key_folders, self.real_keys)
