@@ -94,7 +94,7 @@ $(function(){
         formatter: function() {
             return '<b>'+ this.series.name + '</b><br/>' +
                 'Значение:' + this.y + '<br/>' +
-                'Дата:' + formatDate(this.x, interval);
+                'Дата:' + formatDate(this.x, interval, true);
 
         }
     };
@@ -127,7 +127,7 @@ function drawChart() {
                 year: '%b'},
                 labels: {
                     formatter: function() {
-                        return formatDate(this.value, interval);
+                        return formatDate(this.value, interval, false);
                     }
                 }
         };
@@ -209,6 +209,9 @@ function formatDate(timestamp, interval, extra) {
     var result = date.getDate() + ' ' + shortMonths[date.getMonth()] + ' ' + date.getFullYear();
     switch (interval) {
         case '10minutes':
+            if (!extra) {
+                result = '';
+            }
             result += ' ' + date.getHours() + ':' + date.getMinutes() + (extra ? ' +10 мин' : '');
         break;
 
@@ -225,6 +228,9 @@ function formatDate(timestamp, interval, extra) {
         break;
 
         case 'minute':
+            if (!extra) {
+                result = '';
+            }
             result += ' ' + date.getHours() + ':' +date.getMinutes();
         break;
     }
