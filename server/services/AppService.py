@@ -116,9 +116,7 @@ class AppService():
         key_configs = {}
         for key in keys:
             key_configs[key] = {
-                "tags": dict(self.getAppTags(app_code, key, 'mustHave').items() +
-                             self.getAppTags(app_code, key, 'canHave').items() +
-                             self.getAppTags(app_code, key, 'autoLoad').items())
+                "tags": self.getAppTags(app_code, key)
                 }
         return key_configs
 
