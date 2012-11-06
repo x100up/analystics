@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 from AdminIndexController import AdminAction
+from models.Config import Config
 
 class IndexAction(AdminAction):
 
@@ -13,6 +14,12 @@ class IndexAction(AdminAction):
         self.run()
 
     def post(self, *args, **kwargs):
+
+        def_host = self.request.host.split(':')[0]
+
+        old_host = self.config.get(Config.APP_HOST)
+        old_port = self.config.get(Config.APP_PORT)
+
         for key, value in self.request.arguments.items():
             self.config.set(key, value.pop())
 
@@ -30,6 +37,9 @@ class IndexAction(AdminAction):
             raw_config.write(configfile)
             configfile.close()
             self.application.loadConfiguration()
+            if old_host != self.config.get(Config.APP_HOST) or old_port != self.config.get(Config.APP_PORT):
+                self.redirect('http://' + self.config.get(Config.APP_HOST, def_host) + ':' + self.config.get(Config.APP_PORT) + '/admin/settings')
+                self.application.start()
 
         self.run()
 

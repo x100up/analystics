@@ -67,6 +67,7 @@ class AnalyticsServer(tornado.web.Application):
         self.jinjaEnvironment.filters['smartDateInterval'] = smartDateInterval
         self.jinjaEnvironment.filters['smartDate'] = smartDate
         self.scoped_session = None
+        self.loopInstance = None
         if self.isInstalled:
             self.initDBScopedSession()
 
@@ -94,9 +95,13 @@ class AnalyticsServer(tornado.web.Application):
 
 
     def start(self):
-        self.listen(48888)
-        loopInstance = tornado.ioloop.IOLoop.instance()
-        loopInstance.start()
+        port = int(self.config.get('app_port', 48888))
+        address = self.config.get('app_host', "")
+        print '{}:{}'.format(address, port)
+        self.listen(port = port, address = address )
+        self.loopInstance = tornado.ioloop.IOLoop.instance()
+        self.loopInstance.start()
+
 
     def loadConfiguration(self):
         self.config = Config()

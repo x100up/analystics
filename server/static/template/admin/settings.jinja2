@@ -11,6 +11,19 @@
 
     <form action="" method="post">
 
+        <h2>Приложение</h2>
+        <p class="info">При изменении параметров приложения, оно может оказаться недоступным по текущему адресу.</p>
+        <ul>
+            <li>
+                <label>Хост:</label>
+                <input type="test" name="app_host" value="{{ config.app_host or '' }}">
+            </li>
+            <li>
+                <label>Порт:</label>
+                <input type="test" name="app_port" value="{{ config.app_port  or '' }}">
+            </li>
+        </ul>
+
         <h2>MySQL</h2>
 
         <ul>

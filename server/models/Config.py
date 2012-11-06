@@ -5,6 +5,9 @@ class Config():
     Struct for app settings
     '''
 
+    APP_HOST = 'app_host'
+    APP_PORT = 'app_port'
+
     HIVE_HOST = 'hive_host'
     HIVE_PORT = 'hive_port'
     HIVE_PREFIX = 'hive_prefix'
@@ -14,7 +17,6 @@ class Config():
     MYSQL_PORT = 'mysql_port'
     MYSQL_DBNAME = 'mysql_dbname'
     MYSQL_PASSWORD = 'mysql_password'
-
 
     HDFS_HOST = 'hdfs_host'
     HDFS_PORT = 'hdfs_port'
@@ -42,16 +44,17 @@ class Config():
     def __getattr__(self, item):
         return self.get(item)
 
-    def get(self, key):
+    def get(self, key, default = None):
         if self.values.has_key(key):
             return self.values[key]
-        return None
+        return default
 
     def set(self, key, value):
         self.values[key] = value
 
     def getRawConfig(self):
         config = ConfigParser.RawConfigParser()
+        config.add_section('app')
         config.add_section('mysql')
         config.add_section('hive')
         config.add_section('hdfs')
