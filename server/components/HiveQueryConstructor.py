@@ -206,7 +206,7 @@ class HiveQueryConstructor():
         else:
             # разные годы
             for yi in range(start_year, end_year + 1):
-                prefix = '(year = %(year)i'%{'year':start_year}
+                prefix = '(year = %(year)i'%{'year':yi}
                 if yi == start_year:
 
                     for mi in range(start_month, 12 + 1):
