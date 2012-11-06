@@ -20,10 +20,10 @@
 
     {# строки #}
         <tbody>
-            {% for ts in data['data'] %}
+            {% for ts, values in data['data'] %}
                 <tr>
                     <td>{{ ts|smartDate(data['interval']) }}</td>
-                    {%  for value in data['data'][ts] %}
+                    {%  for value in values %}
 
                         <td class="value">{{ value }}</td>
                     {% endfor %}

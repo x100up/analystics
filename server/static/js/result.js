@@ -90,12 +90,11 @@ function prepareCompareSeries() {
 
 $(function(){
     chartconf = chartdata['chartconf'];
-
     chartconf['tooltip'] = {
         formatter: function() {
             return '<b>'+ this.series.name + '</b><br/>' +
                 'Значение:' + this.y + '<br/>' +
-                'Дата:' + formatDate(this.x, this.series.options.opt.interval);
+                'Дата:' + formatDate(this.x, interval);
 
         }
     };
@@ -125,7 +124,12 @@ function drawChart() {
             showEmpty: false,
             dateTimeLabelFormats: {
                 month: '%e %b',
-                year: '%b'}
+                year: '%b'},
+                labels: {
+                    formatter: function() {
+                        return formatDate(this.value, interval);
+                    }
+                }
         };
     }
 
@@ -200,12 +204,12 @@ Object.size = function(obj) {
  * @param interval
  * @return {String}
  */
-function formatDate(timestamp, interval) {
+function formatDate(timestamp, interval, extra) {
     var date = new Date(timestamp);
-    var result =  date.getDate() + ' ' + shortMonths[date.getMonth()] + ' ' + date.getFullYear();
+    var result = date.getDate() + ' ' + shortMonths[date.getMonth()] + ' ' + date.getFullYear();
     switch (interval) {
         case '10minutes':
-            result += ' ' + date.getHours() + ':' + date.getMinutes() + '+10 мин';
+            result += ' ' + date.getHours() + ':' + date.getMinutes() + (extra ? ' +10 мин' : '');
         break;
 
         case 'week':
@@ -217,7 +221,7 @@ function formatDate(timestamp, interval) {
         break;
 
         case 'hour':
-            result += ' ' + date.getHours() + ' +1час';
+            result += ' ' + date.getHours() +  (extra ? ' +1 час' : '');
         break;
 
         case 'minute':

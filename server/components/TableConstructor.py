@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import pprint
 class TableConstructor():
 
     def __init__(self, data, nameService, task):
@@ -52,6 +52,7 @@ class TableConstructor():
 
                 # пакуем данные
                 column_values = []
+                pprint.pprint( self.data[key][series]['data'])
                 for ts, value in self.data[key][series]['data']:
                     column_values.append(value)
 
@@ -59,13 +60,18 @@ class TableConstructor():
                         data[ts] = ()
                     data[ts] = data[ts] + (self._format(value),)
 
+
+
                 columnSum = sum(column_values)
                 ops.append({'sum': self._format(columnSum), 'avg': self._format(columnSum/len(column_values))})
 
+            sorted_data = []
+            for ts in sorted(data.iterkeys()):
+                sorted_data.append((ts, data[ts]))
 
             self.result[key]['table_headers'] = enumerate(table_headers)
             self.result[key]['table_headers_adds'] = table_headers_adds
-            self.result[key]['data'] = data
+            self.result[key]['data'] = sorted_data
             self.result[key]['interval'] = self.task.interval
             self.result[key]['ops'] = ops
 
