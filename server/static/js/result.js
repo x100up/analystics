@@ -207,12 +207,16 @@ Object.size = function(obj) {
 function formatDate(timestamp, interval, extra) {
     var date = new Date(timestamp);
     var result = date.getDate() + ' ' + shortMonths[date.getMonth()] + ' ' + date.getFullYear();
+    var minutes = date.getMinutes();
+    var hours = date.getHours();
+    if (minutes < 10) minutes = '0' + minutes;
+    if (hours < 10) hours = '0' + hours;
     switch (interval) {
         case '10minutes':
             if (!extra) {
                 result = '';
             }
-            result += ' ' + date.getHours() + ':' + date.getMinutes() + (extra ? ' +10 мин' : '');
+            result += ' ' + hours + ':' + minutes + (extra ? ' +10 мин' : '');
         break;
 
         case 'week':
@@ -224,14 +228,14 @@ function formatDate(timestamp, interval, extra) {
         break;
 
         case 'hour':
-            result += ' ' + date.getHours() +  (extra ? ' +1 час' : '');
+            result += ' ' + hours +  (extra ? ' +1 час' : '');
         break;
 
         case 'minute':
             if (!extra) {
                 result = '';
             }
-            result += ' ' + date.getHours() + ':' +date.getMinutes();
+            result += ' ' + hours + ':' + minutes;
         break;
     }
     return result;
