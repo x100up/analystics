@@ -121,6 +121,10 @@ class AnalyticsMonitor():
         self.log('tables for app {}: '.format(appCode) + str(tables))
 
         for key in self.real_keys:
+
+            if key in non_existing_folders:
+                continue
+
             table_name = self.getTableName(key)
             if not table_name in tables:
                 self.log('table %(table_name)s not exist'%{'table_name':table_name})
