@@ -37,9 +37,7 @@ class KeyConfigurationAction(AjaxController):
 
         appService = AppService(self.application.getAppConfigPath())
         tags = {
-            "tags": dict(appService.getAppTags(appName, keyName, 'mustHave').items() +
-             appService.getAppTags(appName, keyName, 'canHave').items() +
-             appService.getAppTags(appName, keyName, 'autoLoad').items())
+            "tags": appService.getAppTags(appName, keyName)
         }
 
         self.render('blocks/tag_container.jinja2', {'tags':tags, 'taskItem': taskItem, 'values':{}})

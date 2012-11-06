@@ -38,8 +38,8 @@ print 'Generate for ' + app
 config = appService.getAppConfig(app)
 
 keys = config['keys']
-tags = config['tags']
 tagSettings = config['tagSettings']
+tags = tagSettings.keys()
 if config.has_key('bunches'):
     bunches = config['bunches']
 else:

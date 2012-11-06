@@ -89,7 +89,7 @@ class NameConstructor(object):
         '''
         tag_value = value
 
-        if tagName in self.appConfig['tags']:
+        if tagName in self.appConfig['tagSettings'].keys():
             tagConf = self.appConfig['tagSettings'][tagName]
 
             type = None

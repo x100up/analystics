@@ -49,8 +49,8 @@ class AppService():
             return list of tags
         '''
         config = self.getAppConfig(appName)
-        if config.has_key('tags'):
-            return config['tags']
+        if config.has_key('tagSettings'):
+            return config['tagSettings'].keys()
         return []
 
     def getTagSettings(self, appName):
@@ -67,21 +67,22 @@ class AppService():
         config['tagSettings'] = tagSettings
         if keyConfig:
             config['keys'] = keyConfig
-        config['tags'] = tagSettings.keys()
         self.saveConfig(config)
 
-    def getAppTags(self, appName, keyName, prefix):
+    def getAppTags(self, appName, keyName):
+        '''
+
+        '''
         config = self.getAppConfig(appName)
         keyConf = config['keys'][keyName]
 
         raw_json = {}
-        if keyConf.has_key(prefix + 'Tags'):
-            for tag in keyConf[prefix + 'Tags']:
-                raw_json[tag] = None
+        if keyConf.has_key('tags'):
+            raw_json = keyConf['tags']
 
         # load bunch
-        if keyConf.has_key(prefix + 'Bunches'):
-            for bunchName in keyConf[prefix + 'Bunches']:
+        if keyConf.has_key('bunches'):
+            for bunchName in keyConf['bunches']:
                 for tag in config['bunches'][bunchName]['tags']:
                     raw_json[tag] = None
 
