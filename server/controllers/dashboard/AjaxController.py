@@ -89,6 +89,15 @@ class AddNewTag(AjaxController):
         }
         self.render('blocks/edit_tag.jinja2', data)
 
+class AddNewBunch(AjaxController):
+    def post(self):
+        data = {
+            'index': self.get_argument('index'),
+            'bunch_name':'',
+            'tags':{}
+        }
+        self.render('blocks/edit_bunch.jinja2', data)
+
 class GatTasksProgress(AjaxController):
     def post(self, *args, **kwargs):
         arguments = []

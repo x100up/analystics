@@ -6,6 +6,9 @@ from optparse import OptionParser
 import inspect
 import os
 
+print 'must remove bunch'
+exit()
+
 rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
 
 optParser = OptionParser()
@@ -38,7 +41,7 @@ print 'Generate for ' + app
 config = appService.getAppConfig(app)
 
 keys = config['keys']
-tagSettings = config['tagSettings']
+tagSettings = config['tags']
 tags = tagSettings.keys()
 if config.has_key('bunches'):
     bunches = config['bunches']

@@ -26,9 +26,13 @@ div#tabber > div.active {
 
 
 div#tabber > ul > li{
-    display: inline;
+    display: inline-block;
     font-size: 13pt;
     cursor: pointer;
+    width: 100px;
+    text-align: center;
+    border: 1px solid #e0e0e0;
+    border-bottom: none;
 }
 
 div#tabber > ul > li.active {
@@ -37,7 +41,7 @@ div#tabber > ul > li.active {
 }
 
 div#tabber > ul {
-    margin-bottom: 15px;
+    /*margin-bottom: 15px;*/
 }
 
 form h3 {

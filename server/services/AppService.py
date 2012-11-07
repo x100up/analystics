@@ -4,6 +4,12 @@ from pprint import pprint
 from components.AnalyticsException import AnalyticsException
 
 class AppService():
+
+
+    KEYS_JSON_INDEX = 'keys'
+    BUNCHES_JSON_INDEX = 'bunches'
+    TAGS_JSON_INDEX = 'tags'
+
     nameR = re.compile('^(.*)\.json$')
 
     def __init__(self, config_folder):
@@ -35,7 +41,8 @@ class AppService():
     def createEmptyConfig(self, appCode):
         config = {
             'appname': appCode,
-            'keys' : {}
+            'keys' : {},
+            'tags':{}
         }
         self.appConfCache[appCode] = config
         self.saveConfig(config)
@@ -49,8 +56,8 @@ class AppService():
             return list of tags
         '''
         config = self.getAppConfig(appName)
-        if config.has_key('tagSettings'):
-            return config['tagSettings'].keys()
+        if config.has_key('tags'):
+            return config['tags'].keys()
         return []
 
     def getTagSettings(self, appName):
@@ -58,15 +65,18 @@ class AppService():
             return list of tags
         '''
         config = self.getAppConfig(appName)
-        if config.has_key(u'tagSettings'):
-            return config[u'tagSettings']
+        if config.has_key(u'tags'):
+            return config[u'tags']
         return []
 
-    def saveSettings(self, appName, tagSettings = None, keyConfig = None):
+    def saveSettings(self, appName, tags = None, keys = None, bunches = None):
         config = self.getAppConfig(appName)
-        config['tagSettings'] = tagSettings
-        if keyConfig:
-            config['keys'] = keyConfig
+        if tags:
+            config['tags'] = tags
+        if keys:
+            config['keys'] = keys
+        if bunches:
+            config['bunches'] = bunches
         self.saveConfig(config)
 
     def getAppTags(self, appName, keyName):
@@ -98,11 +108,18 @@ class AppService():
         config = self.getAppConfig(appName)
         return config['keys']
 
+    def getBunches(self, appName):
+        config = self.getAppConfig(appName)
+        if config.has_key(self.BUNCHES_JSON_INDEX):
+            return config[self.BUNCHES_JSON_INDEX]
+        return {}
+
     def saveConfig(self, data):
         if u'appname' in data.keys():
             appName = data[u'appname']
             f = open(self.folder + '/' + appName + '.json', 'w+')
-            f.write(json.dumps(data))
+            pprint(data)
+            f.write(json.dumps(data, sort_keys=True, indent=4))
             f.close()
         else:
             raise Error('Cant find appname in config')

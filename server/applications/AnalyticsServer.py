@@ -170,6 +170,8 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/saveWorkerName?", AjaxController.SaveWorkerName),
             (r"/ajax/add_new_key?", AjaxController.AddNewKey),
             (r"/ajax/add_new_tag?", AjaxController.AddNewTag),
+            (r"/ajax/add_new_bunch?", AjaxController.AddNewBunch),
+
 
 
             (r"/api/putConfig/?", APIController.PutConfigAction),

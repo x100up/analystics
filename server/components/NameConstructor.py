@@ -31,7 +31,7 @@ class NameConstructor(object):
         return key name by taskItem index
         '''
 
-        tagSettings = self.appConfig['tagSettings']
+        tags = self.appConfig['tags']
 
         taskItem = self.task.getTaskItem(index)
         if taskItem:
@@ -63,8 +63,8 @@ class NameConstructor(object):
                 for condition in params['conditions']:
                     tag_key = condition[0]
                     value = condition[1]
-                    if tagSettings.has_key(tag_key) and tagSettings[tag_key].has_key('name'):
-                        tag_name = tagSettings[tag_key]['name']
+                    if tags.has_key(tag_key) and tags[tag_key].has_key('name'):
+                        tag_name = tags[tag_key]['name']
                         operation += '[' + tag_name + '=' + str(value) + ']'
 
 
@@ -89,8 +89,8 @@ class NameConstructor(object):
         '''
         tag_value = value
 
-        if tagName in self.appConfig['tagSettings'].keys():
-            tagConf = self.appConfig['tagSettings'][tagName]
+        if tagName in self.appConfig['tags'].keys():
+            tagConf = self.appConfig['tags'][tagName]
 
             type = None
             if tagConf.has_key('type'):
