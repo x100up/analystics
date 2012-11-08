@@ -19,7 +19,7 @@ class HiveQueryConstructor():
         '''
             Генерирует запрос для Hive основываясь на зачаче Task
         '''
-        self.dateFields = self.getDateFields(self.task.interval)
+
         queries = []
         isMulty = len(self.task.items) > 1
 
@@ -46,11 +46,9 @@ class HiveQueryConstructor():
             if not isMulty:
                 query += '\'' + str(workerId) + '\' as `wid`,'
 
-            #taskFields = taskItem.getFields(not taskItem.userUnique)
-            # дополняем поля до нужного количества иначе будет FAILED: Error in semantic analysis: Schema of both sides of union should match.
-            #taskFields += ['0.0']*(self.fieldCount - len(taskFields))
+            dateFields = self.getDateFields(self.task.interval, taskItem.userUnique)
 
-            query += self.toSQLFields(self.dateFields) + ', ' +self.toSQLFields(taskItem.fields) + fieldsTemplate%fields\
+            query += self.toSQLFields(dateFields) + ', ' +self.toSQLFields(taskItem.fields) + fieldsTemplate%fields\
                      + ' FROM {}'.format(self.getSelectSource(taskItem))
 
             if not taskItem.userUnique:
@@ -64,7 +62,7 @@ class HiveQueryConstructor():
                 pass
 
             # группировка
-            query += ' GROUP BY ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsByOperation(taskItem, 'group', not taskItem.userUnique)
+            query += ' GROUP BY ' + self.getGroupInterval(self.task.interval, taskItem.userUnique) + self.getTaskTagsByOperation(taskItem, 'group', not taskItem.userUnique)
             queries.append(query)
 
         if not isMulty:
@@ -78,7 +76,7 @@ class HiveQueryConstructor():
         Из чего выбираем - из таблицы или из выражения
         '''
         if (taskItem.userUnique):
-            subquery = 'SELECT {}, userId '.format(self.toSQLFields(self.dateFields))
+            subquery = 'SELECT {}, userId '.format(self.toSQLFields(self.getDateFields(self.task.interval)))
 
             taskFields = taskItem.getFields(topQuery = True, isSubquery = True)
             # дополняем поля до нужного количества иначе будет FAILED: Error in semantic analysis: Schema of both sides of union should match.
@@ -142,7 +140,7 @@ class HiveQueryConstructor():
 
         return '(' + ' OR '.join(exp) + ')'
 
-    def getDateFields(self, interval):
+    def getDateFields(self, interval, isSubquery = False):
         '''
             Генерирует список полей дат, нужных для интервала
         '''
@@ -159,7 +157,11 @@ class HiveQueryConstructor():
 
         elif  interval == Task.INTERVAL_10_MINUTE:
             fields.append(('hour'))
-            fields.append(('floor(`minute` / 10) * 10', 'minute_10'))
+            if isSubquery:
+                fields.append(('minute_10'))
+            else:
+                fields.append(('floor(`minute` / 10) * 10', 'minute_10'))
+
 
         elif  interval == Task.INTERVAL_HOUR:
             fields.append(('hour'))
@@ -193,7 +195,7 @@ class HiveQueryConstructor():
                 if start_day == end_day:
                     intervals.append(prefix + ' AND day = %(start_day)i)'%{'start_day':start_day})
                 else:
-                    intervals.append(prefix + ' AND day >= %(start_day)i AND day < %(end_day)i)'%{'start_day':start_day, 'end_day':end_day})
+                    intervals.append(prefix + ' AND day >= %(start_day)i AND day <= %(end_day)i)'%{'start_day':start_day, 'end_day':end_day})
             else:
                 for mi in range(start_month, end_month + 1):
                     prefix2 = prefix + ' AND month = %(month)i'%{'month':mi}
@@ -230,7 +232,7 @@ class HiveQueryConstructor():
                     intervals.append(prefix)
         return intervals
 
-    def getGroupInterval(self, group_interval):
+    def getGroupInterval(self, group_interval, isSubquery = False):
         '''
         Генерит группировку основываясь на интервале
         '''
@@ -238,7 +240,10 @@ class HiveQueryConstructor():
             return ' year, month, day, hour, minute '
 
         if group_interval == Task.INTERVAL_10_MINUTE:
-            return ' year, month, day, hour, floor(`minute` / 10) * 10 '
+            if isSubquery:
+                return ' year, month, day, hour, minute_10 '
+            else:
+                return ' year, month, day, hour, floor(`minute` / 10) * 10 '
 
         if group_interval ==  Task.INTERVAL_HOUR:
             return ' year, month, day, hour'

@@ -36,13 +36,13 @@ class TableConstructor():
                     extra = params['extra']
 
                 conditions = []
-
+                add_headers = []
                 if extra == 'userunique':
                     add_headers.append(u'уникальная')
 
                 if params.has_key('conditions'):
                     conditions = params['conditions']
-                add_headers = []
+
                 for kv in conditions:
                     k, v = kv
                     add_headers.append(k + '=' + v)

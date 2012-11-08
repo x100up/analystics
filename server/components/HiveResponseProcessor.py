@@ -133,9 +133,10 @@ class HiveResponseProcessor():
                     }
 
                 if not result[taskItemIndex][seria_id]['data'].has_key(date):
-                    print 'Warning: unexpected date '
-
-                result[taskItemIndex][seria_id]['data'][date] = value[0]
+                    # тут мы отсекаем лишние данные по времени - не вставляем то что не входит в матрицу данных
+                    pass
+                else:
+                    result[taskItemIndex][seria_id]['data'][date] = value[0]
 
         for taskItemIndex in result:
             for seria_id in result[taskItemIndex]:
