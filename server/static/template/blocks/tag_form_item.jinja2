@@ -18,7 +18,7 @@
             <ul>
             {% for v, k in data['values'].items() %}
                 <li><input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
-                    {% if value and v in value %} checked="checked" {% endif %}> : {{ k }}
+                    {% if value and v in value %} checked="checked" {% endif %}> : {{ k or v }}
                 </li>
             {% endfor %}
             </ul>
