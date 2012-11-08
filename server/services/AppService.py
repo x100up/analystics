@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import json, os, re
-from pprint import pprint
 from components.AnalyticsException import AnalyticsException
 
 class AppService():
@@ -118,7 +117,6 @@ class AppService():
         if u'appname' in data.keys():
             appName = data[u'appname']
             f = open(self.folder + '/' + appName + '.json', 'w+')
-            pprint(data)
             f.write(json.dumps(data, sort_keys=True, indent=4))
             f.close()
         else:

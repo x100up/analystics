@@ -46,12 +46,13 @@ class ResultAction(BaseController):
 
         # configuration name services
         task = service.getTask()
+
         appService = AppService(self.application.getAppConfigPath())
         appConfig = appService.getAppConfig(app.code)
         nameService = NameConstructor(appConfig, task)
 
         try:
-            data = service.getResults()
+            data = service.getResultData()['data']['result']
             if len(data.items()) == 0:
                 self.render('dashboard/result_no_data.jinja2', {'app': app})
                 return
@@ -66,4 +67,4 @@ class ResultAction(BaseController):
                            'chartdata': json.dumps(chartService.getResult()),
                            'interval': json.dumps(task.interval)
                         },
-                    'app': app, 'data':data, 'tabledata': tableService.getData(), 'nameService':nameService})
+                    'app': app, 'data':data, 'tabledata': tableService.getData(), 'nameService':nameService, 'workerId':workerId})

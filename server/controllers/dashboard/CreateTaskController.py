@@ -11,7 +11,23 @@ from components.TaskFactory import createTaskFromRequestArguments
 from components.NameConstructor import NameConstructor
 import tornado.web
 
-class CreateAction(BaseController):
+
+class CreateTaskController(BaseController):
+
+    def createHiveWorker(self, workerService):
+        workerThread = HiveWorker.HiveWorker(workerService)
+        # передает sessionmaker т.к. он создает сеессию в пределах треда
+        workerThread.mysqlSessionMaker = self.application.scoped_session
+        workerThread.folderForWorkerService = self.application.getResultPath()
+        workerThread.host = self.getConfigValue('hive_host')
+        workerThread.port = int(self.getConfigValue('hive_port'))
+        workerThread.setName('worker-' + str(workerService.getWorker().workerId))
+        workerThread.setVersion(workerService.version)
+        workerThread.setTask(workerService.getTask())
+        return workerThread
+
+
+class CreateAction(CreateTaskController):
     """
         Добавление новой задачи
     """
@@ -78,21 +94,41 @@ class CreateAction(BaseController):
         # создаем WorkerService - он будет связывать тред с файловой системой
         workerService = WorkerService(self.application.getResultPath(), worker)
         workerService.setQuery(query)
-        workerService.setFields(constructor.getFields())
         workerService.setTask(task)
         workerService.init()
 
-        # тут будем констуровать запрос
-        workerThread = HiveWorker.HiveWorker(workerService)
-
-        # передает sessionmaker т.к. он создает сеессию в пределах треда
-        workerThread.mysqlSessionMaker = self.application.scoped_session
-        workerThread.folderForWorkerService = self.application.getResultPath()
-        workerThread.host = self.getConfigValue('hive_host')
-        workerThread.port = int(self.getConfigValue('hive_port'))
-        workerThread.setName('worker-' + str(worker.workerId))
-        workerThread.setTask(task)
-
+        # создаем и запускаем тред
+        workerThread = self.createHiveWorker(workerService)
         workerThread.start()
 
         self.redirect('/dashboard/app/' + app.code + '/')
+
+class RecalculateAction(CreateTaskController):
+
+    def get(self, *args, **kwargs):
+        app = self.checkAppAccess(args)
+        workerId = self.get_argument('workerId')
+        workerId = int(workerId)
+        dbSession = self.getDBSession()
+
+        # загружаем воркер из базы
+        worker = dbSession.query(Worker).filter_by(workerId = workerId).first()
+        worker.status = Worker.STATUS_ALIVE
+        worker.startDate = datetime.now()
+        worker.endDate = None
+        dbSession.add(worker)
+        dbSession.commit()
+
+        # создаем WorkerService и загружаем его данные
+        workerService = WorkerService(self.application.getResultPath(), worker)
+        workerService.load()
+        workerService.version = workerService.version + 1
+        workerService.init()
+
+        # создаем и запускаем тред
+        workerThread = self.createHiveWorker(workerService)
+        workerThread.start()
+
+        self.redirect('/dashboard/app/' + app.code + '/')
+
+

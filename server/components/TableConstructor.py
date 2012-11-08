@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import pprint
 class TableConstructor():
 
     def __init__(self, data, nameService, task):
@@ -52,7 +51,6 @@ class TableConstructor():
 
                 # пакуем данные
                 column_values = []
-                pprint.pprint( self.data[key][series]['data'])
                 for ts, value in self.data[key][series]['data']:
                     column_values.append(value)
 

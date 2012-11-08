@@ -2,7 +2,6 @@
 from AdminIndexController import AdminAction
 from services.AppService import AppService
 from components.AnalyticsException import AnalyticsException
-from pprint import pprint
 class TagEditAction(AdminAction):
     def prepare(self):
         super(TagEditAction, self).prepare()
@@ -90,7 +89,6 @@ class TagEditAction(AdminAction):
                     for bunch_index in bunch_indexes:
                         keys[key_code]['bunches'][bunch_codes[bunch_index]] = {}
 
-        pprint(keys)
         if not self.errors:
             self.appService.saveSettings(app_code, tags = tags, keys = keys, bunches = bunches)
 

@@ -44,8 +44,7 @@ class NameConstructor(object):
                 key_name = self.appConfig['keys'][key]['name'] + key_name
 
             operation = ''
-            print '-----------'
-            print params
+
             if params['op'] == 'group':
                 operation += u'/кол-во'
                 if params.has_key('extra') and params['extra'] == 'userunique':

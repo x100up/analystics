@@ -1,7 +1,6 @@
 # coding=utf-8
 from HadoopService import HadoopService
 import re
-from pprint import  pprint
 
 class ResourceManagerService(HadoopService):
     def __init__(self, rmurl):

@@ -68,7 +68,7 @@ def smartDateInterval(date1, date2):
     if date2:
         delta = date2 - date1
         if delta.days != 0:
-            result += delta.days + ' ' + dayCountName(delta.days) + ' '
+            result += str(delta.days) + ' ' + dayCountName(delta.days) + ' '
 
         hourse_delta = delta.seconds / 3600
         if hourse_delta != 0:

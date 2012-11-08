@@ -133,6 +133,7 @@ class AnalyticsServer(tornado.web.Application):
             (r"/dashboard/app/([^/]+)/?", DashboardController.IndexAction),
             (r"/dashboard/app/([^/]+)/result/?", ResultController.ResultAction),
             (r"/dashboard/app/([^/]+)/new/?", CreateTaskController.CreateAction),
+            (r"/dashboard/app/([^/]+)/recalculate/?", CreateTaskController.RecalculateAction),
             (r"/dashboard/empty/?", DashboardController.EmptyAppAction),
             (r"/dashboard/selectapp/?", DashboardController.SelectAppAction),
 

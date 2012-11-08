@@ -27,7 +27,9 @@
                     <a class="copy_action button copy" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.workerId}}" title="create on base"></a>
                 </td>
 
-                <td>{{worker.startDate|smartDatePeriod(worker.endDate)}} <sup>{{worker.startDate|smartDateInterval(worker.endDate)}}</sup></td>
+                <td>
+                    {{worker.startDate|smartDatePeriod(worker.endDate)}} <sup>{{worker.startDate|smartDateInterval(worker.endDate)}}</sup>
+                </td>
                 <td class="action q">
                     <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
                 </td>
