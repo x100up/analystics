@@ -130,6 +130,18 @@ class WebHDFS(object):
         httpClient.close()
         return files
 
+    def list(self, path):
+        url_path = WEBHDFS_CONTEXT_ROOT + path + '?op=LISTSTATUS&user.name=' + self.username
+        httpClient = self.__getNameNodeHTTPClient()
+        httpClient.request('GET', url_path , headers={})
+        response = httpClient.getresponse()
+        data_dict = json.loads(response.read())
+        files = []
+        if data_dict.has_key('RemoteException'):
+            raise WebHDFSException(data_dict['RemoteException']['message'], data_dict['RemoteException']['exception'])
+        return data_dict['FileStatuses']['FileStatus']
+
+
     def status(self, path):
         url_path = WEBHDFS_CONTEXT_ROOT +path+'?op=GETFILESTATUS&user.name='+self.username
         self.debug("Get file status: " + url_path)

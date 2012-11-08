@@ -35,7 +35,7 @@ class BaseController(tornado.web.RequestHandler):
         '''
         return self.application.config.get(key)
 
-    def render(self, template_name, dict = None):
+    def render(self, template_name, dict = None, _return = False):
         if dict is None:
             dict = {}
         dict['static_url_prefix'] = self.application.settings['static_url_prefix']
@@ -46,7 +46,11 @@ class BaseController(tornado.web.RequestHandler):
 
         dict['title'] = self.title
 
-        self.write(self.application.jinjaEnvironment.get_template(template_name).render(**dict))
+        html = self.application.jinjaEnvironment.get_template(template_name).render(**dict)
+        if _return:
+            return html
+
+        self.write(html)
 
     def checkAppAccess(self, args):
         # get app code

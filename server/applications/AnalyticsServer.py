@@ -14,6 +14,7 @@ from controllers.api import APIController
 from controllers.dashboard import ResultController, AjaxController, DashboardController, CreateTaskController
 from controllers.cluster import NameNodeController
 from controllers.install import InstallController
+from controllers.hdfs import HDFSController, HDFSAJAXController
 from jinja2 import Environment, PackageLoader
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -66,6 +67,7 @@ class AnalyticsServer(tornado.web.Application):
         self.jinjaEnvironment.filters['smartDatePeriod'] = smartDatePeriod
         self.jinjaEnvironment.filters['smartDateInterval'] = smartDateInterval
         self.jinjaEnvironment.filters['smartDate'] = smartDate
+        self.jinjaEnvironment.filters['dateFromTS'] = dateFromTS
         self.scoped_session = None
         self.loopInstance = None
         if self.isInstalled:
@@ -173,6 +175,10 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/add_new_tag?", AjaxController.AddNewTag),
             (r"/ajax/add_new_bunch?", AjaxController.AddNewBunch),
 
+
+            # ----------- HDFS ---------------
+            (r"/hdfs/?", HDFSController.IndexAction),
+            (r"/hdfs/ajax/getPath?", HDFSAJAXController.GetPathAction),
 
 
             (r"/api/putConfig/?", APIController.PutConfigAction),

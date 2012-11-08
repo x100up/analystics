@@ -1,0 +1,20 @@
+{# HDFSItem #}
+<tr>
+    <td>
+        <span class="hdfsItem {{ HDFSItem.type }}"></span>
+        <span
+              {% if HDFSItem.type == 'DIRECTORY' %}
+              onclick="loadPath('{{ HDFSItem.dir }}/{{ HDFSItem.pathSuffix }}')"
+              {% endif %}
+              class="a">{{ HDFSItem.pathSuffix }}</span></td>
+    <td>{{ HDFSItem.owner }}</td>
+    <td>{{ HDFSItem.group }}</td>
+    <td>{{ HDFSItem.permission }}</td>
+
+    <td>{{ HDFSItem.length|filesizeformat }}</td>
+    <td>{{ HDFSItem.blockSize|filesizeformat }}</td>
+    <td>{{ HDFSItem.replication }}</td>
+
+    <td class="datetime">{{ HDFSItem.accessTime|dateFromTS }}</td>
+    <td class="datetime">{{ HDFSItem.modificationTime|dateFromTS }}</td>
+</tr>

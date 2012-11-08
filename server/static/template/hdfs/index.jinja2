@@ -1,0 +1,41 @@
+{% extends 'layout/main.jinja2' %}
+
+{% block head %}
+    <script type="text/javascript" src="{{ static_url_prefix }}/js/hdfs.js" ></script>
+    <link href="{{ static_url_prefix }}/css/hdfs.css" type="text/css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<h1>HDFS</h1>
+
+<div class="grid_12">
+
+    <div id="navigator">
+
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>pathSuffix</th>
+                <th>owner</th>
+                <th>group</th>
+                <th>permission</th>
+
+                <th>length</th>
+                <th>blockSize</th>
+                <th>replication</th>
+
+                <th>accessTime</th>
+                <th>modificationTime</th>
+            </tr>
+        </thead>
+        <tbody id="fileList">
+
+        </tbody>
+    </table>
+
+</div>
+ <div class="clearfix"></div>
+
+{% endblock %}

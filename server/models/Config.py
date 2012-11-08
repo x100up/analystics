@@ -21,6 +21,7 @@ class Config():
     HDFS_HOST = 'hdfs_host'
     HDFS_PORT = 'hdfs_port'
     HDFS_USERNAME = 'hdfs_username'
+    HDFS_STAT_ROOT = 'statistic_path'
 
     HADOOP_NAMENODE = 'hadoop_namenode'
     HADOOP_YARN_RESOURCEMANAGER = 'hadoop_yarn_resourcemanager'
@@ -34,7 +35,8 @@ class Config():
             self.MYSQL_HOST: 'localhost',
             self.HIVE_PREFIX: 'stat_',
             self.HIVE_PORT: '10000',
-            self.HIVE_HOST: 'localhost'
+            self.HIVE_HOST: 'localhost',
+            self.HDFS_STAT_ROOT: '/statistics/'
         }
 
         if values:

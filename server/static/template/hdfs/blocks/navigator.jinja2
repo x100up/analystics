@@ -1,0 +1,5 @@
+{% set fullPath = '' %}
+{% for path in paths %}
+    {% set fullPath = fullPath + path + '/' %}
+    <span class="a" onclick="loadPath('{{ fullPath }}')">{{ path }}/</span>
+{% endfor %}

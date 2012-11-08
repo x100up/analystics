@@ -1,0 +1,38 @@
+span.hdfsItem {
+    background: url(/static/img/sprite.png) no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+span.hdfsItem.DIRECTORY {
+    background-position: -255px -27px;
+}
+
+span.hdfsItem.FILE {
+    background-position: -255px -5px;
+}
+
+span.a{
+     border-bottom: 1px solid #0099CC;
+    cursor: pointer
+ }
+
+span.a:hover{
+    border-bottom: 1px dotted #0099CC;
+}
+
+#navigator {
+    word-spacing: 0;
+}
+
+#navigator span{
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+td.datetime{
+    font-size: 10pt;
+}

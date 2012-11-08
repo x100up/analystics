@@ -22,6 +22,10 @@ def smartDate(timestamp, precision = Task.INTERVAL_MINUTE):
 
     return datetofiled(date, _format)
 
+def dateFromTS(timestamp):
+    date = datetime.fromtimestamp(int(timestamp) / 1000)
+    return datetofiled(date)
+
 def smartDatePeriod(date1, date2):
     if date2:
         '''

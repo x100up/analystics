@@ -55,13 +55,22 @@ ul#mainmenu a.manage:hover {
     background-position: -105px -46px;
 }
 
+ul#mainmenu a.hdfs {
+    width: 99px;
+    background-position: -202px 0;
+}
+
+ul#mainmenu a.hdfs:hover {
+    background-position: -202px -46px;
+}
+
 ul#mainmenu a.logout{
     width: 107px;
-    background-position: -203px 0;
+    background-position: -305px 0;
 }
 
 ul#mainmenu a.logout:hover {
-    background-position: -203px -46px;
+    background-position: -305px -46px;
 }
 
 
