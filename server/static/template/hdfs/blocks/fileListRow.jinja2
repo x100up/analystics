@@ -7,9 +7,7 @@
               onclick="loadPath('{{ HDFSItem.dir }}/{{ HDFSItem.pathSuffix }}')"
               {% endif %}
               class="a">{{ HDFSItem.pathSuffix }}</span></td>
-    <td>{{ HDFSItem.owner }}</td>
-    <td>{{ HDFSItem.group }}</td>
-    <td>{{ HDFSItem.permission }}</td>
+    <td>{{ HDFSItem.owner }}:{{ HDFSItem.group }}<sup>{{ HDFSItem.permission }}</sup></td>
 
     <td>{{ HDFSItem.length|filesizeformat }}</td>
     <td>{{ HDFSItem.blockSize|filesizeformat }}</td>
