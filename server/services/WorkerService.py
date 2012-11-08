@@ -87,11 +87,11 @@ class WorkerService(object):
         f.close()
 
     def getResultData(self, version = None):
-        result = self.getRawResults()
+        self.result = self.getRawResults()
 
         # fix old versions
-        if result.has_key('result'):
-            result = {1:{'data': result}}
+        if self.result.has_key('result'):
+            self.result = {1:{'data':  self.result}}
 
         if version is None:
             version = max(self.result.keys())
