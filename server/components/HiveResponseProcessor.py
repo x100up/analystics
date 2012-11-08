@@ -19,6 +19,8 @@ class HiveResponseProcessor():
             delta = timedelta(minutes = 10)
         elif interval == Task.INTERVAL_DAY:
             delta = timedelta(days = 1)
+        elif interval == Task.INTERVAL_HOUR:
+            delta = timedelta(hours = 1)
         elif interval == Task.INTERVAL_WEEK:
             delta = timedelta(days = 7)
 
@@ -31,6 +33,7 @@ class HiveResponseProcessor():
             while start < end:
                 matrix[int(start.strftime("%s000"))] = default
                 start = start + delta
+                print start
             matrixes[i] = matrix
         return matrixes
 
