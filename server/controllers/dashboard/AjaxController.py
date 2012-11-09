@@ -6,6 +6,7 @@ from models.Worker import Worker
 from models.App import App
 from services import ThredService
 from components.TaskFactory import createTaskFromRequestArguments
+from models.TaskTemplate import TaskTemplate
 import re
 
 class KeyAutocompleteAction(AjaxController):
@@ -116,7 +117,6 @@ class GatTasksProgress(AjaxController):
         #if toGetProgress:
         #    progressResult = resourceManagerService.getWorkerProgresses(toGetProgress)
 
-        #print progressResult
 
         diedWorkers = []
         workerIds = [workerId for workerId, stageCount in arguments]
@@ -147,3 +147,23 @@ class CopyTaskKey(AjaxController):
         key_configs = appService.getKeyConfigs(appname, [taskItem.key])
         self.render('blocks/key_container.jinja2', {'taskItem': taskItem, 'key_configs':key_configs})
 
+
+class getTemplateModal(AjaxController):
+    def get(self, *args, **kwargs):
+        self.render('dashboard/template/templatemodal.jinja2')
+
+from sqlalchemy.sql import or_, and_
+
+class getTemplateListModal(AjaxController):
+    def get(self, *args, **kwargs):
+        app = self.checkAppAccess(args)
+        dbSession = self.getDBSession()
+        userId = self.get_current_user().userId
+        templates = dbSession.query(TaskTemplate).filter(
+            and_(TaskTemplate.appId == app.appId,
+                 or_(    TaskTemplate.userId == userId,
+                         TaskTemplate.shared == TaskTemplate.SHARED_YES
+            ))
+        ).order_by(TaskTemplate.userId != userId,TaskTemplate.shared == TaskTemplate.SHARED_YES).all()
+
+        self.render('dashboard/template/templateListModal.jinja2',{'templates':templates, 'appCode':app.code})

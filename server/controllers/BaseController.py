@@ -86,6 +86,9 @@ class BaseController(tornado.web.RequestHandler):
         self.removeDBSessions()
         super(BaseController, self).on_finish()
 
+    def showFatalError(self, err=''):
+        pass
+
 
 
 

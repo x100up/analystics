@@ -9,6 +9,8 @@ from services.WorkerService import WorkerService
 from services.AppService import AppService
 from components.TaskFactory import createTaskFromRequestArguments
 from components.NameConstructor import NameConstructor
+from models.TaskTemplate import TaskTemplate, TaskTemplateFile
+from sqlalchemy.sql import or_, and_
 import tornado.web
 
 
@@ -36,17 +38,34 @@ class CreateAction(CreateTaskController):
         app = self.checkAppAccess(args)
         dbSession = self.getDBSession()
         baseTask = self.get_argument('baseOn', False)
+        template = self.get_argument('template', False)
         if baseTask:
             # задача основана на другой задаче
             worker = dbSession.query(Worker).filter_by(workerId = baseTask).first()
             workerService = WorkerService(self.application.getResultPath(), worker)
             task = workerService.getTask()
-            keys_loaded = len(task.items)
+        elif template:
+            templateId = int(template)
+            userId = self.get_current_user().userId
+            taskTemplate = dbSession.query(TaskTemplate).filter(
+                    and_(TaskTemplate.taskTemplateId == templateId,
+                    or_(    TaskTemplate.userId == userId,
+                            TaskTemplate.shared == TaskTemplate.SHARED_YES))
+                    ).first()
+
+            if taskTemplate:
+                taskTemplateFile = TaskTemplateFile.read(self.application.getTemplatePath(), taskTemplate)
+                task = taskTemplateFile.getTask()
+            else:
+                self.showFatalError(u'Ошибка при доступе к шаблону')
+                return
+
         else:
             taskItem = TaskItem(index = 1)
             task = Task(appname = app.code)
             task.addTaskItem(taskItem)
-            keys_loaded = 0
+
+        keys_loaded = len(task.items)
 
         keys = set()
         for index, taskItem in task.items.items():

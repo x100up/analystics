@@ -42,7 +42,7 @@ class GetPathAction(HDFSController):
 
         hdfspath = HDFSPath(path)
         hiveDB = hdfspath.getHiveDb()
-        print hiveDB
+
         hiveTable =  hdfspath.getHiveTable()
         hiveTablePartition =  hdfspath.getHiveTablePartition()
 
@@ -90,7 +90,6 @@ class GetHiveStatus(HiveController):
         table = self.get_argument('table', default=None)
         partition = self.get_arguments('partition[]')
 
-        print partition
         if table:
             data['table'] = {'exists':False}
             self.query('USE {}'.format(db))
@@ -103,11 +102,10 @@ class GetHiveStatus(HiveController):
                 isExist = False
                 try:
                     q = 'DESCRIBE stat_{} PARTITION(year={},month={},day=45)'.format(table, partition[0], partition[1], partition[2])
-                    print q
                     result = self.query(q)
                     isExist = result[0][0] != 'Partition {}year={}, month={}, day={}{} for table stat_{} does not exist'.format('{',partition[0], partition[1], partition[2], '}',table)
                 except HiveServerException as ex:
-                    print ex
+                    pass
 
                 data['partition']['exists'] = isExist
 

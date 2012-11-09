@@ -38,8 +38,6 @@ class HDFSPath():
             if c == '':
                 del  self.components[i]
 
-        print self.components
-
     def getHiveTable(self):
         if len(self.components) > 1:
             return self.components[1]

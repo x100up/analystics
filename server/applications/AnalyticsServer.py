@@ -11,10 +11,11 @@ from models.Config import Config
 from controllers import  IndexController, UserController
 from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController, AdminSettingsController, AdminTagController
 from controllers.api import APIController
-from controllers.dashboard import ResultController, AjaxController, DashboardController, CreateTaskController
+from controllers.dashboard import ResultController, AjaxController, DashboardController, CreateTaskController, TemplateController
 from controllers.cluster import NameNodeController
 from controllers.install import InstallController
 from controllers.hdfs import HDFSController, HDFSAJAXController
+
 from jinja2 import Environment, PackageLoader
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -99,10 +100,10 @@ class AnalyticsServer(tornado.web.Application):
     def start(self):
         port = int(self.config.get('app_port', 48888))
         address = self.config.get('app_host', "")
-        print '{}:{}'.format(address, port)
         self.listen(port = port, address = address )
         self.loopInstance = tornado.ioloop.IOLoop.instance()
         self.loopInstance.start()
+        print 'application runing'
 
 
     def loadConfiguration(self):
@@ -117,6 +118,9 @@ class AnalyticsServer(tornado.web.Application):
 
     def getLogPath(self):
         return self.appRoot + '/log/'
+
+    def getTemplatePath(self):
+        return self.appRoot + '/template/'
 
     def determineIsInstall(self):
         '''
@@ -174,6 +178,12 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/add_new_key?", AjaxController.AddNewKey),
             (r"/ajax/add_new_tag?", AjaxController.AddNewTag),
             (r"/ajax/add_new_bunch?", AjaxController.AddNewBunch),
+            (r"/ajax/getTemplateModal?", AjaxController.getTemplateModal),
+            (r"/ajax/getTemplateListModal/([^/]+)/?", AjaxController.getTemplateListModal),
+
+            # ----------- TEMPLATE ---------------
+            (r"/template/create/([^/]+)/?", TemplateController.CreateTemplateAction),
+
 
 
             # ----------- HDFS ---------------
@@ -187,6 +197,8 @@ class AnalyticsServer(tornado.web.Application):
 
             (r"/install/?", InstallController.InstallAction),
             (r"/install/final/?", InstallController.FinalInstallAction),
+
+
 
 
 

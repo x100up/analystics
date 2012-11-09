@@ -121,7 +121,6 @@ class WebHDFS(object):
         files = []
 
         if data_dict.has_key('RemoteException'):
-            print data_dict
             raise WebHDFSException(data_dict['RemoteException']['message'], data_dict['RemoteException']['exception'])
 
         for i in data_dict["FileStatuses"]["FileStatus"]:

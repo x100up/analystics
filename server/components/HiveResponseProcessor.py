@@ -33,7 +33,6 @@ class HiveResponseProcessor():
             while start < end:
                 matrix[int(start.strftime("%s000"))] = default
                 start = start + delta
-                print start
             matrixes[i] = matrix
         return matrixes
 

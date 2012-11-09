@@ -351,6 +351,40 @@ function sendForm() {
 }
 
 /**
+ * Модальное окно шаблона
+ */
+function saveTemplate(){
+    $.ajax({
+               url: '/ajax/getTemplateModal',
+               data: {},
+               success: function(data){
+                   findModal = $('#myModal').empty().append(data).reveal();
+               }
+           });
+}
+
+function selectTemplate(){
+    $.ajax({
+               url: '/ajax/getTemplateListModal/' + appCode,
+               data: {},
+               success: function(data){
+                   $('#myModal').empty().append(data).reveal();
+               }
+           });
+}
+
+/**
+ * Сохранение шаблона
+ */
+function doSaveTemplate(){
+    if (keys_loaded){
+        $('#new_task_form').append($('#template_modal_form')).attr('action', '/template/create/' + appCode).submit();
+    } else {
+        alert('Вы должны выбрать как минимум 1 ключ');
+    }
+}
+
+/**
  * Копирует ключ
  * @param index - индекс копируемого ключа
  */

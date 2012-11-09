@@ -1,0 +1,8 @@
+<h1>Выбирите шаблон</h1>
+<table>
+    {% for template in templates %}
+    <tr>
+        <td><a href="/dashboard/app/{{ appCode }}/new?template={{ template.taskTemplateId }}"> {{ template.name }}</a></td>
+    </tr>
+    {% endfor %}
+</table>

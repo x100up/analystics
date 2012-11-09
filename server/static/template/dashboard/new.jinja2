@@ -19,8 +19,11 @@
 
 {% block content %}
 
-<div class="grid_5">
+<div class="grid_4">
     <h1>Новая задача <sup>{{ app.name }}</sup></h1>
+</div>
+<div class="grid_1">
+<span class="awesome small yellow" onclick="selectTemplate()">шаблоны</span>
 </div>
 <form action="" method="post" id="new_task_form">
 
@@ -48,6 +51,8 @@
 
     <div class="grid_12">
             <input type="button" value="Отправить" class="awesome green" onclick="sendForm()">
+
+            <input type="button" value="Сохранить как шаблон" class="awesome orange" onclick="saveTemplate()">
     </div>
 
 

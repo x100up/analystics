@@ -33,7 +33,6 @@ class InstallAction(InstallController):
                 conn_str += '@'
 
             conn_str += self.config.get(Config.MYSQL_HOST)
-            print conn_str
             engine = create_engine(conn_str + '/?init_command=set%20names%20%22utf8%22', encoding='utf8', convert_unicode=True)
             try:
                 connection = engine.connect()
@@ -64,7 +63,6 @@ class InstallAction(InstallController):
                 self.redirect('/install/final')
                 return
 
-        print self.errors
         self.run()
 
 
