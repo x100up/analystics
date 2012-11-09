@@ -1,4 +1,4 @@
-﻿CREATE TABLE analystic.taskTemplate(
+﻿CREATE TABLE taskTemplate(
   taskTemplateId BIGINT(20) NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) DEFAULT NULL,
   userId INT(11) DEFAULT NULL,
