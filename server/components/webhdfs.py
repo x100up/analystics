@@ -136,10 +136,19 @@ class WebHDFS(object):
         httpClient.request('GET', url_path , headers={})
         response = httpClient.getresponse()
         data_dict = json.loads(response.read())
-        files = []
         if data_dict.has_key('RemoteException'):
             raise WebHDFSException(data_dict['RemoteException']['message'], data_dict['RemoteException']['exception'])
         return data_dict['FileStatuses']['FileStatus']
+
+    def dirSummary(self, path):
+        url_path = WEBHDFS_CONTEXT_ROOT + path + '?op=GETCONTENTSUMMARY&user.name=' + self.username
+        httpClient = self.__getNameNodeHTTPClient()
+        httpClient.request('GET', url_path , headers={})
+        response = httpClient.getresponse()
+        data_dict = json.loads(response.read())
+        if data_dict.has_key('RemoteException'):
+            raise WebHDFSException(data_dict['RemoteException']['message'], data_dict['RemoteException']['exception'])
+        return data_dict['ContentSummary']
 
 
     def status(self, path):

@@ -5,18 +5,24 @@ from components.webhdfs import WebHDFS, WebHDFSException
 from pprint import pprint
 from models.HDFS import HDFS_item
 
-class GetPathAction(AjaxController):
+
+class HDFSController(AjaxController):
+
+    def getHDFSClient(self):
+        host = self.getConfigValue(Config.HDFS_HOST)
+        port = self.getConfigValue(Config.HDFS_PORT)
+        username = self.getConfigValue(Config.HDFS_USERNAME)
+        return WebHDFS(host, int(port), username)
+
+class GetPathAction(HDFSController):
 
     def post(self, *args, **kwargs):
 
         path = self.get_argument('path')
 
         currentPath = self.getConfigValue(Config.HDFS_STAT_ROOT)
-        host = self.getConfigValue(Config.HDFS_HOST)
-        port = self.getConfigValue(Config.HDFS_PORT)
-        username = self.getConfigValue(Config.HDFS_USERNAME)
 
-        self.webhdfs = WebHDFS(host, int(port), username)
+        self.webhdfs = self.getHDFSClient()
 
         list = self.webhdfs.list(currentPath + path)
         files = []
@@ -37,3 +43,17 @@ class GetPathAction(AjaxController):
         navigator = self.render('hdfs/blocks/navigator.jinja2', {'paths': paths}, _return=True)
 
         self.renderJSON({'body':body, 'navigator':navigator})
+
+
+class GetPathStat(HDFSController):
+
+    def post(self, *args, **kwargs):
+
+        path = self.get_argument('path')
+        currentPath = self.getConfigValue(Config.HDFS_STAT_ROOT)
+
+        self.webhdfs = self.getHDFSClient()
+        data = self.webhdfs.dirSummary(currentPath + path)
+
+        total = self.render('hdfs/blocks/pathTotal.jinja2', data, _return=True)
+        self.renderJSON({'html':total})

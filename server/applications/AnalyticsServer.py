@@ -178,7 +178,8 @@ class AnalyticsServer(tornado.web.Application):
 
             # ----------- HDFS ---------------
             (r"/hdfs/?", HDFSController.IndexAction),
-            (r"/hdfs/ajax/getPath?", HDFSAJAXController.GetPathAction),
+            (r"/hdfs/ajax/getPath/?", HDFSAJAXController.GetPathAction),
+            (r"/hdfs/ajax/getPathStat/?", HDFSAJAXController.GetPathStat),
 
 
             (r"/api/putConfig/?", APIController.PutConfigAction),

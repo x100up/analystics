@@ -9,7 +9,8 @@ $(function(){
 
 
 function loadPath(path){
-    console.log(path);
+    loadPathStat(path);
+    currentPath = path;
     $.ajax('/hdfs/ajax/getPath', {
         type:'POST',
         data: {path: path},
@@ -19,3 +20,15 @@ function loadPath(path){
         }
     })
 }
+
+function loadPathStat(path){
+    currentPath = path;
+    $.ajax('/hdfs/ajax/getPathStat', {
+        type:'POST',
+        data: {path: path},
+        success: function(data){
+            $('#folderSummary').html(data.html);
+        }
+    })
+}
+
