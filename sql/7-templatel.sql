@@ -1,8 +1,8 @@
 ﻿CREATE TABLE taskTemplate(
   taskTemplateId BIGINT(20) NOT NULL AUTO_INCREMENT,
   name VARCHAR(255) DEFAULT NULL,
-  userId INT(11) DEFAULT NULL,
-  appId INT(11) DEFAULT NULL,
+  userId INT(11) NOT NULL,
+  appId INT(11) NOT NULL,
   shared ENUM('YES', 'NO') DEFAULT 'NO',
   PRIMARY KEY (taskTemplateId),
   CONSTRAINT FK_taskTemplate_app_appId FOREIGN KEY (appId)
