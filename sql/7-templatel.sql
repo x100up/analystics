@@ -5,10 +5,10 @@
   appId INT(11) NOT NULL,
   shared ENUM('YES', 'NO') DEFAULT 'NO',
   PRIMARY KEY (taskTemplateId),
-  CONSTRAINT FK_taskTemplate_app_appId FOREIGN KEY (appId)
-  REFERENCES analystic.app (appId) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT FK_taskTemplate_user_userId FOREIGN KEY (userId)
-  REFERENCES analystic.user (userId) ON DELETE CASCADE ON UPDATE CASCADE
+  CONSTRAINT FK_taskTemplate_app_appId FOREIGN KEY (`appId`)
+  REFERENCES `app` (appId) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT FK_taskTemplate_user_userId FOREIGN KEY (`userId`)
+  REFERENCES `user` (userId) ON DELETE CASCADE ON UPDATE CASCADE
 )
 ENGINE = INNODB
 AUTO_INCREMENT = 1
