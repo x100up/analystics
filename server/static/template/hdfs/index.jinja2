@@ -6,33 +6,49 @@
 {% endblock %}
 
 {% block content %}
-<h1>HDFS</h1>
 
-<div class="grid_12">
-
-    <div class="grid_7 alpha">
+<div class="grid_12" id="HDFSSummary">
+    <div class="grid_1 name alpha">HDFS: </div>
+    <div class="grid_7 ">
         <div id="navigator">
 
         </div>
     </div>
-    <div class="grid_1">
-        <span class="a" onclick="loadPath(currentPath)">reload</span>
-    </div>
     <div class="grid_4 omega" id="folderSummary">
 
     </div>
+</div>
 
-    <table>
+    <div class="clearfix"></div>
+
+
+    <div class="grid_12" id="hiveSummary">
+        <div class="grid_1 name alpha">Hive: </div>
+        <div id="hive_db">База данных:<span class="label">-</span>
+            <span id="dropDatabase" class="db_button drop" onclick="dropDatabase()"></span>
+            <span id="createDatabase" class="db_button create" onclick="createDatabase()"></span>
+        </div>
+
+        <div id="hive_table">Таблица:<span class="label">-</span>
+            <span id="dropTable" class="db_button drop" onclick="dropTable()"></span>
+            <span id="createTable" class="db_button create" onclick="createTable()"></span>
+        </div>
+
+        <div id="hive_partition">Партиция:<span class="label">-</span>
+            <span id="dropPartition" class="db_button drop" onclick="dropPartition()"></span>
+            <span id="createPartition" class="db_button create" onclick="createPartition()"></span>
+        </div>
+
+    </div>
+
+    <table id="pathTable">
         <thead>
             <tr>
                 <th>pathSuffix</th>
                 <th>permission</th>
-
-
                 <th>length</th>
                 <th>blockSize</th>
                 <th>rep</th>
-
                 <th>accessTime</th>
                 <th>modificationTime</th>
             </tr>
@@ -42,7 +58,10 @@
         </tbody>
     </table>
 
-</div>
+
  <div class="clearfix"></div>
 
+    <div id="loadingDiv">
+    Загрузка
+    </div>
 {% endblock %}

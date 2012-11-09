@@ -30,3 +30,29 @@ class HDFS_item(object):
 
         return item
 
+
+class HDFSPath():
+    def __init__(self, path):
+        self.components = path.replace('//', '/').split('/')
+        for i, c in enumerate(self.components):
+            if c == '':
+                del  self.components[i]
+
+        print self.components
+
+    def getHiveTable(self):
+        if len(self.components) > 1:
+            return self.components[1]
+        return None
+
+    def getHiveDb(self):
+        if len(self.components) > 0:
+            return self.components[0]
+        return None
+
+    def getHiveTablePartition(self):
+        if len(self.components) == 5:
+            return self.components[2:5]
+        return None
+
+

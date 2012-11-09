@@ -36,3 +36,66 @@ span.a:hover{
 td.datetime{
     font-size: 10pt;
 }
+
+
+#hiveSummary > div {
+    display: inline;
+}
+
+#hiveSummary div.exist > span.label {
+    color: #25781e;
+}
+
+#hiveSummary div.not_exist > span.label  {
+    color: #78161d;
+}
+
+span.db_button {
+    background: url("/static/img/sprite.png") no-repeat;
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+}
+
+span#dropDatabase, span#dropTable, span#dropPartition{
+     background-position: -280px -4px;
+}
+
+span#createDatabase, span#createTable, span#createPartition{
+    background-position: -280px -30px;
+}
+
+span.drop, span.create {
+    display: none;
+}
+
+/*
+#hiveSummary div.not_exist > span.create {
+    display: inline-block !important;
+}
+
+#hiveSummary div.exist > span.drop {
+    display: inline-block !important;
+}*/
+
+div#loadingDiv{
+    position: absolute;
+    z-index: 1000;
+    display: none;
+    background-color: #86da81;
+    box-shadow: 0 4px 40px rgba(255, 255, 255, 0.2) inset, 0 10px 10px -5px #1E8AAA, 0 7px 0 #13768C;
+
+    text-align: center;
+    font-size: 20pt;
+    color: #fff;
+}
+
+div#hiveSummary, div#HDFSSummary {
+    height: 40px;
+}
+
+div#hiveSummary > div.name, div#HDFSSummary > div.name {
+    text-align: right;
+    font-size: 14pt;
+}
+

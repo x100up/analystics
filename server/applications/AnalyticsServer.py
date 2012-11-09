@@ -180,6 +180,7 @@ class AnalyticsServer(tornado.web.Application):
             (r"/hdfs/?", HDFSController.IndexAction),
             (r"/hdfs/ajax/getPath/?", HDFSAJAXController.GetPathAction),
             (r"/hdfs/ajax/getPathStat/?", HDFSAJAXController.GetPathStat),
+            (r"/hdfs/ajax/getHiveStat/?", HDFSAJAXController.GetHiveStatus),
 
 
             (r"/api/putConfig/?", APIController.PutConfigAction),
