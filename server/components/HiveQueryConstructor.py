@@ -3,8 +3,9 @@ from models.Task import Task
 
 class HiveQueryConstructor():
 
-    def __init__(self, task):
+    def __init__(self, task, appConfig):
         self.task = task
+        self.appConfig = appConfig
 
     def getFields(self):
         '''
@@ -107,9 +108,14 @@ class HiveQueryConstructor():
         if conditions:
             where = []
             for tagName, tagValue in conditions.items():
+                tagType = 'string'
+                if self.appConfig['tags'].has_key(tagName):
+                    tagType = self.appConfig['tags']['type']
+
+
                 if tagValue:
                     # TODO by settings int
-                    if tagName == 'age':
+                    if tagType == 'int':
                         where.append(self.parseIntValue(tagName, tagValue[0]))
                     else:
                         if len(tagValue) == 1:
