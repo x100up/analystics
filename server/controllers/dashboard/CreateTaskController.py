@@ -106,7 +106,7 @@ class CreateAction(CreateTaskController):
         session.commit()
 
         # конструирем запрос
-        constructor = HiveQueryConstructor(task)
+        constructor = HiveQueryConstructor(task, appConfig)
         query = constructor.getHiveQuery(worker.workerId)
 
         task.stageCount = constructor.getStageCount()
