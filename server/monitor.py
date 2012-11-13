@@ -21,7 +21,7 @@ config.readConfigFile(os.path.abspath(os.path.abspath(rootPath + '/../server.cfg
 STATISTICS_ROOT = config.get('hdfs_statistic_path')
 HDFS_HOST = config.get('hdfs_host')
 HDFS_PORT = int(config.get('hdfs_port'))
-HDFS_USER = config.get('hdfs_user')
+HDFS_USER = config.get('hdfs_username')
 TABLE_PREFIX = config.get('hive_prefix')
 
 CREATE_TABLE_QUERY = """CREATE TABLE %(table_name)s (params MAP<STRING, STRING>, `userId` INT, `timestamp` TIMESTAMP, hour INT, minute INT, second INT)
@@ -47,7 +47,6 @@ availale_apps = appService.getAppConfigList()
 
 # - удалить лишние таблицы
 # - удалить папки в hdfs, для которых нет ключей
-
 
 if options['appname'] is None and options['all_apps'] is None:
     print 'App name is not set'
