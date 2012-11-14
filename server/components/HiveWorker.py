@@ -51,10 +51,10 @@ class HiveWorker(threading.Thread):
             data = {'exception' : {'HiveServerException': tx.message }}
             status = Worker.STATUS_ERROR
             self.logger.error(tx.message)
-        except Exception as tx:
-            data = {'exception' : {'Exception': tx.message }}
-            status = Worker.STATUS_ERROR
-            self.logger.error(tx.message)
+        #except Exception as tx:
+        #    data = {'exception' : {'Exception': tx.message }}
+        #    status = Worker.STATUS_ERROR
+        #    self.logger.error(tx.message)
         finally:
             if hiveClient:
                 hiveClient.close()

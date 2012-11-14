@@ -6,6 +6,7 @@ span.button {
 
 .button.compare {
     background: url('/static/img/sprite.png') -164px -2px no-repeat;
+    display: inline-block;
 }
 
 .button.compare.on {
@@ -32,4 +33,49 @@ table.data_table th.op{
 
 table.data_table th span.op{
     font-size: 10pt;
+}
+
+.button.chart {
+    background: url('/static/img/sprite.png') no-repeat;
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+}
+
+.button.chart.spline {
+    background-position: -334px -26px;
+}
+.button.chart.spline.on {
+    background-position: -334px -3px;
+}
+
+.button.chart.area {
+    background-position: -307px -26px;
+}
+.button.chart.area.on {
+    background-position: -307px -3px;
+}
+
+.button.chart.column {
+    background-position: -357px -26px;
+}
+
+.button.chart.column.on {
+    background-position: -357px -3px;
+}
+
+.button.chart.stack_column {
+    background-position: -403px -26px;
+}
+
+.button.chart.stack_column.on {
+    background-position: -403px -3px;
+}
+
+.button.chart.percent_column {
+    background-position: -380px -26px;
+}
+
+.button.chart.percent_column.on {
+    background-position: -380px -3px;
 }

@@ -13,7 +13,15 @@ Highcharts.setOptions({
 var chart = null;
 var isComapare = false;
 
-function prepareDateSeries() {
+var intervalsSeconds = {
+    'minute': 60000,
+    '10minutes': 600000,
+    'hour': 60 * 60000,
+    'day': 60 * 60000 * 24,
+    'week': 60 * 60000 * 24 * 7
+};
+
+function prepareDataSeries() {
     var series = [];
     for (var index in chartdata['data'])
     {
@@ -27,23 +35,21 @@ function prepareDateSeries() {
                 var row = seriesData['data'][i];
                 xdata.push([row[0], row[1]])
             }
+
             series.push({
                             name: seriesData.name,
                             data: xdata,
-                            opt: seriesData.opt
+                            opt: seriesData.opt,
+                            stack: seriesData.params.op + '_' + index
                         })
         }
     }
+
+
+
     return series;
 }
 
-var intervalsSeconds = {
-    'minute': 60000,
-    '10minutes': 600000,
-    'hour': 60 * 60000,
-    'day': 60 * 60000 * 24,
-    'week': 60 * 60000 * 24 * 7
-};
 
 /**
  * Подготавливает данные для сравнения серий
@@ -81,7 +87,8 @@ function prepareCompareSeries() {
             series.push({
                             name: rowSeriesData.name,
                             data: seriesData,
-                            opt: rowSeriesData.opt
+                            opt: rowSeriesData.opt,
+                            stack: rowSeriesData.params.op + '_' + index
                         })
         }
     }
@@ -98,71 +105,126 @@ $(function(){
 
         }
     };
-    drawChart();
+    chartconf['chart'] = {
+        renderTo: 'chart_container',
+        type: 'spline'
+    };
+    switchToSpline();
 });
+
 
 /**
  * Рисует график
+ * @param chartconf
  */
-function drawChart() {
+function renderChart(chartconf) {
 
     if (isComapare) {
-        chartconf['chart']['type'] = "spline";
+        chartconf['series'] = prepareCompareSeries();
         chartconf['xAxis']['type'] = 'linear';
         chartconf['xAxis']['tickInterval'] = 1;
-        chartconf['series'] = prepareCompareSeries();
-
     } else {
-        chartconf['chart'] = {
-                renderTo: 'chart_container',
-                type: 'spline'
-        };
-        chartconf['series'] = prepareDateSeries();
-
+        chartconf['series'] = prepareDataSeries();
         chartconf['xAxis'] = {
             type: 'datetime',
             showEmpty: false,
             dateTimeLabelFormats: {
                 month: '%e %b',
                 year: '%b'},
-                labels: {
-                    formatter: function() {
-                        return formatDate(this.value, interval, false);
-                    }
+            labels: {
+                formatter: function() {
+                    return formatDate(this.value, interval, false);
                 }
+            }
         };
     }
 
-    chart = new Highcharts.Chart(chartconf);
+    new Highcharts.Chart(chartconf);
 }
 
+
+//------------------------------------------------------------
+// Разные виды графиков
+//------------------------------------------------------------
 
 /**
  * Переключает режим сравнения серий
  */
-function switchCompare() {
+function switchToCompare() {
     isComapare = !isComapare;
     if (isComapare) {
         $('#compare_button').addClass('on');
     } else {
         $('#compare_button').removeClass('on');
     }
-    drawChart();
+    renderChart(chartconf);
 }
 
-function drawColumnChart(chartconf) {
+/**
+ * Переключает в режим базовых столбцов
+ */
+function switchToBasicColumn(button){
+    switchChartButtons(button);
+    switchToColumn(null);
+}
+
+/**
+ * Переключает в режим базовых столбцов
+ */
+function switchToStackingColumn(button){
+    switchChartButtons(button);
+    switchToColumn('normal');
+    //console.log(JSON.stringify(chartconf));
+}
+
+/**
+ * Переключает в режим базовых столбцов
+ */
+function switchToPercentColumn(button){
+    switchChartButtons(button);
+    switchToColumn('percent');
+}
+
+function switchToColumn(stacking){
     chartconf['chart']['type'] = "column";
-    chartconf['plotOptions'] = {
-        column: {
-            stacking: 'normal',
-                dataLabels: {
-                enabled: true,
-                    color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
-            }
+    chartconf['plotOptions'] = {};
+    chartconf['plotOptions']['column'] = {
+        stacking: stacking,
+        dataLabels: {
+            enabled: true,
+            color: (Highcharts.theme && Highcharts.theme.dataLabelsColor) || 'white'
         }
     };
-    chart = new Highcharts.Chart(chartconf);
+    renderChart(chartconf);
 }
+
+
+/**
+ * Переключает на обычные линейные графики
+ */
+function switchToSpline(button) {
+    switchChartButtons(button);
+    chartconf['chart']['type'] = "spline";
+    renderChart(chartconf);
+}
+
+/**
+ *
+ */
+function switchToArea() {
+    alert('coming soon');
+}
+
+function switchChartButtons(button){
+    if (button) {
+        $('span.button.chart.on').removeClass('on');
+        $(button).addClass('on');
+    }
+}
+
+
+
+
 
 function drawAreaChart(chartconf){
     chartconf['chart']['type'] = "area";

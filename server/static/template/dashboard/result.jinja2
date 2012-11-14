@@ -14,11 +14,16 @@
     </div>
 
 
-    <div class="grid_1 push_4">
+    <div class="grid_3 push_2">
         <a href="/dashboard/app/{{ app.code }}/recalculate/?workerId={{ workerId }}">пересчитать</a>
-        {% if data|length > 1 %}
-            <span class="button compare" id="compare_button" onclick="switchCompare()" title="Режим сравнения серий"></span>
+        {% if True %}
+            <span class="button compare" id="compare_button" onclick="switchToCompare()" title="Режим сравнения серий"></span>
         {% endif %}
+        <span class="button chart spline on" onclick="switchToSpline(this)" title="Линейный график"></span>
+        <span class="button chart column" onclick="switchToBasicColumn(this)" title="Базовые столбцы"></span>
+        <span class="button chart stack_column" onclick="switchToStackingColumn(this)" title="Стековые столбцы"></span>
+        <span class="button chart percent_column" onclick="switchToPercentColumn(this)" title="Процентные столбцы"></span>
+        <!--<span class="button chart area" onclick="switchToArea(this)" title="Area"></span>-->
     </div>
     <div class="clearfix"></div>
 

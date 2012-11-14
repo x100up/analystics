@@ -109,7 +109,11 @@ class HiveResponseProcessor():
                         conditions.append((tag, value))
                     else:
                         # для каждого тега свое значение операции
-                        values[operation + '_' + tag] = [float(value), {'op' : operation, 'tag': tag}]
+                        if value == 'NULL':
+                            value = 0
+                        else:
+                            value = float(value)
+                        values[operation + '_' + tag] = [value, {'op' : operation, 'tag': tag}]
 
                 # кладем условия в каждое значение
                 for index in values:
