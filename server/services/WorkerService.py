@@ -119,7 +119,7 @@ class WorkerService(object):
             if result.has_key('data') and result['data'].has_key('exception'):
                 ex = ''
                 for key in result['data']['exception']:
-                    ex += key + ' => ' + result['data']['exception'][key] + ';'
+                    ex += key + ' => ' + str(result['data']['exception'][key]) + ';'
                 return 'Task except: ' + ex
             else:
                 return 'Wrong data in task result'

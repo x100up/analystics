@@ -30,7 +30,9 @@ class HiveQueryConstructor():
         self.fieldsName = self.task.getFieldsNames()
         fieldsTemplates = []
         for default, name in self.fieldsName:
-            fieldsTemplates.append('%({0})s as {0}'.format(name))
+            field = '%({0})s as {0}'.format(name)
+            if field not in fieldsTemplates:
+                fieldsTemplates.append(field)
 
         fieldsTemplate = ','.join(fieldsTemplates)
         if fieldsTemplate:
@@ -49,7 +51,7 @@ class HiveQueryConstructor():
 
             dateFields = self.getDateFields(self.task.interval, taskItem.userUnique)
 
-            query += self.toSQLFields(dateFields) + ', ' +self.toSQLFields(taskItem.fields) + fieldsTemplate%fields\
+            query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.fields) + fieldsTemplate%fields\
                      + ' FROM {}'.format(self.getSelectSource(taskItem))
 
             if not taskItem.userUnique:
@@ -111,7 +113,6 @@ class HiveQueryConstructor():
                 tagType = 'string'
                 if self.appConfig['tags'].has_key(tagName):
                     tagType = self.appConfig['tags']['type']
-
 
                 if tagValue:
                     # TODO by settings int
