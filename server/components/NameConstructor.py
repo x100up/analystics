@@ -40,8 +40,8 @@ class NameConstructor(object):
             operation = ''
 
             key = taskItem.key
-            if self.appConfig['keys'].has_key(key) and self.appConfig['keys'][key].has_key('name'):
-                key_name = self.appConfig['keys'][key]['name'] + key_name
+            if self.appConfig['keys'].has_key(key) and self.appConfig['keys'][key].has_key('description'):
+                key_name = self.appConfig['keys'][key]['description'] + key_name
 
             operation = ''
 
