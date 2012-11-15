@@ -292,3 +292,54 @@ function showTab(li) {
         updateKeyTags();
     }
 }
+
+function showTagValues(tag_index) {
+    keys = [];
+
+    var bunchesForTag = getBunchesForTag(tag_index);
+
+    for (key_index in relation_cache['tag']) {
+        var tags = relation_cache['tag'][key_index];
+        var index = jQuery.inArray(tag_index, tags);
+        if (index != -1) {
+            keys.push($('#key_' + key_index + '_name').val())
+        }
+    }
+
+    for (key_index in relation_cache['bunch']) {
+        for (var i in relation_cache['bunch'][key_index]) {
+            bunchIndex = relation_cache['bunch'][key_index][i];
+            if (jQuery.inArray(bunchIndex, bunchesForTag) != -1) {
+                keys.push($('#key_' + key_index + '_name').val())
+            }
+        }
+    }
+
+    if (keys.length == 0) {
+        alert('Нет привязанных ключей для этого тега.');
+    } else {
+        var data = {
+            tagCode: $('#tag_' + tag_index + '_code').val(),
+            keys: keys,
+            app: appCode
+        };
+
+        $.ajax('/ajax/getTagUniqueValues/',{
+            type: 'POST',
+            data: data,
+            success: function(data){
+                if (data.values != undefined){
+                    var list = '';
+                    for (var i in data.values){
+                        var value = data.values[i];
+                        list += '<li>' + value + '</li>';
+                    }
+                    list = '<ul>' + list + '</ul>';
+                    $('#tag_distinct_' + tag_index).append(list)
+                }
+            }
+        });
+    }
+
+    return false;
+}
