@@ -31,9 +31,12 @@ class getTagUniqueValues(HiveController):
         else:
             query = 'SELECT DISTINCT `value` FROM (' + ' UNION ALL ' .join(querys) +') FINAL'
 
+        values = []
         result = self.query(query)
-        print result
+        if len(result) > 0:
+            for i in result:
+                values.append(i.pop())
 
-        self.renderJSON({'values':['sssss', 'ssssssss', 'ffffff'], 'result': result, 'query':query})
+        self.renderJSON({'values':values})
 
 
