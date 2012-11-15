@@ -42,10 +42,10 @@ class getTagUniqueValues(HiveController):
                       'ru_RU',
                       'tr_TR']
 
-        #result = self.query(query)
-        #if len(result) > 0:
-        #    for i in result:
-        #       values.append(i.pop())
+        result = self.query(query)
+        if len(result) > 0:
+            for i in result:
+               values.append(i.pop())
 
         self.renderJSON({'values':values})
 
