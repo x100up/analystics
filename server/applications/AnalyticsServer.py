@@ -67,7 +67,8 @@ class AnalyticsServer(tornado.web.Application):
         self.jinjaEnvironment.filters['datetofiled'] = datetofiled
         self.jinjaEnvironment.filters['smartDatePeriod'] = smartDatePeriod
         self.jinjaEnvironment.filters['smartDateInterval'] = smartDateInterval
-        self.jinjaEnvironment.filters['smartDate'] = smartDate
+        self.jinjaEnvironment.filters['excelDate'] = excelDate
+        self.jinjaEnvironment.filters['excelTime'] = excelTime
         self.jinjaEnvironment.filters['dateFromTS'] = dateFromTS
         self.scoped_session = None
         self.loopInstance = None

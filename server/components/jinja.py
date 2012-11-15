@@ -9,6 +9,14 @@ def datetofiled(value, format = '%d {0} %Y %H:%M'):
                                                   monthNamesB[value.date().month - 1],
                                                   value.date().day)
 
+def excelDate(timestamp, precision = Task.INTERVAL_MINUTE):
+    date = datetime.fromtimestamp(int(timestamp) / 1000)
+    return date.strftime('%d.%m.%Y')
+
+def excelTime(timestamp, precision = Task.INTERVAL_MINUTE):
+    date = datetime.fromtimestamp(int(timestamp) / 1000)
+    return date.strftime('%H:%M')
+
 def smartDate(timestamp, precision = Task.INTERVAL_MINUTE):
     date = datetime.fromtimestamp(int(timestamp) / 1000)
     _format = '{2} {1} %Y %H:%M'

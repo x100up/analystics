@@ -1,5 +1,6 @@
 {% for index in tabledata %}
     {% set data = tabledata[index] %}
+    {% set showTime = not data['interval'] in ['day', 'week'] %}
     <h2>{{ data['table_name'] }}</h2>
 
     <table class="data_table">
@@ -7,6 +8,10 @@
         <thead>
             <tr>
                 <th class="date">Дата</th>
+                {% if showTime %}
+                    <th class="date">Время</th>
+                {% endif %}
+
                 {% for i, header in data['table_headers'] %}
                 <th>
                     {{ header }}
@@ -22,7 +27,10 @@
         <tbody>
             {% for ts, values in data['data'] %}
                 <tr>
-                    <td>{{ ts|smartDate(data['interval']) }}</td>
+                    <td>{{ ts|excelDate(data['interval']) }}</td>
+                    {% if showTime %}
+                        <th class="date">{{ ts|excelTime(data['interval']) }}</th>
+                    {% endif %}
                     {%  for value in values %}
 
                         <td class="value">{{ value }}</td>
@@ -33,13 +41,13 @@
 
     <tfoot>
         <tr>
-            <th>Сумма</th>
+            <th {% if showTime %} colspan="2" {% endif %}>Сумма</th>
             {% for i in data['ops'] %}
             <th class="op">{{ i['sum'] }}</th>
             {% endfor %}
         </tr>
         <tr>
-            <th>Среднее</th>
+            <th {% if showTime %} colspan="2" {% endif %}>Среднее</th>
             {% for i in data['ops'] %}
                 <th class="op">{{ i['avg'] }}</th>
             {% endfor %}
