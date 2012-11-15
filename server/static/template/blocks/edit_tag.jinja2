@@ -19,7 +19,7 @@
         </li>
         <li>
             <label for="tag_{{ index }}_type">Тип: </label>
-            <select name="tag_{{ index }}_type" id="tag_{{ tag }}_type" onchange="onChangeType(this, {{ index }})">
+            <select name="tag_{{ index }}_type" id="tag_{{ index }}_type" onchange="onChangeType(this, {{ index }})">
                 <option value="string" {% if values.type == 'string' %}selected="selected"{% endif %}>Строка</option>
                 <option value="int" {% if values.type == 'int' %}selected="selected"{% endif %}>Целое (int)</option>
                 <option value="choose" {% if values.type == 'choose' %}selected="selected"{% endif %}>Выбор</option>
@@ -61,7 +61,7 @@
             {% endif %}
             <tr class="new">
                 <td><input type="text" onkeypress="setNew({{ index }})" name="tag_{{ index }}_values_key_{{ new_index }}"
-                    class="new_tag_value_{{ index }}"></td>
+                    class="new_tag_value_{{ index }} key"></td>
                 <td><input type="text" onkeypress="setNew({{ index }})" name="tag_{{ index }}_values_value_{{ new_index }}"
                     class="new_tag_value_{{ index }}"></td>
             </tr>
@@ -71,7 +71,8 @@
     </div>
 </div>
     <div class="grid_6 omega" id="tag_distinct_{{ index }}">
-        <span class="awesome red" onclick="showTagValues({{ index }})">Посмотреть варианты</span>
+        <span class="awesome red" onclick="showTagValues({{ index }}, this)">Посмотреть варианты</span>
+        <span id="tag_distinct_loading_{{ index }}" style="display:none;">.. загрузка ..</span>
     </div>
     <div class="clearfix"></div>
 </div>

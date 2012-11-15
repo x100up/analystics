@@ -6,14 +6,21 @@ function onChangeType(select, index) {
    }
 }
 
-function setNew(tag_index){
+/**
+ *
+ * @param tag_index
+ */
+function setNew(tag_index, value){
+    if (typeof value =='undefined') value = '';
     var countTag = $('#tag_' + tag_index + '_values_count');
     var count = parseInt(countTag.val());
-    $('input.new_tag_value_' + tag_index).removeAttr('onkeypress').parent().parent().removeClass('new');
+    $('input.new_tag_value_' + tag_index + '.key').val(value).addClass('tag_' + tag_index + '_values_key').removeClass('key');
+    $('input.new_tag_value_' + tag_index).removeAttr('onkeypress').removeClass('new_tag_value_' + tag_index).parent().parent().removeClass('new');
+
     count = count + 1;
     $('#tag_choose_' + tag_index + ' tbody').append('<tr class="new">'
         + '<td><input type="text" onkeypress="setNew(' + tag_index + ')" '
-        + 'name="tag_' + tag_index + '_values_key_' + count + '" class="new_tag_value_' + tag_index + '"></td>'
+        + 'name="tag_' + tag_index + '_values_key_' + count + '" class="new_tag_value_' + tag_index + ' key"></td>'
         + '<td><input type="text" onkeypress="setNew(' + tag_index + ')" '
         + 'name="tag_' + tag_index + '_values_value_' + count + '" class="new_tag_value_' + tag_index + '"></td>'+
         '</tr>');
@@ -293,7 +300,7 @@ function showTab(li) {
     }
 }
 
-function showTagValues(tag_index) {
+function showTagValues(tag_index, button) {
     keys = [];
 
     var bunchesForTag = getBunchesForTag(tag_index);
@@ -324,22 +331,65 @@ function showTagValues(tag_index) {
             app: appCode
         };
 
+        $(button).hide();
+        $('#tag_distinct_loading_' + tag_index).show();
+
         $.ajax('/ajax/getTagUniqueValues/',{
             type: 'POST',
             data: data,
             success: function(data){
+                $('#tag_unique_'  + tag_index).remove();
                 if (data.values != undefined){
+                    var existValues = getTagValues(tag_index);
                     var list = '';
                     for (var i in data.values){
                         var value = data.values[i];
-                        list += '<li>' + value + '</li>';
+                        if ($.inArray(value, existValues) == -1) {
+                            list += '<li><span onclick="addTagValue(\'' + value + '\',' + tag_index + ', this)" class="awesome green small">+</span> ' + value + '</li>';
+                        } else {
+                            list += '<li style="color: green;">' + value + '</li>';
+                        }
+
                     }
-                    list = '<ul>' + list + '</ul>';
-                    $('#tag_distinct_' + tag_index).append(list)
+                    list = '<ul id="tag_unique_'  + tag_index + '">' + list + '</ul>';
+                    $('#tag_distinct_' + tag_index).append(list);
+                    $(button).show();
+                    $('#tag_distinct_loading_' + tag_index).hide();
                 }
             }
         });
     }
 
     return false;
+}
+
+/**
+ * Вовзращает значения для тега если он choose
+ * @param tag_index
+ */
+function getTagValues(tag_index) {
+    var values = [];
+    if ($('#tag_' + tag_index + '_type').val() == 'choose'){
+        $('input.tag_' + tag_index + '_values_key').each(function(i, input){
+            var val = $(input).val();
+            if (val){
+                values.push($(input).val());
+            }
+        });
+    }
+    return values;
+}
+
+/**
+ * Добавляет знаяение для тега
+ */
+function addTagValue(value, tag_index, button) {
+    if ($('#tag_' + tag_index + '_type').val() == 'choose'){
+        setNew(tag_index, value);
+        button = $(button);
+        button.parent().css('color','green');
+        button.remove();
+    } else {
+        alert('Тип тега должен быть "Выбор"');
+    }
 }
