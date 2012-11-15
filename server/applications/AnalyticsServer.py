@@ -15,6 +15,7 @@ from controllers.dashboard import ResultController, AjaxController, DashboardCon
 from controllers.cluster import NameNodeController
 from controllers.install import InstallController
 from controllers.hdfs import HDFSController, HDFSAJAXController
+from controllers.hadoop import HiveAJAXController
 
 from jinja2 import Environment, PackageLoader
 from sqlalchemy import create_engine
@@ -181,6 +182,7 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/add_new_bunch?", AjaxController.AddNewBunch),
             (r"/ajax/getTemplateModal?", AjaxController.getTemplateModal),
             (r"/ajax/getTemplateListModal/([^/]+)/?", AjaxController.getTemplateListModal),
+            (r"/ajax/getTagUniqueValues/?", HiveAJAXController.getTagUniqueValues),
 
             # ----------- TEMPLATE ---------------
             (r"/template/create/([^/]+)/?", TemplateController.CreateTemplateAction),

@@ -10,6 +10,8 @@ class TagEditAction(AdminAction):
 
     def post(self, *args, **kwargs):
         app_code, = args
+        self.app_code = app_code
+        print self.app_code
 
         tag_indexes = self.get_arguments('tag_index')
 
@@ -122,7 +124,7 @@ class TagEditAction(AdminAction):
 
         if not self.appService.isConfigExist(app_code):
             self.appService.createEmptyConfig(app_code)
-
+        self.app_code = app_code
         self.showTags(app_code)
 
 
@@ -160,5 +162,5 @@ class TagEditAction(AdminAction):
                 for bunch_code in key_data[AppService.BUNCHES_JSON_INDEX].keys():
                     relation_cache['bunch'][index].append(bunch_indexes[bunch_code])
 
-        dict['js_vars'] = {'relation_cache': relation_cache, 'bunch_cache':bunch_cache}
+        dict['js_vars'] = {'relation_cache': relation_cache, 'bunch_cache':bunch_cache, 'appCode': '"' + self.app_code + '"'}
         self.render('admin/editTags.jinja2', dict)

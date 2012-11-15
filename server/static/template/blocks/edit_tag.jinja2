@@ -4,8 +4,10 @@
  values
 #}
 <div id="tag_{{ index }}">
-    <input type="hidden" name="tag_index" value="{{ index }}">
     <h3 class="tag_{{ index }}_h">Тег: {{ tag_name }}</h3>
+<div class="grid_6 alpha">
+    <input type="hidden" name="tag_index" value="{{ index }}">
+
     <ul>
         <li>
             <label>Код</label>
@@ -26,7 +28,7 @@
         </li>
     </ul>
 
-    <div class="grid_6 choose" id="tag_choose_{{ index }}" {% if values.type != 'choose' %} style="display: none" {% endif %}>
+    <div class="grid_6 choose alpha omega" id="tag_choose_{{ index }}" {% if values.type != 'choose' %} style="display: none" {% endif %}>
         {% if not values.has_key('values') %}
             {% set tag_values = [] %}
         {% else %}
@@ -66,6 +68,10 @@
             </tbody>
         </table>
         <input type="hidden" name="tag_{{ index }}_values_count" id="tag_{{ index }}_values_count" value="{{ new_index }}">
+    </div>
+</div>
+    <div class="grid_6 omega" id="tag_distinct_{{ index }}">
+        <span class="awesome red" onclick="showTagValues({{ index }})">Посмотреть варианты</span>
     </div>
     <div class="clearfix"></div>
 </div>
