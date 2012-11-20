@@ -29,8 +29,22 @@
 
     <div id="chart_container"></div>
 
+    <div id="chart_legend_container">
+        <ul>
+    {% for series in chartService.getSeries() %}
+        <li>
+            <input type="checkbox"{% if series.display %} checked="checked"{% endif %} onclick="ChartManager.switchDisplaySeries(this, {{ series.id }})">
+
+            {{ series.name }}
+            {{ series.operationName }}
+            {% for tagName, valueName in series.conditions %}
+                <strong>{{ tagName }}: {{ valueName }}</strong>
+            {% endfor %}
+        </li>
+    {% endfor %}
+        </ul>
+    </div>
 
     {% include 'dashboard/result/table.jinja2' %}
-
 
 {% endblock %}

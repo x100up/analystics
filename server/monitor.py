@@ -106,7 +106,7 @@ class AnalyticsMonitor():
         # есть директории, для которых нет ключей
         excess_keys = listDiff(key_folders, self.real_keys)
         for dir_name in excess_keys:
-            self.log('key not found for folder "%(dir_name)s" not exist'.format(dir_name))
+            self.log('key not found for folder "{}" not exist'.format(dir_name))
             if self.remove_dir_not_equal_key:
                 self.log('try remove '.format(dir_name))
                 self.webhdfs.rmdir(self.getStatRoot(appCode) + dir_name)

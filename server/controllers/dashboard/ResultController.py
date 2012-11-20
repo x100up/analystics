@@ -67,4 +67,5 @@ class ResultAction(BaseController):
                            'chartdata': json.dumps(chartService.getResult()),
                            'interval': json.dumps(task.interval)
                         },
-                    'app': app, 'data':data, 'tabledata': tableService.getData(), 'nameService':nameService, 'workerId':workerId})
+                    'app': app, 'data':data, 'tabledata': tableService.getData(), 'nameService':nameService,
+                    'chartService':chartService, 'workerId':workerId})

@@ -42,7 +42,6 @@ class getTagUniqueValues(HiveController):
                       'ru_RU',
                       'tr_TR']
         values = []
-
         result = self.query(query)
         if len(result) > 0:
             for i in result:

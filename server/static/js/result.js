@@ -7,6 +7,9 @@ Highcharts.setOptions({
         shortMonths: shortMonths,
         loading: 'Загрузка',
         weekdays: ['Воскресение', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+    },
+    legend:{
+        enabled: false
     }
 });
 
@@ -40,6 +43,7 @@ function prepareDataSeries() {
                             name: seriesData.name,
                             data: xdata,
                             opt: seriesData.opt,
+                            _id: seriesData.id,
                             stack: seriesData.params.op + '_' + index
                         })
         }
@@ -110,6 +114,7 @@ $(function(){
         type: 'spline'
     };
     switchToSpline();
+    ChartManager.constructor(chart);
 });
 
 
@@ -139,7 +144,7 @@ function renderChart(chartconf) {
         };
     }
 
-    new Highcharts.Chart(chartconf);
+    chart = new Highcharts.Chart(chartconf);
 }
 
 
@@ -174,7 +179,6 @@ function switchToBasicColumn(button){
 function switchToStackingColumn(button){
     switchChartButtons(button);
     switchToColumn('normal');
-    //console.log(JSON.stringify(chartconf));
 }
 
 /**
@@ -302,4 +306,35 @@ function formatDate(timestamp, interval, extra) {
     }
     return result;
 }
+
+
+var ChartManager = {
+
+    chart: null,
+
+    constructor: function(chart){
+        this.chart = chart
+    },
+
+    switchDisplaySeries: function(checkbox, seriesId){
+        for (var i in this.chart.series) {
+            var series = this.chart.series[i];
+            if (series.options._id == seriesId){
+                if (checkboxIsChecked(checkbox)) {
+                    series.show();
+                } else {
+                    series.hide();
+                }
+            }
+        }
+    }
+
+};
+
+
+function checkboxIsChecked(checkbox){
+    return $(checkbox).attr('checked') != undefined
+}
+
+
 
