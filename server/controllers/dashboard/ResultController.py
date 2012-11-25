@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from components.ChartConstructor import ChartConstructor
 from components.TableConstructor import TableConstructor
-from controllers.BaseController import BaseController
+from controllers.BaseController import AjaxController
 from models.Worker import Worker
 from models.App import App
 from services.AppService import AppService
@@ -10,7 +10,8 @@ from services.WorkerService import WorkerService
 from components.NameConstructor import NameConstructor
 import tornado, json
 
-class ResultAction(BaseController):
+
+class ResultAction(AjaxController):
 
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
@@ -62,10 +63,11 @@ class ResultAction(BaseController):
         except IOError as ioerr:
             self.render('dashboard/result.jinja2', {'errors': [u'Ошибка чтения результатов выполнения работы'], 'app': app})
         else:
-            self.render('dashboard/result.jinja2',
-                    {'js_vars': {
-                           'chartdata': json.dumps(chartService.getResult()),
-                           'interval': json.dumps(task.interval)
-                        },
-                    'app': app, 'data':data, 'tabledata': tableService.getData(), 'nameService':nameService,
-                    'chartService':chartService, 'workerId':workerId})
+            html = self.render('dashboard/result.jinja2',
+                    {'app': app, 'data':data, 'tablesdata': tableService.getData(), 'nameService':nameService,
+                     'chartService':chartService, 'workerId':workerId}, _return = True)
+            self.renderJSON({'html': html, 'vars': {
+                'chartdata': chartService.getResult(),
+                'interval': task.interval
+            }})
+

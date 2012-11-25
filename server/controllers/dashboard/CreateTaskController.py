@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from components import HiveWorker
 from components.HiveQueryConstructor import  HiveQueryConstructor
-from controllers.BaseController import BaseController
+from controllers.BaseController import BaseController, AjaxController
 from models.Worker import Worker
 from models.Task import Task, TaskItem
 from datetime import datetime
@@ -14,7 +14,7 @@ from sqlalchemy.sql import or_, and_
 import tornado.web
 
 
-class CreateTaskController(BaseController):
+class CreateTaskController():
 
     def createHiveWorker(self, workerService):
         workerThread = HiveWorker.HiveWorker(workerService)
@@ -29,7 +29,7 @@ class CreateTaskController(BaseController):
         return workerThread
 
 
-class CreateAction(CreateTaskController):
+class CreateAction(CreateTaskController, AjaxController):
     """
         Добавление новой задачи
     """
@@ -77,8 +77,9 @@ class CreateAction(CreateTaskController):
             appService = AppService(self.application.getAppConfigPath())
             key_configs = appService.getKeyConfigs(app.code, keys)
 
+        html = self.render('dashboard/new.jinja2', {'task':task, 'app':app, 'key_configs':key_configs}, _return = True)
 
-        self.render('dashboard/new.jinja2', {'task':task, 'app':app, 'key_configs':key_configs, 'js_vars': {'keys_loaded':keys_loaded}})
+        self.renderJSON({'html': html, 'vars':{'keys_loaded':keys_loaded}})
 
     def post(self, *args, **kwargs):
         app = self.checkAppAccess(args)
@@ -123,7 +124,7 @@ class CreateAction(CreateTaskController):
 
         self.redirect('/dashboard/app/' + app.code + '/')
 
-class RecalculateAction(CreateTaskController):
+class RecalculateAction(CreateTaskController, BaseController):
 
     def get(self, *args, **kwargs):
         app = self.checkAppAccess(args)

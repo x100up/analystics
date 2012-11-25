@@ -36,6 +36,7 @@ class AnalyticsServer(tornado.web.Application):
         formatter = logging.Formatter('%(asctime)s %(filename)s(%(lineno)s)[%(funcName)s] %(threadName)s %(levelname)-8s %(message)s')
         self.logger = logging.getLogger('AnalyticsServer')
         self.logger.setLevel(level)
+        self.internalData = {}
 
         # sterr out
         if debug:
@@ -71,6 +72,8 @@ class AnalyticsServer(tornado.web.Application):
         self.jinjaEnvironment.filters['excelDate'] = excelDate
         self.jinjaEnvironment.filters['excelTime'] = excelTime
         self.jinjaEnvironment.filters['dateFromTS'] = dateFromTS
+        self.jinjaEnvironment.filters['toJsVar'] = toJsVar
+
         self.scoped_session = None
         self.loopInstance = None
         if self.isInstalled:
@@ -130,6 +133,15 @@ class AnalyticsServer(tornado.web.Application):
         '''
         self.isInstalled =  os.path.exists(self.appRoot + '/server.cfg')
 
+    def setData(self, key, value):
+        self.internalData[key] = value
+
+    def getData(self, key):
+        return self.internalData[key]
+
+    def deleteData(self, key):
+        del self.internalData[key]
+
     def getHandlers(self):
         thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
         return [
@@ -139,6 +151,7 @@ class AnalyticsServer(tornado.web.Application):
 
             (r"/dashboard/?", DashboardController.SwitchApp),
             (r"/dashboard/app/([^/]+)/?", DashboardController.IndexAction),
+            (r"/dashboard/app/([^/]+)/first/?", DashboardController.FirstAction),
             (r"/dashboard/app/([^/]+)/result/?", ResultController.ResultAction),
             (r"/dashboard/app/([^/]+)/new/?", CreateTaskController.CreateAction),
             (r"/dashboard/app/([^/]+)/recalculate/?", CreateTaskController.RecalculateAction),
@@ -183,6 +196,8 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/getTemplateModal?", AjaxController.getTemplateModal),
             (r"/ajax/getTemplateListModal/([^/]+)/?", AjaxController.getTemplateListModal),
             (r"/ajax/getTagUniqueValues/?", HiveAJAXController.getTagUniqueValues),
+            (r"/ajax/downloadCSV/?", AjaxController.DownloadCSVAction),
+
 
             # ----------- TEMPLATE ---------------
             (r"/template/create/([^/]+)/?", TemplateController.CreateTemplateAction),

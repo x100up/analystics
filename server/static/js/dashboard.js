@@ -1,3 +1,8 @@
+var globalData = {};
+var contentContainer ;
+
+
+
 function switchAll(cb){
     if (cb.checked)
         $('input.jobcb').attr('checked', 'checked')
@@ -6,18 +11,7 @@ function switchAll(cb){
 }
 
 var aliveWorkerIds = {};
-$(function(){
-    alive_progress_spans = $('span.alive_progress');
-    if (alive_progress_spans.length) {
-        alive_progress_spans.each(function(index, span){
-            span = $(span)
-            aliveWorkerIds[span.data('workerid')] = span.data('stage_count');
-        });
-        getProgress();
-        setInterval('getProgress()', 2000);
-    }
-    console.log(aliveWorkerIds);
-});
+
 
 function getProgress() {
     if (Object.keys(aliveWorkerIds).length){
@@ -73,3 +67,65 @@ function editName(workerId) {
         }
     })
 }
+
+function loadResult(workerId) {
+    loadDashboardContent('result?jobId=' + workerId);
+    $('tr.job').removeClass('selected');
+    $('#worker_row_' + workerId).addClass('selected');
+}
+
+function startNewTask(){
+    loadDashboardContent('new');
+}
+
+function loadDashboardContent(page) {
+    var callback = null;
+    if (typeof page == "undefined") {
+        page = 'first'
+    } else {
+        location.hash = page;
+        if (page.indexOf('result?') == 0){
+            callback = onChartResultLoad
+        }
+
+        if (page.indexOf('new') == 0){
+            callback = initNewTask;
+        }
+    }
+
+
+    $.ajax('/dashboard/app/' + app + '/' + page,{
+        success: function(data){
+            contentContainer.html(data.html);
+            if (typeof data.vars != 'undefined'){
+                for (var key in data.vars){
+                    globalData[key] = data.vars[key];
+                }
+            }
+
+            if (callback) {
+                callback();
+            }
+        }
+    });
+}
+
+
+$(function(){
+    alive_progress_spans = $('span.alive_progress');
+    if (alive_progress_spans.length) {
+        alive_progress_spans.each(function(index, span){
+            span = $(span);
+            aliveWorkerIds[span.data('workerid')] = span.data('stage_count');
+        });
+        getProgress();
+        setInterval('getProgress()', 2000);
+    }
+
+    contentContainer = $('#dashboard_container');
+    loadDashboardContent(location.hash.substr(1));
+
+});
+
+
+

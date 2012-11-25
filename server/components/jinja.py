@@ -34,6 +34,14 @@ def dateFromTS(timestamp):
     date = datetime.fromtimestamp(int(timestamp) / 1000)
     return datetofiled(date)
 
+
+def toJsVar(var):
+    print
+    if isinstance(var, basestring):
+        return '"{}"'.format(var)
+
+    return var
+
 def smartDatePeriod(date1, date2):
     if date2:
         '''

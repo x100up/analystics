@@ -8,6 +8,8 @@ from services import ThredService
 from components.TaskFactory import createTaskFromRequestArguments
 from models.TaskTemplate import TaskTemplate
 import re
+import random
+
 
 class KeyAutocompleteAction(AjaxController):
 
@@ -167,3 +169,26 @@ class getTemplateListModal(AjaxController):
         ).order_by(TaskTemplate.userId != userId,TaskTemplate.shared == TaskTemplate.SHARED_YES).all()
 
         self.render('dashboard/template/templateListModal.jinja2',{'templates':templates, 'appCode':app.code})
+
+
+class DownloadCSVAction(AjaxController):
+    def post(self, *args, **kwargs):
+
+        rowCount = int(self.get_argument('rowCount'))
+        rows = []
+        for i in range(0, rowCount+1):
+            rows.append(';'.join( self.get_arguments('row_{}[]'.format(i))) )
+
+        index = random.randint(0, 1566666)
+        self.application.setData(index, "\n".join(rows))
+        self.write(str(index))
+
+    def get(self, *args, **kwargs):
+        index = int(self.get_argument('file'))
+        self.set_header('Content-Type', 'text/csv')
+        self.set_header('Content-Disposition', 'attachment; filename="data{}.csv"'.format(index))
+        self.set_header('Cache-Control', 'no-cache, must-revalidate')
+        self.set_header('Pragma', 'no-cache')
+
+        self.write(self.application.getData(index))
+        self.application.deleteData(index)

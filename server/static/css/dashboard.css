@@ -4,6 +4,17 @@ a.copy_action {
     text-indent: 1000px;
 }
 
+table#workersTable {
+    margin: 20px 0 0 10px;
+    border: none;
+}
+table#workersTable td {
+    border: none;
+    padding-bottom: 20px;
+}
+
+
+
 table#workersTable td.action {
     text-align: center;
 }
@@ -47,4 +58,44 @@ span.button.edit_name {
 
 td:hover span.button.edit_name {
     visibility: visible;
+}
+
+table#workersTable td.main {
+    cursor: pointer;
+    font-size: 16pt;
+}
+
+
+
+tr.selected > td.q{
+    width: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+tr.selected > td.main {
+    background-color: #7C9CC7;
+    color: #FFF;
+
+}
+
+table#workersTable  td.plus{
+    color: #FFF;
+    margin: 0;
+    padding: 0
+}
+
+table#workersTable  td.plus span {
+    padding-top: 10px;
+    display: block;
+    font-size: 20pt;
+}
+
+table#workersTable  tr.selected  td.plus {
+    background-color: #D7E1EE;
+    color: #7C9CC7 !important;
+}
+
+table#workersTable  tr:HOVER td.plus {
+    color: #7C9CC7;
 }

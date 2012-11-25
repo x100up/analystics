@@ -1,10 +1,55 @@
+<h1>Сводная таблица</h1>
+<div id="tableBox">
+{% for key in tablesdata %}
+    {% set tabledata = tablesdata[key] %}
+    <table class="data_table">
+        <thead>
+            <tr>
+                <th></th>
+                <th class="r">Сумма <span class="button sort down" onclick="sortResultTable(this, 'sum')"></span></th>
+                <th class="r">Среднее <span class="button sort down"  onclick="sortResultTable(this, 'avg')"></span></th>
+                {% for ts in tabledata['columnHeaders'] %}
+                <th onclick="selectColumn(this, {{ loop.index0 }})">
+                    <span>{{ ts|excelDate(data['interval']) }}</span>
+                   {#  <br /> {{ ts|excelTime(data['interval']) }} #}
+                </th>
+                {% endfor %}
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for rowData in tabledata['rowsData'] %}
+                <tr class="datarow" data-sum="{{ rowData.sum }}" data-avg="{{ rowData.avg }}" data-index="{{ loop.index }}">
+                    <th onclick="selectRow(this)">
+                        <span>{{ rowData.header }}</span>
+                    </th>
+                    <td class="value r">{{ rowData.sum }}</td>
+                    <td class="value r">{{ rowData.avg }}</td>
+                    {% for value in rowData['values'] %}
+                        <td class="value col_{{ loop.index0 }}">{{ value }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+{% endfor %}
+
+</div>
+
+<div id="tableMenu">
+    <button onclick="copyToBuffer()">копировать в буфер</button>
+    <button onclick="exportToExcel()">экспортировать в эксель</button>
+    <button>построить график</button>
+</div>
+{#
 {% for index in tabledata %}
     {% set data = tabledata[index] %}
     {% set showTime = not data['interval'] in ['day', 'week'] %}
     <h2>{{ data['table_name'] }}</h2>
 
     <table class="data_table">
-    {# заголовок #}
+
         <thead>
             <tr>
                 <th class="date">Дата</th>
@@ -23,7 +68,6 @@
             </tr>
         </thead>
 
-    {# строки #}
         <tbody>
             {% for ts, values in data['data'] %}
                 <tr>
@@ -55,3 +99,4 @@
     </tfoot>
     </table>
 {% endfor %}
+#}

@@ -4,6 +4,7 @@ span.button {
     height: 26px;
 }
 
+
 .button.compare {
     background: url('/static/img/sprite.png') -164px -2px no-repeat;
     display: inline-block;
@@ -13,8 +14,28 @@ span.button {
     background: url('/static/img/sprite.png') -164px -29px no-repeat;
 }
 
+table.data_table {
+    width: auto;
+    border: none;
+}
+table.data_table td, table.data_table th {
+    border: none;
+}
+
 table.data_table td.value {
     text-align: right;
+}
+
+table.data_table td.value.r {
+    font-weight: bold;
+}
+
+table.data_table th.r {
+    font-weight: bold;
+}
+
+table.data_table th {
+    cursor: pointer;
 }
 
 table.data_table th.date{
@@ -34,6 +55,19 @@ table.data_table th.op{
 table.data_table th span.op{
     font-size: 10pt;
 }
+
+table.data_table tr.selected > td.value {
+    background-color: #E7EFF8;
+}
+
+table.data_table td.cSelected {
+    background-color: #E7EFF8;
+}
+
+table.data_table tr.selected > td.cSelected {
+    background-color: #D4E2F2;
+}
+
 
 .button.chart {
     background: url('/static/img/sprite.png') no-repeat;
@@ -78,4 +112,49 @@ table.data_table th span.op{
 
 .button.chart.percent_column.on {
     background-position: -380px -3px;
+}
+
+
+div#chartBox {
+    border: 1px solid #C8D5E8;
+    margin-right: 10px;
+}
+
+div#chart_container {
+    margin-right: 100px;
+}
+
+div#chart_legend_container{
+    border: 1px solid #C8D5E8;
+    margin: 10px 10px 40px 0;
+}
+
+div#tableBox{
+    overflow: auto;
+    border: 1px solid #C8D5E8;
+    margin: 15px 15px 15px 0;
+}
+
+span.button.sort {
+    background: url('/static/img/sprite.png');
+    display: inline-block;
+    width: 15px;
+    height: 16px;
+}
+
+span.button.sort.up {
+    background-position: -465px -3px;
+}
+
+span.button.sort.down {
+    background-position: -465px -25px;
+}
+
+table.data_table th.selected > span,
+table.data_table tr.datarow.selected > th > span{
+    background-color: #C3D6ED;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    padding: 2px 4px;
 }

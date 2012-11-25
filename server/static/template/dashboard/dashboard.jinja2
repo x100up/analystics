@@ -1,60 +1,86 @@
-{% extends 'layout/main.jinja2' %}
+{% extends 'layout/gum.jinja2' %}
 {% block head %}
     <script type="text/javascript" src="/static/js/dashboard.js"></script>
     <link href="{{ static_url_prefix }}/css/dashboard.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript" src="/static/libs/highcharts/highcharts.js" ></script>
+    <script type="text/javascript" src="/static/js/result.js" ></script>
+    <link href="/static/css/result.css" rel="stylesheet" type="text/css">
+
+    <script type="text/javascript" src="/static/js/zclip.min.js" ></script>
+
+    <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery-ui-1.8.23.custom.min.js"></script>
+    <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery.ui.picker.addon.js"></script>
+    <script type="text/javascript" src="{{ static_url_prefix }}/libs/autocomplete/jquery.autocomplete-min.js"></script>
+    <script type="text/javascript" src="{{ static_url_prefix }}/js/new_task.js"></script>
+
+    <link href="{{ static_url_prefix }}/libs/autocomplete/styles.css" type="text/css" rel="stylesheet">
+    <link href="{{ static_url_prefix }}/css/pepper-grinder/jquery-ui-1.8.23.custom.css" type="text/css"
+          rel="stylesheet">
+    <link href="{{ static_url_prefix }}/css/new_task.css" type="text/css" rel="stylesheet">
+
+    <script type="text/javascript" src="/static/libs/reveal/jquery.reveal.js"></script>
+    <link href="/static/libs/reveal/reveal.css" type="text/css" rel="stylesheet">
+{% endblock %}
+
+{% block toppanel %}
+    <span onclick="startNewTask()" style="margin-top: 10px;" class="awesome green" {# href="/dashboard/app/topface/new" #}>Новая задача</span>
 {% endblock %}
 
 {% block content %}
-    <h1>{{ app.name }}</h1>
+    <div id="dashboard_container">
 
-    <a href="/dashboard/app/{{ app.code }}/new" class="awesome green" style="margin-top: 10px;">Новая задача</a>
+    </div>
+{% endblock %}
 
-    <form action="" method="post">
-        <table style="margin-top: 20px;" id="workersTable">
+{% block sidebar %}
+    <h2>Список отчетов</h2>
+
+<form action="" method="post">
+    <table id="workersTable">
 
         {% for worker in lastWorkers %}
-            <tr class="job_{{worker.status}}">
+            <tr class="job job_{{worker.status}}" id="worker_row_{{worker.workerId}}">
                 <td class="q {{ worker.status }}">
                     {% if worker.status == 'ALIVE' %}
                         <img src="/static/img/ajax-loader.gif" alt="Выполняется" id="loader_{{ worker.workerId  }}">
                         <span class="alive_progress" data-stage_count="{{ worker.task.stageCount }}" data-workerid="{{ worker.workerId }}" id="progress_{{ worker.workerId }}"></span>
                     {% endif %}
+                    <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
                 </td>
-                <td>
-                    <a href="/dashboard/app/{{ app.code }}/result?jobId={{worker.workerId}}" id="link_{{worker.workerId}}">{{worker.name}}</a>
+                <td class="main">
+                    <span class="a" onclick="loadResult({{worker.workerId}})" id="link_{{worker.workerId}}">{{worker.name}}</span>
 
                     <span class="button edit_name" onclick="editName({{worker.workerId}})"></span>
-                    <a class="copy_action button copy" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.workerId}}" title="create on base"></a>
-                </td>
 
-                <td>
+                    {#
+                    <a class="copy_action button copy" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.workerId}}" title="create on base"></a>
                     {{worker.startDate|smartDatePeriod(worker.endDate)}} <sup>{{worker.startDate|smartDateInterval(worker.endDate)}}</sup>
+                     #}
+
                 </td>
-                <td class="action q">
-                    <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
+                <td class="plus">
+                    <span>+</span>
                 </td>
             </tr>
         {% endfor %}
-            <tfoot>
-                <tr>
-                    <td colspan="2"></td>
-                    <td colspan="2" style="text-align: right"><input type="submit" name="action" value="Удалить" class=" awesome orange"></td>
-                </tr>
-            </tfoot>
-        </table>
+        <tfoot>
+        <tr>
+            <td colspan="3" style="text-align: right"><input type="submit" name="action" value="Удалить" class=" awesome orange"></td>
+        </tr>
+        </tfoot>
+    </table>
 
-        {% if pageCount > 1 %}
-                Страница:
-                <ul class="paging">
-                {% for p in range(1, pageCount + 1) %}
-                    {% if currentPage == p %}
-                        <li>{{ p }}</li>
-                    {% else %}
-                        <li><a href="?page={{ p }}">{{ p }}</a></li>
-                    {% endif %}
-                {% endfor %}
-                </ul>
-        {% endif %}
-    </form>
-
+    {% if pageCount > 1 %}
+        Страница:
+        <ul class="paging">
+            {% for p in range(1, pageCount + 1) %}
+                {% if currentPage == p %}
+                    <li>{{ p }}</li>
+                {% else %}
+                    <li><a href="?page={{ p }}">{{ p }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+    {% endif %}
+</form>
 {% endblock %}

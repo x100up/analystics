@@ -1,63 +1,52 @@
-{% extends 'layout/main.jinja2' %}
-
 {% block head %}
-    <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery-ui-1.8.23.custom.min.js"></script>
-    <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery.ui.picker.addon.js"></script>
-    <script type="text/javascript" src="{{ static_url_prefix }}/libs/autocomplete/jquery.autocomplete-min.js"></script>
-    <script type="text/javascript" src="{{ static_url_prefix }}/js/new_task.js" ></script>
 
-    <link href="{{ static_url_prefix }}/libs/autocomplete/styles.css" type="text/css" rel="stylesheet">
-    <link href="{{ static_url_prefix }}/css/pepper-grinder/jquery-ui-1.8.23.custom.css" type="text/css" rel="stylesheet">
-    <link href="{{ static_url_prefix }}/css/new_task.css" type="text/css" rel="stylesheet">
-
-    <script type="text/javascript" src="/static/libs/reveal/jquery.reveal.js"></script>
-    <link href="/static/libs/reveal/reveal.css" type="text/css" rel="stylesheet">
     <script type="text/javascript">
         var appCode = '{{ app.code }}';
     </script>
 {% endblock %}
 
-{% block content %}
 
-<div class="grid_4">
-    <h1>Новая задача <sup>{{ app.name }}</sup></h1>
-</div>
-<div class="grid_1">
-<span class="awesome small yellow" onclick="selectTemplate()">шаблоны</span>
-</div>
-<form action="" method="post" id="new_task_form">
-
-    <div class="grid_7">
-        <input type="hidden" id="group_interval"  value="{{ task.interval }}" name="group_interval">
-            <ul id="interval_selector">
-                {% for key, value in task.intervals %}
-                <li data-value="{{ key }}" class="{% if loop.first %}first{% endif %}{% if loop.last %} last{% endif %}{% if task.interval == key %} selected{% endif %}" onclick="switchInterval(this)" >{{ value }}</li>
-                {% endfor %}
-            </ul>
-    </div>
-
-
-    <input type="hidden" name="appname" value="{{ app.code }}">
-
-
-        <div class="grid_12 alpha omega">
-            {% for index, taskItem in task.items.items() %}
-                {% include 'blocks/key_container.jinja2' %}
-            {% endfor %}
+    <div class="container_12">
+        <div class="grid_4">
+            <h1>Новая задача <sup>{{ app.name }}</sup></h1>
         </div>
+        <div class="grid_1">
+            <span class="awesome small yellow" onclick="selectTemplate()">шаблоны</span>
+        </div>
+        <form action="/dashboard/app/{{ app.code }}/new" method="post" id="new_task_form">
 
-        <div class="add_key grid_12 alpha omega" onclick="addKey()"> еще ключ </div>
-    </form>
+            <div class="grid_7">
+                <input type="hidden" id="group_interval" value="{{ task.interval }}" name="group_interval">
+                <ul id="interval_selector">
+                    {% for key, value in task.intervals %}
+                        <li data-value="{{ key }}"
+                            class="{% if loop.first %}first{% endif %}{% if loop.last %} last{% endif %}{% if task.interval == key %} selected{% endif %}"
+                            onclick="switchInterval(this)">{{ value }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
 
-    <div class="grid_12">
+
+            <input type="hidden" name="appname" value="{{ app.code }}">
+
+
+            <div class="grid_12 alpha omega">
+                {% for index, taskItem in task.items.items() %}
+                    {% include 'blocks/key_container.jinja2' %}
+                {% endfor %}
+            </div>
+
+            <div class="add_key grid_12 alpha omega" onclick="addKey()"> еще ключ</div>
+        </form>
+
+        <div class="grid_12">
             <input type="button" value="Отправить" class="awesome green" onclick="sendForm()">
 
             <input type="button" value="Сохранить как шаблон" class="awesome orange" onclick="saveTemplate()">
+        </div>
+
+
+        <div id="myModal" class="reveal-modal">
+
+        </div>
     </div>
-
-
-    <div id="myModal" class="reveal-modal">
-
-    </div>
-
-{% endblock %}

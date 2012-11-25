@@ -10,6 +10,13 @@ from services import ThredService
 from models.UserAppRule import RuleCollection
 from sqlalchemy import func
 
+class FirstAction(BaseController):
+
+    @tornado.web.authenticated
+    def get(self, *args, **kwargs):
+        app = self.checkAppAccess(args)
+        self.render('dashboard/first/first.jinja2', {'app':app})
+
 class SwitchApp(BaseController):
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
@@ -50,11 +57,11 @@ class IndexAction(BaseController):
 
             db_session.commit()
 
-        perPage = 10
+        perPage = 4
 
         # получаем количество
         count, = db_session.query(func.count(Worker.workerId)).filter(Worker.userId == user.userId, Worker.appId == app.appId).first()
-        pageCount = int(math.ceil(float(count) / 10))
+        pageCount = int(math.ceil(float(count) / perPage))
         page = int(self.get_argument('page', 1))
 
         # получаем список последних запросов
@@ -86,7 +93,8 @@ class IndexAction(BaseController):
                 workerService.setWorker(worker)
                 worker.task = workerService.getTask()
 
-        self.render('dashboard/dashboard.jinja2', {'lastWorkers' : workers, 'app':app, 'pageCount':pageCount, 'currentPage': page})
+        self.render('dashboard/dashboard.jinja2', {'lastWorkers' : workers, 'app':app, 'pageCount':pageCount, 'currentPage': page,
+                                                   'js_vars': {'app': app.code}})
 
 class EmptyAppAction(BaseController):
     @tornado.web.authenticated

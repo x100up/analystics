@@ -1,9 +1,9 @@
 body {
-    background: url("../img/white_grid.png") repeat center top;
+   /* background: url("../img/white_grid.png") repeat center top;*/
     font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
     color: #64625E;
 }
-
+/*
 div#wrapper {
     width: 1000px;
     background: #FFFFFF;
@@ -11,10 +11,10 @@ div#wrapper {
     min-height: 500px;
     border: 1px solid #666666;
     padding-bottom: 20px;
-}
+}*/
 
 a#logo {
-
+    margin-left: 20px;
 }
 
 ul#mainmenu {

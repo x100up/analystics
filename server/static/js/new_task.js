@@ -5,16 +5,16 @@ var findModal = false;
 var isLockDate = false;
 var synchronizedTags = [];
 
-$(function(){
+function initNewTask() {
     $('input.key_autocomplete').each(function(x, item){
-        $(item).autocomplete({ serviceUrl:'/ajax/key_autocomplete?app=' + appCode , onSelect: onSelectKey.bind(item)});
+        $(item).autocomplete({ serviceUrl:'/ajax/key_autocomplete?app=' + app , onSelect: onSelectKey.bind(item)});
     });
 
     $.datepicker.setDefaults( {'monthNames':months, 'dayNamesMin':dayNamesMin, 'firstDay':1, 'maxDate': Date.now(),
                                   dateFormat:'dd M yy', monthNamesShort:monthNamesShort} );
 
     attachDateTimePicker($( "input.datepicker" ));
-});
+}
 
 function attachDateTimePicker(obj){
     obj.datetimepicker({timeFormat: 'hh:mm', onSelect: onDateSelect});
@@ -30,14 +30,14 @@ function onSelectKey(keyName, index) {
     if (index === undefined)
         index = $(this).data('index')
     // загружаем конфигурацию
-    $('div#key_' + index + '_tag_container').load('/ajax/key_configuration', {'key':keyName, 'app': appCode, 'index':index},
+    $('div#key_' + index + '_tag_container').load('/ajax/key_configuration', {'key':keyName, 'app': app, 'index':index},
                                                   function (responseText, textStatus, XMLHttpRequest){
                                                       initLoadedKey(index);
                                                   });
     $('#myModal').trigger('reveal:close');
     $('#key_header_' + index).addClass('key_loaded');
     $('#copy_key_' + index).removeClass('invisible');
-    keys_loaded++;
+    globalData['keys_loaded']++;
 }
 
 function getNextKeyIndex(){
@@ -53,7 +53,7 @@ function addKey(){
     $.ajax({
         url : '/ajax/get_key_form',
         type: 'post',
-        data: {index: next_index, appCode: appCode },
+        data: {index: next_index, appCode: app },
         success: function(data) {
             $('div.add_key').before(data)
             removeSelection()
@@ -152,7 +152,7 @@ function toDateString(date) {
  * @param index
  */
 function initLoadedKeyForm(index) {
-    $('input#key_' + index).autocomplete({ serviceUrl:'/ajax/key_autocomplete?app=' + appCode ,
+    $('input#key_' + index).autocomplete({ serviceUrl:'/ajax/key_autocomplete?app=' + app ,
                                              onSelect: onSelectKey.bind($('#key_' + index)[0])});
     attachDateTimePicker($( "#start_" + index ));
     attachDateTimePicker($( "#end_" + index ));
@@ -222,7 +222,7 @@ function deleteKey(key) {
 
 function findKey(index){
     $.ajax({
-        url: '/ajax/getKeys/' + appCode + '/',
+        url: '/ajax/getKeys/' + app + '/',
         data: {index: index},
         success: function(data){
             findModal = $('#myModal').empty().append(data).reveal();
@@ -342,7 +342,7 @@ function tagValueChange(type, input, tag_name, index) {
 }
 
 function sendForm() {
-    if (keys_loaded){
+    if (globalData['keys_loaded']){
         $('#new_task_form').submit()
     } else {
         alert('Вы должны выбрать как минимум 1 ключ');
@@ -365,7 +365,7 @@ function saveTemplate(){
 
 function selectTemplate(){
     $.ajax({
-               url: '/ajax/getTemplateListModal/' + appCode,
+               url: '/ajax/getTemplateListModal/' + app,
                data: {},
                success: function(data){
                    $('#myModal').empty().append(data).reveal();
@@ -377,8 +377,8 @@ function selectTemplate(){
  * Сохранение шаблона
  */
 function doSaveTemplate(){
-    if (keys_loaded){
-        $('#new_task_form').append($('#template_modal_form')).attr('action', '/template/create/' + appCode).submit();
+    if (globalData['keys_loaded']){
+        $('#new_task_form').append($('#template_modal_form')).attr('action', '/template/create/' + app).submit();
     } else {
         alert('Вы должны выбрать как минимум 1 ключ');
     }

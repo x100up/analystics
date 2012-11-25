@@ -15,6 +15,8 @@ Highcharts.setOptions({
 
 var chart = null;
 var isComapare = false;
+var chartconf, chartdata, interval;
+
 
 var intervalsSeconds = {
     'minute': 60000,
@@ -23,6 +25,26 @@ var intervalsSeconds = {
     'day': 60 * 60000 * 24,
     'week': 60 * 60000 * 24 * 7
 };
+
+function onChartResultLoad() {
+    chartconf = globalData.chartdata.chartconf;
+    chartdata = globalData.chartdata;
+    interval = globalData.interval;
+    chartconf['tooltip'] = {
+        formatter: function() {
+            return '<b>'+ this.series.name + '</b><br/>' +
+                'Значение:' + this.y + '<br/>' +
+                'Дата:' + formatDate(this.x, interval, true);
+
+        }
+    };
+    chartconf['chart'] = {
+        renderTo: 'chart_container',
+        type: 'spline'
+    };
+    switchToSpline();
+    ChartManager.constructor(chart);
+}
 
 function prepareDataSeries() {
     var series = [];
@@ -99,23 +121,7 @@ function prepareCompareSeries() {
     return series;
 }
 
-$(function(){
-    chartconf = chartdata['chartconf'];
-    chartconf['tooltip'] = {
-        formatter: function() {
-            return '<b>'+ this.series.name + '</b><br/>' +
-                'Значение:' + this.y + '<br/>' +
-                'Дата:' + formatDate(this.x, interval, true);
 
-        }
-    };
-    chartconf['chart'] = {
-        renderTo: 'chart_container',
-        type: 'spline'
-    };
-    switchToSpline();
-    ChartManager.constructor(chart);
-});
 
 
 /**
@@ -336,5 +342,116 @@ function checkboxIsChecked(checkbox){
     return $(checkbox).attr('checked') != undefined
 }
 
+
+/*---------------------------------------------------
+                TABLE MECHANISM
+ --------------------------------------------------*/
+function selectRow(td){
+    var tr = $($(td).parent());
+    if (tr.hasClass('selected')) {
+        tr.removeClass('selected');
+    } else {
+        tr.addClass('selected');
+    }
+}
+
+function selectColumn(th ,columnIndex) {
+    th = $(th);
+    if (!th.hasClass('selected')) {
+        $('td.col_' + columnIndex).addClass('cSelected');
+        th.addClass('selected')
+    } else {
+        th.removeClass('selected')
+        $('td.col_' + columnIndex).removeClass('cSelected');
+    }
+
+}
+
+/*---------------------------------------------------
+            SORT TABLE MECHANISM
+ --------------------------------------------------*/
+
+/**
+ *
+ * @param field
+ */
+function sortResultTable(button, field) {
+    button = $(button);
+    var turn = button.data('sorted');
+    if (turn == 'ask') {
+        turn = 'desc';
+        button.removeClass('up').addClass('down');
+    } else {
+        turn = 'ask';
+        button.removeClass('down').addClass('up');
+    }
+    button.data('sorted', turn);
+
+
+    var rows = $('table.data_table > tbody > tr');
+    var values = [];
+    var rowDict = {};
+    rows.each(function(index, row){
+        row = $(row);
+        var val = parseFloat($(row).data(field));
+        values.push(val);
+        if (typeof rowDict[val] == 'undefined') {
+            rowDict[val] = []
+        }
+        rowDict[val].push(row);
+    });
+    var body = $('table.data_table > tbody');
+    rows.detach();
+    if (turn == 'ask') {
+        values = values.sort(function(a,b){return a > b});
+    } else {
+        values = values.sort(function(a,b){return a < b});
+    }
+    for (var i in values) {
+        val = values[i];
+        body.append(rowDict[val].pop());
+    }
+}
+
+function copyToBuffer() {
+    window.getSelection().removeAllRanges();
+
+    var cells = $('table.data_table > tbody > tr.datarow.selected > td');
+
+    cells.each(function(i, cell) {
+        var rangeObj = document.createRange();
+        rangeObj.selectNodeContents(cell);
+        window.getSelection().addRange(rangeObj);
+    });
+
+    cells = $('table.data_table td.cSelected');
+
+    cells.each(function(i, cell) {
+        var rangeObj = document.createRange();
+        console.log(rangeObj)
+        rangeObj.selectNodeContents(cell);
+        window.getSelection().addRange(rangeObj);
+    });
+}
+
+function exportToExcel(){
+    var data = {};
+    var row = $('table.data_table > tbody > tr.datarow.selected');
+    row.each(function(index, row){
+        $(row).children().each(function(i, child){
+            child = $(child);
+            if (typeof data['row_' + index] == 'undefined'){
+                data['row_' + index] = []
+            }
+            data['row_' + index].push(child.text().trim());
+            data['rowCount'] = index
+        });
+    });
+
+
+    $.post('/ajax/downloadCSV', data, function(retData){
+        $("body").append("<iframe src='/ajax/downloadCSV/?file=" + retData + "' style='display: none;' ></iframe>")
+    });
+}
 
 
