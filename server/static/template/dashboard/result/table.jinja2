@@ -5,7 +5,7 @@
     <table class="data_table">
         <thead>
             <tr>
-                <th></th>
+                <th id="emptyData">_</th>
                 <th class="r">Сумма <span class="button sort down" onclick="sortResultTable(this, 'sum')"></span></th>
                 <th class="r">Среднее <span class="button sort down"  onclick="sortResultTable(this, 'avg')"></span></th>
                 {% for ts in tabledata['columnHeaders'] %}
@@ -38,65 +38,7 @@
 </div>
 
 <div id="tableMenu">
-    <button onclick="copyToBuffer()">копировать в буфер</button>
+    <button onclick="copyToBuffer()">выделить выбранное</button>
     <button onclick="exportToExcel()">экспортировать в эксель</button>
     <button>построить график</button>
 </div>
-{#
-{% for index in tabledata %}
-    {% set data = tabledata[index] %}
-    {% set showTime = not data['interval'] in ['day', 'week'] %}
-    <h2>{{ data['table_name'] }}</h2>
-
-    <table class="data_table">
-
-        <thead>
-            <tr>
-                <th class="date">Дата</th>
-                {% if showTime %}
-                    <th class="date">Время</th>
-                {% endif %}
-
-                {% for i, header in data['table_headers'] %}
-                <th>
-                    {{ header }}
-                    {% for _cond in data['table_headers_adds'][i] %}
-                        <br /><span class="op">{{ _cond }}</span>
-                    {% endfor %}
-                </th>
-                {% endfor %}
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for ts, values in data['data'] %}
-                <tr>
-                    <td>{{ ts|excelDate(data['interval']) }}</td>
-                    {% if showTime %}
-                        <th class="date">{{ ts|excelTime(data['interval']) }}</th>
-                    {% endif %}
-                    {%  for value in values %}
-
-                        <td class="value">{{ value }}</td>
-                    {% endfor %}
-                </tr>
-            {% endfor %}
-        </tbody>
-
-    <tfoot>
-        <tr>
-            <th {% if showTime %} colspan="2" {% endif %}>Сумма</th>
-            {% for i in data['ops'] %}
-            <th class="op">{{ i['sum'] }}</th>
-            {% endfor %}
-        </tr>
-        <tr>
-            <th {% if showTime %} colspan="2" {% endif %}>Среднее</th>
-            {% for i in data['ops'] %}
-                <th class="op">{{ i['avg'] }}</th>
-            {% endfor %}
-        </tr>
-    </tfoot>
-    </table>
-{% endfor %}
-#}

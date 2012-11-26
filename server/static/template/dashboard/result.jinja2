@@ -3,38 +3,51 @@
 
     <h1>Полученные монеты Vkontakte, Facebook</h1>
 
-
-    <div class="grid_3 push_2">
-        <a href="/dashboard/app/{{ app.code }}/recalculate/?workerId={{ workerId }}">пересчитать</a>
-        {% if True %}
-            <span class="button compare" id="compare_button" onclick="switchToCompare()" title="Режим сравнения серий"></span>
-        {% endif %}
-        <span class="button chart spline on" onclick="switchToSpline(this)" title="Линейный график"></span>
-        <span class="button chart column" onclick="switchToBasicColumn(this)" title="Базовые столбцы"></span>
-        <span class="button chart stack_column" onclick="switchToStackingColumn(this)" title="Стековые столбцы"></span>
-        <span class="button chart percent_column" onclick="switchToPercentColumn(this)" title="Процентные столбцы"></span>
-        <!--<span class="button chart area" onclick="switchToArea(this)" title="Area"></span>-->
-    </div>
     <div class="clearfix"></div>
     <div id="chartBox">
+        <div id="chartManagment">
+            <span class="button chart spline on" onclick="switchToSpline(this)" title="Линейный график"></span>
+            <span class="button chart column" onclick="switchToBasicColumn(this)" title="Базовые столбцы"></span>
+            <span class="button chart stack_column" onclick="switchToStackingColumn(this)"
+                  title="Стековые столбцы"></span>
+            <span class="button chart percent_column" onclick="switchToPercentColumn(this)"
+                  title="Процентные столбцы"></span>
+            <span class="button chart area" onclick="switchToArea(this)" title="Area"></span>
+            <span class="button chart compare" id="compare_button" onclick="switchToCompare()"
+                  title="Режим сравнения серий"></span>
+
+            <a href="/dashboard/app/{{ app.code }}/recalculate/?workerId={{ workerId }}" class="button chart recalculate"
+                    title="Пересчитать"></a>
+        </div>
         <div id="chart_container"></div>
+
     </div>
+
+    <div class="clearfix"></div>
 
     <div id="chart_legend_container">
+        <div id="tagcloud"></div>
         <ul>
-    {% for series in chartService.getSeries() %}
-        <li>
-            <input type="checkbox"{% if series.display %} checked="checked"{% endif %} onclick="ChartManager.switchDisplaySeries(this, {{ series.id }})">
+            {% for series in chartService.getSeries() %}
+                <li>
+                    <input type="checkbox"{% if series.display %} checked="checked"{% endif %}
+                           onclick="ChartManager.switchDisplaySeries(this, {{ series.id }})">
 
-            {{ series.name }}
-            {{ series.operationName }}
-            {% for tagName, valueName in series.conditions %}
-                <strong>{{ tagName }}: {{ valueName }}</strong>
+                    {{ series.name }}
+                    {{ series.operationName }}
+                    {% for tagName, valueName in series.conditions %}
+                        <strong>{{ tagName }}: {{ valueName }}</strong>
+                    {% endfor %}
+                </li>
             {% endfor %}
-        </li>
-    {% endfor %}
         </ul>
+
+
+
+
     </div>
+
+    <div class="clearfix"></div>
 
     {% include 'dashboard/result/table.jinja2' %}
 

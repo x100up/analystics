@@ -173,11 +173,16 @@ class getTemplateListModal(AjaxController):
 
 class DownloadCSVAction(AjaxController):
     def post(self, *args, **kwargs):
-
-        rowCount = int(self.get_argument('rowCount'))
         rows = []
-        for i in range(0, rowCount+1):
-            rows.append(';'.join( self.get_arguments('row_{}[]'.format(i))) )
+        i = 0
+        while True:
+            k = 'data[{}][]'.format(i)
+            if self.request.arguments.has_key(k):
+                rows.append(';'.join( self.get_arguments(k, strip=False)) )
+                i = i + 1
+            else:
+                break
+        print rows
 
         index = random.randint(0, 1566666)
         self.application.setData(index, "\n".join(rows))

@@ -44,6 +44,8 @@ function onChartResultLoad() {
     };
     switchToSpline();
     ChartManager.constructor(chart);
+
+    $("#tagcloud").jQCloud(globalData.tagCloudData);
 }
 
 function prepareDataSeries() {
@@ -413,45 +415,89 @@ function sortResultTable(button, field) {
     }
 }
 
+function getSectionInTabel() {
+    var columns = $('table.data_table > thead th.selected');
+    var rows = $('table.data_table > tbody tr.selected');
+
+    var data = [];
+    var rowData = [];
+
+    // выделены только строки
+    if (columns.length == 0) {
+        rows.each(function(index, row){
+            var rowData = [];
+            $(row).children().each(function(i, child){
+                rowData.push(child);
+            });
+            data.push(rowData)
+        });
+    }
+
+    else if (rows.length == 0) {
+        rowData = [$('#emptyData')[0]];
+        columns.each(function(i, th){
+            rowData.push(th);
+        });
+        data.push(rowData);
+
+        $('table.data_table > tbody tr').each(function(index, row){
+            var rowData = [];
+            $(row).children('.cSelected').each(function(i, child){
+                rowData.push(child);
+            });
+            data.push(rowData)
+        });
+    } else {
+        rowData = [$('#emptyData')[0]];
+        columns.each(function(i, th){
+            rowData.push(th);
+        });
+        data.push(rowData);
+
+        rows.each(function(index, row){
+            row = $(row);
+            var rowData = [
+                row.children('th')[0]
+            ];
+            $(row).children('.cSelected').each(function(i, child){
+                rowData.push(child);
+            });
+            data.push(rowData)
+        });
+    }
+
+    return data;
+}
+
 function copyToBuffer() {
+    var data = getSectionInTabel();
+
     window.getSelection().removeAllRanges();
 
-    var cells = $('table.data_table > tbody > tr.datarow.selected > td');
+    for (var rowIndex in data) {
+        for (var columnIndex in data[rowIndex]) {
+            var el = data[rowIndex][columnIndex];
+            var rangeObj = document.createRange();
+            rangeObj.selectNodeContents(el);
+            window.getSelection().addRange(rangeObj);
+        }
+    }
 
-    cells.each(function(i, cell) {
-        var rangeObj = document.createRange();
-        rangeObj.selectNodeContents(cell);
-        window.getSelection().addRange(rangeObj);
-    });
-
-    cells = $('table.data_table td.cSelected');
-
-    cells.each(function(i, cell) {
-        var rangeObj = document.createRange();
-        console.log(rangeObj)
-        rangeObj.selectNodeContents(cell);
-        window.getSelection().addRange(rangeObj);
-    });
 }
 
 function exportToExcel(){
-    var data = {};
-    var row = $('table.data_table > tbody > tr.datarow.selected');
-    row.each(function(index, row){
-        $(row).children().each(function(i, child){
-            child = $(child);
-            if (typeof data['row_' + index] == 'undefined'){
-                data['row_' + index] = []
-            }
-            data['row_' + index].push(child.text().trim());
-            data['rowCount'] = index
-        });
-    });
+    var data = getSectionInTabel();
+    var textData = [];
+    for (var rowIndex in data) {
+        var rowData = [];
+        for (var columnIndex in data[rowIndex]) {
+            var el = $(data[rowIndex][columnIndex]);
+            rowData.push(el.text().trim());
+        }
+        textData.push(rowData);
+    }
 
-
-    $.post('/ajax/downloadCSV', data, function(retData){
+    $.post('/ajax/downloadCSV', {'data': textData}, function(retData){
         $("body").append("<iframe src='/ajax/downloadCSV/?file=" + retData + "' style='display: none;' ></iframe>")
     });
 }
-
-

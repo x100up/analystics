@@ -10,6 +10,9 @@
 
     <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery-ui-1.8.23.custom.min.js"></script>
     <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery.ui.picker.addon.js"></script>
+    <script type="text/javascript" src="{{ static_url_prefix }}/js/jcloud.min.js"></script>
+    <link href="/static/css/jcloud.css" rel="stylesheet" type="text/css">
+
     <script type="text/javascript" src="{{ static_url_prefix }}/libs/autocomplete/jquery.autocomplete-min.js"></script>
     <script type="text/javascript" src="{{ static_url_prefix }}/js/new_task.js"></script>
 
@@ -22,9 +25,6 @@
     <link href="/static/libs/reveal/reveal.css" type="text/css" rel="stylesheet">
 {% endblock %}
 
-{% block toppanel %}
-    <span onclick="startNewTask()" style="margin-top: 10px;" class="awesome green" {# href="/dashboard/app/topface/new" #}>Новая задача</span>
-{% endblock %}
 
 {% block content %}
     <div id="dashboard_container">
@@ -44,6 +44,8 @@
                     {% if worker.status == 'ALIVE' %}
                         <img src="/static/img/ajax-loader.gif" alt="Выполняется" id="loader_{{ worker.workerId  }}">
                         <span class="alive_progress" data-stage_count="{{ worker.task.stageCount }}" data-workerid="{{ worker.workerId }}" id="progress_{{ worker.workerId }}"></span>
+
+
                     {% endif %}
                     <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
                 </td>
@@ -65,13 +67,12 @@
         {% endfor %}
         <tfoot>
         <tr>
-            <td colspan="3" style="text-align: right"><input type="submit" name="action" value="Удалить" class=" awesome orange"></td>
+            <td colspan="3"><input type="submit" name="action" value="Удалить" class=" awesome orange"></td>
         </tr>
         </tfoot>
     </table>
 
     {% if pageCount > 1 %}
-        Страница:
         <ul class="paging">
             {% for p in range(1, pageCount + 1) %}
                 {% if currentPage == p %}

@@ -10,10 +10,11 @@ table#workersTable {
 }
 table#workersTable td {
     border: none;
-    padding-bottom: 20px;
 }
 
-
+table#workersTable  input[type~=checkbox] {
+    border: none;
+}
 
 table#workersTable td.action {
     text-align: center;
@@ -27,16 +28,16 @@ span.alive_progress {
     font-size: 10pt
 }
 
-td.SUCCESS {
-    background: url('/static/img/accept.png') no-repeat center;
+tr.job_SUCCESS td {
+    border-bottom: solid 4px #99C700 !important;
 }
 
-td.ERROR {
-    background: url('/static/img/cancel.png') no-repeat center;
+tr.job_ERROR td {
+    border-bottom: solid 4px #FFCD45 !important;
 }
 
-td.DIED {
-    background: url('/static/img/error.png') no-repeat center;
+tr.job_DIED td {
+    border-bottom: solid 4px #F3624C !important;
 }
 
 tr.success_recently td {
@@ -62,16 +63,16 @@ td:hover span.button.edit_name {
 
 table#workersTable td.main {
     cursor: pointer;
-    font-size: 16pt;
+    font-size: 13pt;
+    font-weight: normal;
 }
 
-
-
-tr.selected > td.q{
-    width: 30px;
+td.q{
+    width: 10px;
     margin: 0;
     padding: 0;
 }
+
 
 tr.selected > td.main {
     background-color: #7C9CC7;
@@ -98,4 +99,144 @@ table#workersTable  tr.selected  td.plus {
 
 table#workersTable  tr:HOVER td.plus {
     color: #7C9CC7;
+}
+
+
+
+
+
+
+/*
+Set the container for the bar
+*/
+.bar {
+    height:20px;
+    width:200px;
+    padding:10px;
+    margin:200px auto 0;
+    background-color:rgba(0,0,0,.1);
+    -webkit-border-radius:25px;
+    -moz-border-radius:25px;
+    -ms-border-radius:25px;
+    border-radius:20px;
+    -webkit-box-shadow:0 1px 0 rgba(255,255,255,.03),inset 0 1px 0 rgba(0,0,0,.1);
+    -moz-box-shadow:0 1px 0 rgba(255,255,255,.03),inset 0 1px 0 rgba(0,0,0,.1);
+    -ms-box-shadow:0 1px 0 rgba(255,255,255,.03),inset 0 1px 0 rgba(0,0,0,.1);
+    box-shadow:0 1px 0 rgba(255,255,255,.03),inset 0 1px 0 rgba(0,0,0,.1);
+}
+
+/*
+This is the actual bar with stripes
+*/
+.job_ALIVE {
+    height:100%;
+    width:100%;
+    background-color:#FFFFFF;
+    -webkit-border-radius:20px;
+    -moz-border-radius:20px;
+    -ms-border-radius:20px;
+    border-radius:20px;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    -ms-box-sizing:border-box;
+    box-sizing:border-box;
+    background-image:
+        -webkit-linear-gradient(
+            -45deg,
+            rgba(111, 158, 216, 1) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(111, 158, 216, 1) 50%,
+            rgba(111, 158, 216, 1) 75%,
+            transparent 75%,
+            transparent
+        );
+    background-image:
+        -moz-linear-gradient(
+            -45deg,
+            rgba(111, 158, 216, 1) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(111, 158, 216, 1) 50%,
+            rgba(111, 158, 216, 1) 75%,
+            transparent 75%,
+            transparent
+        );
+    background-image:
+        -ms-linear-gradient(
+            -45deg,
+            rgba(111, 158, 216, 1) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(111, 158, 216, 1) 50%,
+            rgba(111, 158, 216, 1) 75%,
+            transparent 75%,
+            transparent
+        );
+    background-image:
+        linear-gradient(
+            -45deg,
+            rgba(111, 158, 216, 1) 25%,
+            transparent 25%,
+            transparent 50%,
+            rgba(111, 158, 216, 1) 50%,
+            rgba(111, 158, 216, 1) 75%,
+            transparent 75%,
+            transparent
+        );
+    -webkit-background-size:50px 50px;
+    -moz-background-size:50px 50px;
+    -ms-background-size:50px 50px;
+    background-size:50px 50px;
+    -webkit-animation:move 2s linear infinite;
+    -moz-animation:move 2s linear infinite;
+    -ms-animation:move 2s linear infinite;
+    animation:move 2s linear infinite;
+    -webkit-border-radius:20px;
+    -moz-border-radius:20px;
+    -ms-border-radius:20px;
+    overflow: hidden;
+    -webkit-box-shadow:inset 0 10px 0 rgba(255,255,255,.2);
+    -moz-box-shadow:inset 0 10px 0 rgba(255,255,255,.2);
+    -ms-box-shadow:inset 0 10px 0 rgba(255,255,255,.2);
+}
+
+/*
+Animate the stripes
+*/
+@-webkit-keyframes move{
+  0% {
+  	background-position: 0 0;
+  }
+  100% {
+  	background-position: 50px 50px;
+  }
+}
+@-moz-keyframes move{
+  0% {
+  	background-position: 0 0;
+  }
+  100% {
+  	background-position: 50px 50px;
+  }
+}
+@-ms-keyframes move{
+  0% {
+  	background-position: 0 0;
+  }
+  100% {
+  	background-position: 50px 50px;
+  }
+}
+@keyframes move{
+  0% {
+  	background-position: 0 0;
+  }
+  100% {
+  	background-position: 50px 50px;
+  }
+}
+
+.job_ALIVE > td.plus span {
+    color: GREEN;
 }

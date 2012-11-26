@@ -68,6 +68,7 @@ class ResultAction(AjaxController):
                      'chartService':chartService, 'workerId':workerId}, _return = True)
             self.renderJSON({'html': html, 'vars': {
                 'chartdata': chartService.getResult(),
-                'interval': task.interval
+                'interval': task.interval,
+                'tagCloudData': []
             }})
 

@@ -28,16 +28,32 @@
                 <a href="/" id="logo">
                     <img src="{{ static_url_prefix }}/img/logo.png" alt="Analytics logo">
                 </a>
+
+                <a href="/dashboard" class="analytics"></a>
+
+                <ul id="nav">
+                    <li><a href="/admin" class="manage"></a></li>
+                    <li><a href="/user/logout/" class="logout"></a></li>
+                </ul>
             </div>
+        {#
             <nav>
                 {% if __user__ %}
                     {% include 'blocks/menu.jinja2' %}
                 {% endif %}
             </nav>
+          #}
         </header><!-- #header-->
 
-        <div>
-            {% block toppanel %}{% endblock %}
+        <div id="topPanel">
+            <div>
+                <span class="selectedApp">TopFace</span>
+
+                <button onclick="startNewTask()" id="addTaskButton"></button>
+                <button id="fromTemplateButton"></button>
+            </div>
+
+
         </div>
 
         <section id="middle">
@@ -49,7 +65,9 @@
             </div><!-- #container-->
 
             <aside id="sideLeft">
-                {% block sidebar %}{% endblock %}
+                <div>
+                    {% block sidebar %}{% endblock %}
+                </div>
             </aside><!-- #sideLeft -->
 
         </section><!-- #middle-->

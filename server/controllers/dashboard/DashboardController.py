@@ -57,7 +57,7 @@ class IndexAction(BaseController):
 
             db_session.commit()
 
-        perPage = 4
+        perPage = 5
 
         # получаем количество
         count, = db_session.query(func.count(Worker.workerId)).filter(Worker.userId == user.userId, Worker.appId == app.appId).first()

@@ -1,7 +1,9 @@
 body {
-   /* background: url("../img/white_grid.png") repeat center top;*/
+   /* background: url("../img/white_grid.png") repeat center top;
     font-family: "Segoe UI", Frutiger, "Frutiger Linotype", "Dejavu Sans", "Helvetica Neue", Arial, sans-serif;
-    color: #64625E;
+    */
+    font-family: Tahoma,Geneva,Kalimati,sans-serif;
+    color: #212121;
 }
 /*
 div#wrapper {
@@ -14,7 +16,10 @@ div#wrapper {
 }*/
 
 a#logo {
-    margin-left: 20px;
+    left: 20px;
+    position: absolute;
+    top: 0;
+    border: none
 }
 
 ul#mainmenu {
@@ -74,6 +79,44 @@ ul#mainmenu a.logout:hover {
 }
 
 
+ul#nav {
+    display: block;
+    float: right;
+    margin-right: 100px;
+    margin-top: 20px;
+}
+
+ul#nav li {
+    display: inline-block;
+}
+
+ul#nav a, header a.analytics {
+    background: url("/static/img/sprite.png") no-repeat -255px -59px;
+    display: inline-block;
+    cursor: pointer;
+    width: 100px;
+    height: 30px;
+    text-decoration: none;
+    border: none;
+}
+
+header a.analytics {
+    background-position:  -435px -59px;
+    position: relative;
+    left: 200px;
+    margin-top: 15px;
+    width: 125px;
+}
+
+ul#nav a.manage{
+    background-position: -255px -59px;
+}
+
+ul#nav a.logout{
+    background-position: -353px -59px;
+    width: 80px;
+}
+
 
 
 h1 {
@@ -83,6 +126,7 @@ h1 {
 
 h2 {
     font-size: 16pt;
+    font-weight: normal;
 }
 
 a {
@@ -130,9 +174,7 @@ table td, table th {
     height: 30px;
 }
 
-table td.q, table th.q {
-    width: 32px;
-}
+
 
 table th {
     height: 30px;
@@ -271,3 +313,55 @@ fieldset {
     width: 25px;
     height: 27px;
 }
+/**-------------------------------
+        TOP PANEL
+----------------------------------
+*/
+div#topPanel{
+    background: url('/static/img/topPanel.png') repeat-x;
+    height: 100px;
+    width: auto;
+    padding: 10px;
+    margin: 0;
+}
+
+div#topPanel .selectedApp {
+    color: #FFF;
+    font-size: 16pt;
+    display: block;
+    width: 204px;
+    text-align: center
+}
+
+button#addTaskButton {
+    background: url('/static/img/sprite.png') no-repeat -493px 10px;
+    width: 100px;
+    height: 75px;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+button#addTaskButton:hover{
+    border: 1px inset #CECECE
+}
+
+button#fromTemplateButton {
+    background: url('/static/img/sprite.png') no-repeat -587px 10px;
+    width: 100px;
+    height: 75px;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+button#fromTemplateButton:hover{
+    border: 1px inset #CECECE
+}
+
+
+
+
+

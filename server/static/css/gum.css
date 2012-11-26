@@ -35,7 +35,7 @@ input {
 /* Header
 -----------------------------------------------------------------------------*/
 #header {
-	height: 100px;
+	height: 44px;
 }
 
 
@@ -71,6 +71,11 @@ input {
 	margin-left: -100%;
 	position: relative;
 }
+#sideLeft > div
+{
+    margin: 10px 0 0 15px;
+}
+
 
 
 /* Footer

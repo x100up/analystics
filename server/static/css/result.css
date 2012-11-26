@@ -4,16 +4,6 @@ span.button {
     height: 26px;
 }
 
-
-.button.compare {
-    background: url('/static/img/sprite.png') -164px -2px no-repeat;
-    display: inline-block;
-}
-
-.button.compare.on {
-    background: url('/static/img/sprite.png') -164px -29px no-repeat;
-}
-
 table.data_table {
     width: auto;
     border: none;
@@ -68,66 +58,102 @@ table.data_table tr.selected > td.cSelected {
     background-color: #D4E2F2;
 }
 
+div#chart_container {
+    margin-right: 100px;
+
+    width: auto;
+}
+
+div#chartManagment{
+    float: right;
+    width: 90px;
+    clear: right;
+    position: relative;
+    margin-top: 15px;
+}
+
+
 
 .button.chart {
-    background: url('/static/img/sprite.png') no-repeat;
+    background: url('/static/img/graphs.png') no-repeat;
     display: inline-block;
-    width: 20px;
-    height: 20px;
+    width: 56px;
+    height: 56px;
 }
 
 .button.chart.spline {
-    background-position: -334px -26px;
+    background-position: -60px 0 ;
 }
 .button.chart.spline.on {
-    background-position: -334px -3px;
+    background-position: 0 0;
 }
 
-.button.chart.area {
-    background-position: -307px -26px;
-}
-.button.chart.area.on {
-    background-position: -307px -3px;
-}
-
+/* column */
 .button.chart.column {
-    background-position: -357px -26px;
+    background-position: -60px -120px;
 }
 
 .button.chart.column.on {
-    background-position: -357px -3px;
+    background-position: 0 -120px ;
 }
 
+/* area */
+.button.chart.area {
+    background-position: -60px -60px;
+}
+.button.chart.area.on {
+    background-position: 0 -60px;
+}
+
+
 .button.chart.stack_column {
-    background-position: -403px -26px;
+    background-position: -60px -180px;
 }
 
 .button.chart.stack_column.on {
-    background-position: -403px -3px;
+    background-position: 0 -180px;
 }
 
 .button.chart.percent_column {
-    background-position: -380px -26px;
-}
+     background-position: -60px -240px;
+ }
 
 .button.chart.percent_column.on {
-    background-position: -380px -3px;
+    background-position: -0px -240px;
+}
+
+.button.chart.compare {
+    background-position: -60px -300px;
+}
+
+.button.chart.compare.on {
+    background-position: -0px -300px;
+}
+
+
+.button.chart.recalculate {
+    background-position: -13px -372px;
+    width: 26px;
+    height: 26px;
+    display: block;
+    margin: 6px 0 0 18px;
 }
 
 
 div#chartBox {
     border: 1px solid #C8D5E8;
     margin-right: 10px;
+    margin-top: 10px;
 }
 
-div#chart_container {
-    margin-right: 100px;
-}
+
 
 div#chart_legend_container{
     border: 1px solid #C8D5E8;
     margin: 10px 10px 40px 0;
 }
+
+
 
 div#tableBox{
     overflow: auto;
@@ -138,16 +164,16 @@ div#tableBox{
 span.button.sort {
     background: url('/static/img/sprite.png');
     display: inline-block;
-    width: 15px;
-    height: 16px;
+    width: 21px;
+    height: 21px;
 }
 
 span.button.sort.up {
-    background-position: -465px -3px;
+    background-position: -463px -24px;
 }
 
 span.button.sort.down {
-    background-position: -465px -25px;
+    background-position: -463px -3px;
 }
 
 table.data_table th.selected > span,
@@ -158,3 +184,20 @@ table.data_table tr.datarow.selected > th > span{
     border-radius: 5px;
     padding: 2px 4px;
 }
+
+table.data_table *::selection {
+    background: #fdffb9; /* Safari */
+}
+table.data_table *::-moz-selection {
+    background: #fdffb9; /* Firefox */
+}
+
+
+div#tagcloud {
+    width: 300px;
+    height: 150px;
+    position: relative;
+    float: right;
+}
+
+
