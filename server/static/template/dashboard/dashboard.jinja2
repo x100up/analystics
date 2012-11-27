@@ -49,7 +49,7 @@
                     {% endif %}
                     <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
                 </td>
-                <td class="main">
+                <td class="main" title="{{worker.startDate|smartDateInterval(worker.endDate)}}">
                     <span class="a" onclick="loadResult({{worker.workerId}})" id="link_{{worker.workerId}}">{{worker.name}}</span>
 
                     <span class="button edit_name" onclick="editName({{worker.workerId}})"></span>
