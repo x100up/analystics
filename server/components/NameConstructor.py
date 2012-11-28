@@ -143,3 +143,18 @@ class NameConstructor(object):
 
         if (operation == 'group'):
             return u'Количество'
+
+    def getSeriesGroupName(self, seriesGroup):
+        vals = []
+        for s in seriesGroup.getSeries():
+            vals.append(s.avg)
+
+        if sum(vals) == 0:
+            return u' нет данных'
+        else:
+            _min = min(vals)
+            _max = max(vals)
+            return u' от {} до {}'.format(int(_min), int(_max))
+
+
+        return u'Серия'

@@ -27,23 +27,29 @@
 
     <div id="chart_legend_container">
         <div id="tagcloud"></div>
-        <ul>
-            {% for series in chartService.getSeries() %}
+
+            {% for seriesGroup in chartService.getSeries() %}
+                <ul class="seriaGroup">
+                <li class="groupName">{{ seriesGroup.name }}</li>
+                {% for series in seriesGroup.getSeries() %}
                 <li>
-                    <input type="checkbox"{% if series.display %} checked="checked"{% endif %}
-                           onclick="ChartManager.switchDisplaySeries(this, {{ series.id }})">
+                    <span class="legendKey{% if not series.visible %} hide{% endif %} %}" style="background-color: {{ series.color }}"
+                            onclick="ChartManager.switchDisplaySeries(this, {{ series.id }})">
+                        <span class="op {{ series.operation }}"></span>
+                        <span class="name">{{ series.name }}</span>
+                        {% for tagName, valueName in series.conditions %}
+                            <strong>: {{ valueName }}</strong>
+                        {% endfor %}
+                    </span>
 
-                    {{ series.name }}
-                    {{ series.operationName }}
-                    {% for tagName, valueName in series.conditions %}
-                        <strong>{{ tagName }}: {{ valueName }}</strong>
-                    {% endfor %}
                 </li>
+                {% endfor %}
+                </ul>
             {% endfor %}
-        </ul>
 
 
 
+        <div class="clearfix"></div>
 
     </div>
 

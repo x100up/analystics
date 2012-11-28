@@ -199,7 +199,7 @@ class HiveQueryConstructor():
             prefix = '(year = %(year)i'%{'year':start_year}
             if start_month == end_month:
                 prefix += ' AND month = %(month)i'%{'month':start_month}
-                if start_day == end_day:
+                if (start_day == end_day) or (end_day - start_day == 1 and end.hour == 0 and end.minute == 0):
                     intervals.append(prefix + ' AND day = %(start_day)i)'%{'start_day':start_day})
                 else:
                     intervals.append(prefix + ' AND day >= %(start_day)i AND day <= %(end_day)i)'%{'start_day':start_day, 'end_day':end_day})

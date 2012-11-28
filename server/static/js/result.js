@@ -17,6 +17,8 @@ var chart = null;
 var isComapare = false;
 var chartconf, chartdata, interval;
 
+var minStartDate, maxEndDate, dateMode;
+
 
 var intervalsSeconds = {
     'minute': 60000,
@@ -29,6 +31,21 @@ var intervalsSeconds = {
 function onChartResultLoad() {
     chartconf = globalData.chartdata.chartconf;
     chartdata = globalData.chartdata;
+
+    minStartDate = new Date(globalData.minStartDate * 1000);
+    maxEndDate = new Date(globalData.maxEndDate * 1000);
+
+    dateMode = false;
+    if (minStartDate.getYear() == maxEndDate.getYear()) {
+        dateMode = 'year';
+        if (minStartDate.getMonth() == maxEndDate.getMonth()) {
+            dateMode = 'month';
+            if (minStartDate.getMonth() == maxEndDate.getMonth()) {
+                dateMode = 'day';
+            }
+        }
+    }
+
     interval = globalData.interval;
     chartconf['tooltip'] = {
         formatter: function() {
@@ -57,10 +74,12 @@ function prepareDataSeries() {
         {
             var xdata = [];
             var seriesData = seriesGroupData[seriesIndex];
-
             for (var i in seriesData['data']) {
                 var row = seriesData['data'][i];
-                xdata.push([row[0], row[1]])
+                xdata.push({
+                    x: row[0],
+                    y: row[1]
+            })
             }
 
             series.push({
@@ -68,7 +87,9 @@ function prepareDataSeries() {
                             data: xdata,
                             opt: seriesData.opt,
                             _id: seriesData.id,
-                            stack: seriesData.params.op + '_' + index
+                            stack: seriesData.params.op + '_' + index,
+                            color: seriesData.params.color,
+                            visible: seriesData.params.visible
                         })
         }
     }
@@ -141,12 +162,13 @@ function renderChart(chartconf) {
         chartconf['xAxis'] = {
             type: 'datetime',
             showEmpty: false,
+            tickInterval: getTickInterval(),
             dateTimeLabelFormats: {
                 month: '%e %b',
                 year: '%b'},
             labels: {
                 formatter: function() {
-                    return formatDate(this.value, interval, false);
+                    return formatDateLabel(this.value, interval, false);
                 }
             }
         };
@@ -235,9 +257,6 @@ function switchChartButtons(button){
 }
 
 
-
-
-
 function drawAreaChart(chartconf){
     chartconf['chart']['type'] = "area";
 
@@ -314,6 +333,61 @@ function formatDate(timestamp, interval, extra) {
     }
     return result;
 }
+function formatDateLabel(timestamp, interval, extra){
+    var date = new Date(timestamp);
+    var result = '';
+    switch (dateMode) {
+        case 'year':
+            result = date.getMonth() + ' ' + date.getDay();
+            break;
+
+        case 'month':
+            result = date.getDay();
+            break;
+
+        case 'day':
+            result = '';
+            break;
+
+        default :
+            result =  date.getYear() + ' ' + date.getMonth() + ' ' + date.getDay();
+    }
+
+    switch (interval){
+        case 'minute':
+        case '10minutes':
+            result += date.getHours() + ':' + date.getMinutes();
+            break;
+        case 'hour':
+            result += date.getHours() + ':00';
+            break;
+        case 'day':
+            break;
+        case 'week':
+            break;
+    }
+
+    return result;
+}
+function getTickInterval(){
+    switch (interval){
+        case 'minute':
+            return 60000;
+            break;
+        case '10minutes':
+            return 600000;
+            break;
+        case 'hour':
+            return 60 * 60000;
+            break;
+        case 'day':
+            return 24 * 60 * 60000;
+            break;
+        case 'week':
+            return 7 * 24 * 60 * 60000;
+            break;
+    }
+}
 
 
 var ChartManager = {
@@ -324,14 +398,17 @@ var ChartManager = {
         this.chart = chart
     },
 
-    switchDisplaySeries: function(checkbox, seriesId){
+    switchDisplaySeries: function(button, seriesId){
+        button = $(button);
         for (var i in this.chart.series) {
             var series = this.chart.series[i];
             if (series.options._id == seriesId){
-                if (checkboxIsChecked(checkbox)) {
+                if (button.hasClass('hide')) {
                     series.show();
+                    button.removeClass('hide');
                 } else {
                     series.hide();
+                    button.addClass('hide');
                 }
             }
         }
@@ -501,3 +578,4 @@ function exportToExcel(){
         $("body").append("<iframe src='/ajax/downloadCSV/?file=" + retData + "' style='display: none;' ></iframe>")
     });
 }
+

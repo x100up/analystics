@@ -8,7 +8,7 @@ from services.AppService import AppService
 from services.RuleService import RuleService
 from services.WorkerService import WorkerService
 from components.NameConstructor import NameConstructor
-import tornado, json
+import tornado, time
 
 
 class ResultAction(AjaxController):
@@ -48,6 +48,16 @@ class ResultAction(AjaxController):
         # configuration name services
         task = service.getTask()
 
+        startDates = []
+        endDates = []
+        for i in task.items:
+            taskItem = task.items[i]
+            startDates.append(taskItem.start)
+            endDates.append(taskItem.end)
+
+        minStartDate = min(startDates)
+        maxEndDate = max(endDates)
+
         appService = AppService(self.application.getAppConfigPath())
         appConfig = appService.getAppConfig(app.code)
         nameService = NameConstructor(appConfig, task)
@@ -66,9 +76,12 @@ class ResultAction(AjaxController):
             html = self.render('dashboard/result.jinja2',
                     {'app': app, 'data':data, 'tablesdata': tableService.getData(), 'nameService':nameService,
                      'chartService':chartService, 'workerId':workerId}, _return = True)
+
             self.renderJSON({'html': html, 'vars': {
                 'chartdata': chartService.getResult(),
                 'interval': task.interval,
-                'tagCloudData': []
+                'tagCloudData': [],
+                'minStartDate': time.mktime(minStartDate.timetuple()),
+                'maxEndDate': time.mktime(maxEndDate.timetuple())
             }})
 

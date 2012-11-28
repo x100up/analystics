@@ -75,10 +75,17 @@
     {% if pageCount > 1 %}
         <ul class="paging">
             {% for p in range(1, pageCount + 1) %}
-                {% if currentPage == p %}
-                    <li>{{ p }}</li>
+                {% if loop.index >= 12 and not loop.last %}
+                    {%  if loop.index == 12 %}
+                    <li>...</li>
+                    {% endif %}
                 {% else %}
-                    <li><a href="?page={{ p }}">{{ p }}</a></li>
+
+                    {% if currentPage == p %}
+                        <li>{{ p }}</li>
+                    {% else %}
+                        <li><a href="?page={{ p }}">{{ p }}</a></li>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
         </ul>

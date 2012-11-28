@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 import logging
-import re, os, inspect
+import re, os, inspect, json
 from models.Config import Config
 from components.webhdfs import WebHDFS, WebHDFSException
 from components.listutils import listDiff

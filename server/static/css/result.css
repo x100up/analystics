@@ -153,6 +153,16 @@ div#chart_legend_container{
     margin: 10px 10px 40px 0;
 }
 
+div#chart_legend_container > ul.seriaGroup {
+    margin-left: 10px;
+    display: block;
+    float: left
+}
+
+div#chart_legend_container > ul.seriaGroup > li.groupName {
+    padding: 4px;
+    font-weight: bold;
+}
 
 
 div#tableBox{
@@ -201,3 +211,46 @@ div#tagcloud {
 }
 
 
+span.legendKey {
+    border-radius: 4px 4px 4px 4px;
+    color: #FFFFFF;
+    display: inline-block;
+    margin-bottom: 4px;
+    padding: 3px 5px 4px 5px;;
+    position: relative;
+    width: auto;
+    box-shadow: inset #fff 1px -1px 1px -1px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    text-shadow: #ba6e2d 0 -1px 1px;
+}
+
+
+span.legendKey > span.name {
+    letter-spacing: 1px;
+}
+
+span.legendKey.hide {
+    background-color: #d1cdd4 !important;
+    text-shadow: #CCCCCC 0 -1px 1px !important;
+}
+
+
+span.legendKey > span.op {
+    display: inline-block;
+    background: url('/static/img/sprite.png') no-repeat;
+    width: 17px;
+    height: 17px;
+}
+
+span.legendKey > span.op.group {
+    background-position: -734px -25px;
+}
+
+span.legendKey > span.op.sum {
+    background-position: -734px -42px;
+}
+
+span.legendKey > span.op.count {
+    background-position: -734px -25px;
+}
