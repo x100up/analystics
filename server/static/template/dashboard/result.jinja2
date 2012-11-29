@@ -25,29 +25,27 @@
 
     <div class="clearfix"></div>
 
-    <div id="chart_legend_container">
-        <div id="tagcloud"></div>
-
-            {% for seriesGroup in chartService.getSeries() %}
-                <ul class="seriaGroup">
-                <li class="groupName">{{ seriesGroup.name }}</li>
-                {% for series in seriesGroup.getSeries() %}
-                <li>
-                    <span class="legendKey{% if not series.visible %} hide{% endif %} %}" style="background-color: {{ series.color }}"
-                            onclick="ChartManager.switchDisplaySeries(this, {{ series.id }})">
-                        <span class="op {{ series.operation }}"></span>
-                        <span class="name">{{ series.name }}</span>
-                        {% for tagName, valueName in series.conditions %}
-                            <strong>: {{ valueName }}</strong>
-                        {% endfor %}
-                    </span>
-
-                </li>
+    <div id="chart_legend_container" class="container_12">
+        <div id="series_container" class="grid_8 alpha">
+            <div class="grid_6 alpha">
+                {% for seriesGroup in chartService.getSeries() %}
+                    {% if not loop.index % 2 == 0 %}
+                        {% include 'dashboard/result/seriaGroupLegend.jinja2' %}
+                    {% endif %}
                 {% endfor %}
-                </ul>
-            {% endfor %}
+            </div>
 
+            <div class="grid_6 omega">
+                {% for seriesGroup in chartService.getSeries() %}
+                    {% if loop.index % 2 == 0 %}
+                        {% include 'dashboard/result/seriaGroupLegend.jinja2' %}
+                    {% endif %}
+                {% endfor %}
+            </div>
 
+        </div>
+
+        <div id="tagcloud" class="grid_4 omega"></div>
 
         <div class="clearfix"></div>
 

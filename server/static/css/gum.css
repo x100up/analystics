@@ -7,6 +7,7 @@ header, nav, section, article, aside, footer {
 }
 body {
 	font: 12px/18px Arial, Tahoma, Verdana, sans-serif;
+    background: url('/static/img/background.jpg');
 }
 a {
 	color: blue;
@@ -36,6 +37,7 @@ input {
 -----------------------------------------------------------------------------*/
 #header {
 	height: 44px;
+    background: #FFF;
 }
 
 
@@ -59,7 +61,8 @@ input {
 	overflow: hidden;
 }
 #content {
-	padding: 0 0 0 320px;
+	margin: 0 0 0 320px;
+    background: #FFF;
 }
 
 
@@ -70,11 +73,9 @@ input {
 	width: 300px;
 	margin-left: -100%;
 	position: relative;
+
 }
-#sideLeft > div
-{
-    margin: 10px 0 0 15px;
-}
+
 
 
 

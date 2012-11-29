@@ -22,6 +22,12 @@ table.data_table td.value.r {
 
 table.data_table th.r {
     font-weight: bold;
+    padding: 0
+}
+
+table.data_table th.r > span{
+    display: block;
+    width: 100px;
 }
 
 table.data_table th {
@@ -153,13 +159,14 @@ div#chart_legend_container{
     margin: 10px 10px 40px 0;
 }
 
-div#chart_legend_container > ul.seriaGroup {
+/*
+div#series_container > ul.seriaGroup {
     margin-left: 10px;
     display: block;
     float: left
-}
+}*/
 
-div#chart_legend_container > ul.seriaGroup > li.groupName {
+div#series_container > ul.seriaGroup > li.groupName {
     padding: 4px;
     font-weight: bold;
 }
@@ -204,10 +211,7 @@ table.data_table *::-moz-selection {
 
 
 div#tagcloud {
-    width: 300px;
-    height: 150px;
-    position: relative;
-    float: right;
+    height: 300px;
 }
 
 

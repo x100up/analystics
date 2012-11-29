@@ -13,9 +13,14 @@ Highcharts.setOptions({
     }
 });
 
+var dateWidths = {
+    'month': 50
+};
+
 var chart = null;
 var isComapare = false;
 var chartconf, chartdata, interval;
+
 
 var minStartDate, maxEndDate, dateMode;
 
@@ -40,7 +45,7 @@ function onChartResultLoad() {
         dateMode = 'year';
         if (minStartDate.getMonth() == maxEndDate.getMonth()) {
             dateMode = 'month';
-            if (minStartDate.getMonth() == maxEndDate.getMonth()) {
+            if (minStartDate.getDate() == maxEndDate.getDate()) {
                 dateMode = 'day';
             }
         }
@@ -59,11 +64,19 @@ function onChartResultLoad() {
         renderTo: 'chart_container',
         type: 'spline'
     };
+
+
+
     switchToSpline();
     ChartManager.constructor(chart);
-
+    for (i in globalData.tagCloudData){
+        globalData.tagCloudData[i]['handlers'] = {
+            click: ChartManager.onTagClick.bind(ChartManager)
+        };
+    }
     $("#tagcloud").jQCloud(globalData.tagCloudData);
 }
+
 
 function prepareDataSeries() {
     var series = [];
@@ -152,7 +165,6 @@ function prepareCompareSeries() {
  * @param chartconf
  */
 function renderChart(chartconf) {
-
     if (isComapare) {
         chartconf['series'] = prepareCompareSeries();
         chartconf['xAxis']['type'] = 'linear';
@@ -162,13 +174,14 @@ function renderChart(chartconf) {
         chartconf['xAxis'] = {
             type: 'datetime',
             showEmpty: false,
-            tickInterval: getTickInterval(),
+            //tickInterval: getTickInterval(),
+            pointInterval: getPointInterval(),
             dateTimeLabelFormats: {
                 month: '%e %b',
                 year: '%b'},
             labels: {
                 formatter: function() {
-                    return formatDateLabel(this.value, interval, false);
+                    return formatDateLabel(this.value, interval);
                 }
             }
         };
@@ -292,7 +305,7 @@ Object.size = function(obj) {
 };
 
 /**
- *
+ * Генерирует метку времени для тултипа
  * @param timestamp
  * @param interval
  * @return {String}
@@ -333,33 +346,41 @@ function formatDate(timestamp, interval, extra) {
     }
     return result;
 }
-function formatDateLabel(timestamp, interval, extra){
+
+/**
+ * Генерирует метку даты по таймштампу основываясь на периоде выборки и интервале
+ * @param timestamp
+ * @param interval
+ * @return {String}
+ */
+function formatDateLabel(timestamp, interval){
+
     var date = new Date(timestamp);
     var result = '';
     switch (dateMode) {
         case 'year':
-            result = date.getMonth() + ' ' + date.getDay();
+            result = date.getDate() + ' ' + date.getMonth();
             break;
 
         case 'month':
-            result = date.getDay();
+            result = date.getDate();
             break;
 
         case 'day':
-            result = '';
+            result = date.getDate();
             break;
 
         default :
-            result =  date.getYear() + ' ' + date.getMonth() + ' ' + date.getDay();
+            result =  date.getDate() + ' ' +  date.getYear() + ' ' + date.getMonth();
     }
 
     switch (interval){
         case 'minute':
         case '10minutes':
-            result += date.getHours() + ':' + date.getMinutes();
+            result += ' ' + date.getHours() + ':' + date.getMinutes();
             break;
         case 'hour':
-            result += date.getHours() + ':00';
+            result += ' ' + date.getHours() + ':00';
             break;
         case 'day':
             break;
@@ -369,7 +390,13 @@ function formatDateLabel(timestamp, interval, extra){
 
     return result;
 }
-function getTickInterval(){
+
+/**
+ * Возвращает интервал между лейблами
+ * для datetime - это количестов микросекунд
+ * @return {Number}
+ */
+function getPointInterval(){
     switch (interval){
         case 'minute':
             return 60000;
@@ -387,6 +414,7 @@ function getTickInterval(){
             return 7 * 24 * 60 * 60000;
             break;
     }
+    return 1;
 }
 
 
@@ -398,20 +426,72 @@ var ChartManager = {
         this.chart = chart
     },
 
-    switchDisplaySeries: function(button, seriesId){
-        button = $(button);
+    switchDisplaySeries: function(seriesIds, forceShow, removeOther){
+        if (typeof seriesIds == 'number') {
+            seriesIds = [seriesIds];
+        }
+        _series = {};
         for (var i in this.chart.series) {
             var series = this.chart.series[i];
-            if (series.options._id == seriesId){
-                if (button.hasClass('hide')) {
-                    series.show();
+            var seriesId = series.options._id;
+            console.log(series);
+            if ($.inArray(seriesId, seriesIds) != -1) {
+                var button = $('#switchSeriesButton_' + seriesId);
+                if (forceShow || button.hasClass('hide')) {
+                    if (!series.visible){
+                        series.show();
+                    }
+
                     button.removeClass('hide');
                 } else {
-                    series.hide();
+                    if (!series.visible){
+                        series.hide();
+                    }
                     button.addClass('hide');
+                }
+            } else {
+                if (removeOther) {
+                    series.hide();
+                    $('#switchSeriesButton_' + seriesId).addClass('hide');
                 }
             }
         }
+
+
+    },
+
+    switchVisibleChartGroup:function (button, groupId, append) {
+        if (append == undefined) {
+            append = false;
+        }
+        button = $(button);
+        var ul = button.parent().parent();
+        var seriesIds = [];
+        ul.children('li.series').each(function (i, li) {
+            seriesIds.push($(li).data('seriesid'))
+        });
+
+        if (button.hasClass('hidden')) {
+            button.removeClass('hidden');
+            this.switchDisplaySeries(seriesIds, true, append);
+        } else {
+            button.addClass('hidden');
+            this.switchDisplaySeries(seriesIds, false, append);
+        }
+    },
+
+
+    onTagClick: function(e){
+        var tag = $(e.target).data('tag');
+        var value = $(e.target).data('value');
+        var seriesId = [];
+        $('#series_container li.series').each(function(i, li){
+            li = $(li);
+            if (li.data(tag) && li.data(tag) == value){
+                seriesId.push(parseInt(li.data('seriesid')));
+            }
+        });
+        this.switchDisplaySeries(seriesId, true, true);
     }
 
 };

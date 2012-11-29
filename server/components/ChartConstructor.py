@@ -18,6 +18,7 @@ class ChartConstructor():
 
     def prepareData(self):
         i = 0
+        tagCloud = {}
         for taskItemIndex in self.data:
             taskItemData = self.data[taskItemIndex]
             for seriesIndex in taskItemData:
@@ -36,6 +37,12 @@ class ChartConstructor():
                 series.name = self.nameService.getKeyNameByIndex(taskItemIndex)
                 if params.has_key('conditions'):
                     series.conditions = self.nameService.prepareConditions(params['conditions'])
+                    for tag, value in params['conditions']:
+                        key = (tag, value)
+                        if not tagCloud.has_key(key):
+                            tagCloud[key] = 0
+                        tagCloud[key] = tagCloud[key] + series.sum
+
                 series.operation = seriesData['params']['op']
                 series.operationName = self.nameService.getOperationName(seriesData['params']['op'])
                 series.key = taskItem.key
@@ -49,26 +56,28 @@ class ChartConstructor():
                 self.generateSeriesGroup()
 
 
-
-                tagValues = []
-                #for tagName, tagValue in seriesData['params'].items():
-                #    tagValues.append(self.nameService.getParamNameValue(tagName, tagValue))
-
-                #seriesData['opt'] =  {
-                #    'tagValues' : ', '.join(tagValues),
-                #    'interval': self.task.interval
-                #}
-
         if self.seriesGroups:
             for seriesGroup in self.seriesGroups:
                 seriesGroup.name = self.nameService.getSeriesGroupName(seriesGroup)
 
             self.seriesGroups = sorted(self.seriesGroups, key=lambda seriesGroup: seriesGroup.exp, reverse=True)
             self.seriesGroups[0].setVisible(True)
-            print
+
+        self.tagCloud = []
+        for key in tagCloud:
+            tag, value = key
+            name = self.nameService.getTagValueName(tag, value)
+            self.tagCloud.append({'text': name, 'weight': tagCloud[key], 'html':{
+                'data-tag': tag,
+                'data-value': value,
+            }})
+
 
     def getSeries(self):
         return self.seriesGroups
+
+    def getTagCloud(self):
+        return self.tagCloud
 
     def generateSeriesGroup(self):
         groups = []
@@ -100,22 +109,23 @@ class ChartConstructor():
                 rawGroups[exponent] = []
             rawGroups[exponent].append(series)
 
+        # sort raw groups
+        for exponent in rawGroups:
+            rawGroups[exponent] = sorted(rawGroups[exponent], key = lambda series: series.avg, reverse=True)
+
         maxChartInGroups = 6
 
         loop = True
         while loop:
             loop = False
-            print 'start loop'
             for exponent in rawGroups:
-                print 'ex = {}'.format(exponent)
                 if not exponent == 0 and len(rawGroups[exponent]) < maxChartInGroups:
+                    print 'glue'
                     # в группе меньше чем макс, ищем рядом
                     _temp = {}
                     for i in [1, -1]:
-                        if rawGroups.has_key(exponent + i):
+                        if rawGroups.has_key(exponent + i) and ( len(rawGroups[exponent]) + len(rawGroups[exponent + i]) <= maxChartInGroups):
                             _temp[i] = len(rawGroups[exponent + i])
-
-                    print _temp
 
                     if _temp:
                         minDiff = None
@@ -131,6 +141,15 @@ class ChartConstructor():
                             del rawGroups[exponent + minEx]
                             loop = True
                             break
+                elif len(rawGroups[exponent]) > maxChartInGroups:
+                    print 'cell'
+                    # если в серии больше 6-ти, то разделяем
+                    rawGroups[exponent - 0.5] = rawGroups[exponent][0:6]
+                    rawGroups[exponent + 0.5] = rawGroups[exponent][6:]
+                    print  '{} = {} + {}'.format(len(rawGroups[exponent]), len(rawGroups[exponent][0:6]), len(rawGroups[exponent][6:]))
+                    del rawGroups[exponent]
+                    loop = True
+                    break
                 else:
                     pass
             # не было группировок - выходим

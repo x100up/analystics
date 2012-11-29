@@ -27,10 +27,8 @@ function getProgress() {
 
                     if (state != 'ALIVE') {
                         delete aliveWorkerIds[workerId];
-                        processIndicator = $('#loader_' + workerId);
-                        processIndicator.parent().removeClass('ALIVE').addClass(state);
-                        $('#progress_' + workerId).remove();
-                        processIndicator.remove();
+                        //processIndicator
+                        $('#worker_row_' + workerId).removeClass('job_ALIVE').addClass('job_' + state);
                     }
                 }
             }
@@ -70,12 +68,16 @@ function editName(workerId) {
 
 function loadResult(workerId) {
     loadDashboardContent('result?jobId=' + workerId);
-    $('tr.job').removeClass('selected');
+    $('div.job').removeClass('selected');
     $('#worker_row_' + workerId).addClass('selected');
 }
 
-function startNewTask(){
-    loadDashboardContent('new');
+function startNewTask(x){
+    var l = 'new';
+    if (x != undefined){
+        l += '?baseOn=' + x;
+    }
+    loadDashboardContent(l);
 }
 
 function loadDashboardContent(page) {
@@ -112,11 +114,11 @@ function loadDashboardContent(page) {
 
 
 $(function(){
-    alive_progress_spans = $('span.alive_progress');
+    alive_progress_spans = $('div.job_ALIVE');
     if (alive_progress_spans.length) {
-        alive_progress_spans.each(function(index, span){
-            span = $(span);
-            aliveWorkerIds[span.data('workerid')] = span.data('stage_count');
+        alive_progress_spans.each(function(index, obj){
+            obj = $(obj);
+            aliveWorkerIds[obj.data('workerid')] = 1;
         });
         getProgress();
         setInterval('getProgress()', 2000);

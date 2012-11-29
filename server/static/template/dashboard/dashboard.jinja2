@@ -36,41 +36,37 @@
     <h2>Список отчетов</h2>
 
 <form action="" method="post">
-    <table id="workersTable">
+<div id="workers">
+    {% for worker in lastWorkers %}
+        <div class="job job_{{worker.status}}" id="worker_row_{{worker.workerId}}" data-workerid="{{worker.workerId}}">
 
-        {% for worker in lastWorkers %}
-            <tr class="job job_{{worker.status}}" id="worker_row_{{worker.workerId}}">
-                <td class="q {{ worker.status }}">
-                    {% if worker.status == 'ALIVE' %}
-                        <img src="/static/img/ajax-loader.gif" alt="Выполняется" id="loader_{{ worker.workerId  }}">
-                        <span class="alive_progress" data-stage_count="{{ worker.task.stageCount }}" data-workerid="{{ worker.workerId }}" id="progress_{{ worker.workerId }}"></span>
-
-
-                    {% endif %}
-                    <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
-                </td>
-                <td class="main" title="{{worker.startDate|smartDateInterval(worker.endDate)}}">
-                    <span class="a" onclick="loadResult({{worker.workerId}})" id="link_{{worker.workerId}}">{{worker.name}}</span>
-
+            <div class="q {{ worker.status }}">
+                <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
+            </div>
+            <div class="main" title="{{worker.startDate|smartDateInterval(worker.endDate)}}" onclick="loadResult({{worker.workerId}})">
+                <span class="a" id="link_{{worker.workerId}}">{{worker.name}}</span>
+                {#
                     <span class="button edit_name" onclick="editName({{worker.workerId}})"></span>
 
-                    {#
+
                     <a class="copy_action button copy" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.workerId}}" title="create on base"></a>
                     {{worker.startDate|smartDatePeriod(worker.endDate)}} <sup>{{worker.startDate|smartDateInterval(worker.endDate)}}</sup>
                      #}
 
-                </td>
-                <td class="plus">
-                    <span>+</span>
-                </td>
-            </tr>
-        {% endfor %}
-        <tfoot>
-        <tr>
-            <td colspan="3"><input type="submit" name="action" value="Удалить" class=" awesome orange"></td>
-        </tr>
-        </tfoot>
-    </table>
+            </div>
+            <div class="plus">
+                <span onclick="startNewTask({{worker.workerId}})"  title="create on base">+</a>
+            </div>
+            <div class="clearfix"></div>
+            <div class="_selector"></div>
+            <div class="line"></div>
+
+        </div>
+        <div class="clearfix"></div>
+    {% endfor %}
+</div>
+<div style="margin-left: 10px;">
+    <input type="submit" name="action" value="Удалить" class=" awesome orange small">
 
     {% if pageCount > 1 %}
         <ul class="paging">
@@ -90,5 +86,7 @@
             {% endfor %}
         </ul>
     {% endif %}
+    </div>
 </form>
+
 {% endblock %}

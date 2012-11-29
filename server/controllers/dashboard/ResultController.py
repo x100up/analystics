@@ -80,8 +80,8 @@ class ResultAction(AjaxController):
             self.renderJSON({'html': html, 'vars': {
                 'chartdata': chartService.getResult(),
                 'interval': task.interval,
-                'tagCloudData': [],
+                'tagCloudData': chartService.getTagCloud(),
                 'minStartDate': time.mktime(minStartDate.timetuple()),
-                'maxEndDate': time.mktime(maxEndDate.timetuple())
+                'maxEndDate': time.mktime(maxEndDate.timetuple()),
             }})
 

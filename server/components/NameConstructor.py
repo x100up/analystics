@@ -96,7 +96,6 @@ class NameConstructor(object):
                 type = tagConf['type']
 
                 if type == 'choose':
-                    print tagConf['values']
                     if tagConf.has_key('values') and isinstance(tagConf['values'], dict) and tagConf['values'].has_key(value):
                         tag_value = tagConf['values'][value]
 
@@ -122,7 +121,7 @@ class NameConstructor(object):
         """
         result = []
         for tag, value in conditions:
-            result.append((self.getTagName(tag), self.getTagValueName(tag, value)))
+            result.append((self.getTagName(tag), self.getTagValueName(tag, value), tag, value))
 
         return result
 
@@ -154,6 +153,8 @@ class NameConstructor(object):
         else:
             _min = min(vals)
             _max = max(vals)
+            if _min == _max:
+                return u' в среднем {}'.format(int(_min))
             return u' от {} до {}'.format(int(_min), int(_max))
 
 

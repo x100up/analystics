@@ -24,6 +24,97 @@ table#workersTable td.action > input {
     margin-top: 14px;
 }
 
+
+/** -------------------------- **/
+div#workers {
+    margin-top: 10px;
+}
+div#workers > div > div{
+   float: left;
+    min-height: 26px;
+    padding-top: 5px;
+}
+
+div#workers > div{
+    margin-bottom: 5px;
+    vertical-align: middle;
+    width: 320px;
+}
+
+div#workers div.q {
+    width: 24px;
+    margin-left: 10px;
+}
+div#workers div.main {
+    width: 250px;
+    cursor: pointer;
+    color: #DDDDDD;
+}
+
+div#workers div.plus {
+    width: 20px;
+    color: #FFF;
+    margin: 0;
+    padding: 0
+}
+
+div#workers div.plus span {
+    padding-top: 10px;
+    display: block;
+    font-size: 20pt;
+    border-bottom: none;
+    color: #fff;
+    cursor: pointer
+}
+
+div#workers div.line{
+    height: 4px;
+    width: 100%;
+    min-height: 0 !important;
+    float: left;
+}
+
+div#workers div.selected > div.main {
+    color: #FFFFFF !important;
+}
+
+div#workers div:HOVER {
+    text-shadow: 0 0 5px #0ebff5;
+    filter: dropshadow(color=#0ebff5, offx=0, offy=0);
+}
+
+
+div.job_SUCCESS > div.line {
+    border-bottom: solid 4px #99C700 !important;
+}
+
+div.job_ERROR > div.line{
+    border-bottom: solid 4px #FFCD45 !important;
+}
+
+div.job_DIED > div.line{
+    border-bottom: solid 4px #F3624C !important;
+}
+
+
+div#workers div._selector{
+    background: url("/static/img/sprite.png") -71px -65px no-repeat;
+    width: 30px;
+    height: 20px;
+    position: absolute;
+    z-index: -1;
+    left: 0;
+    margin-top: -5px;
+    display: none;
+}
+
+div#workers div.selected div._selector{
+    display: block !important;
+}
+
+/** -------------------------- **/
+
+
 span.alive_progress {
     font-size: 10pt
 }
@@ -40,8 +131,10 @@ tr.job_DIED td {
     border-bottom: solid 4px #F3624C !important;
 }
 
-tr.success_recently td {
-    background-color: #F2F9DD
+
+
+ul.paging{
+    margin-top: 10px;
 }
 
 ul.paging li {
@@ -49,64 +142,7 @@ ul.paging li {
     padding-right: 4px;
 }
 
-span.button.edit_name {
-    display: inline-block;
-    background: url('/static/img/sprite.png') no-repeat -200px 0px;
-    width: 10px;
-    height: 10px;
-    visibility: hidden;
-}
 
-td:hover span.button.edit_name {
-    visibility: visible;
-}
-
-table#workersTable td.main {
-    cursor: pointer;
-    font-size: 13pt;
-    font-weight: normal;
-}
-
-td.q{
-    width: 10px;
-    margin: 0;
-    padding: 0;
-}
-
-
-tr.selected > td.main {
-    background-color: #7C9CC7;
-    color: #FFF;
-
-}
-
-table#workersTable  td.plus{
-    color: #FFF;
-    margin: 0;
-    padding: 0
-}
-
-table#workersTable  td.plus span {
-    padding-top: 10px;
-    display: block;
-    font-size: 20pt;
-}
-
-table#workersTable  tr.selected  td.plus {
-    background-color: #D7E1EE;
-    color: #7C9CC7 !important;
-}
-
-table#workersTable  tr:HOVER td.plus {
-    color: #7C9CC7;
-}
-
-
-
-
-
-
-/*
 Set the container for the bar
 */
 .bar {
@@ -131,11 +167,7 @@ This is the actual bar with stripes
 .job_ALIVE {
     height:100%;
     width:100%;
-    background-color:#FFFFFF;
-    -webkit-border-radius:20px;
-    -moz-border-radius:20px;
-    -ms-border-radius:20px;
-    border-radius:20px;
+
     -webkit-box-sizing:border-box;
     -moz-box-sizing:border-box;
     -ms-box-sizing:border-box;
@@ -184,14 +216,14 @@ This is the actual bar with stripes
             transparent 75%,
             transparent
         );
-    -webkit-background-size:50px 50px;
-    -moz-background-size:50px 50px;
-    -ms-background-size:50px 50px;
-    background-size:50px 50px;
+    -webkit-background-size:15px 15px;
+    -moz-background-size:15px 15px;
+    -ms-background-size:15px 15px;
+    background-size:15px 15px;
     -webkit-animation:move 2s linear infinite;
     -moz-animation:move 2s linear infinite;
     -ms-animation:move 2s linear infinite;
-    animation:move 2s linear infinite;
+    animation:move 3s linear infinite;
     -webkit-border-radius:20px;
     -moz-border-radius:20px;
     -ms-border-radius:20px;

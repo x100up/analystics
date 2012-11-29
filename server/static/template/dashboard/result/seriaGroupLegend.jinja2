@@ -1,0 +1,25 @@
+<ul class="seriaGroup">
+    <li class="groupName">
+        {{ seriesGroup.name }}
+        <button {% if not seriesGroup.visible %} class="hidden" {% endif %}
+                                                 onclick="ChartManager.switchVisibleChartGroup(this, {{ loop.index }}, true)">show/hide</button>
+        <button onclick="ChartManager.switchVisibleChartGroup(this, {{ loop.index }})">+ show</button>
+    </li>
+    {% for series in seriesGroup.getSeries() %}
+        <li class="series" data-seriesId="{{ series.id }}"
+        {% for tagName, valueName, tag, value in series.conditions %}
+            data-{{ tag }}="{{ value }}"
+        {% endfor %}
+        >
+                            <span id="switchSeriesButton_{{ series.id }}" class="legendKey{% if not series.visible %} hide{% endif %} %}" style="background-color: {{ series.color }}"
+                                  onclick="ChartManager.switchDisplaySeries({{ series.id }})">
+                                <span class="op {{ series.operation }}"></span>
+                                <span class="name">{{ series.name }}</span>
+                                {% for tagName, valueName, tag, value in series.conditions %}
+                                    <strong>: {{ valueName }}</strong>
+                                {% endfor %}
+                            </span>
+
+        </li>
+    {% endfor %}
+</ul>

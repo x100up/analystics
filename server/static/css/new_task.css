@@ -158,7 +158,7 @@ div.key_header.key_loaded{
 }
 
 input.datepicker {
-    background: url("/static/img/sprite.png") -15px -63px no-repeat;
+    background: url("/static/img/sprite.png") 120px -91px no-repeat;
 }
 
 div.op_controll{

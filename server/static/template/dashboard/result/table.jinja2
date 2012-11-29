@@ -6,8 +6,8 @@
         <thead>
             <tr>
                 <th id="emptyData">_</th>
-                <th class="r">Сумма <span class="button sort down" onclick="sortResultTable(this, 'sum')"></span></th>
-                <th class="r">Среднее <span class="button sort down"  onclick="sortResultTable(this, 'avg')"></span></th>
+                <th class="r"><span>Сумма <span class="button sort down" onclick="sortResultTable(this, 'sum')"></span></span></th>
+                <th class="r"><span>Среднее <span class="button sort down"  onclick="sortResultTable(this, 'avg')"></span></span></th>
                 {% for ts in tabledata['columnHeaders'] %}
                 <th onclick="selectColumn(this, {{ loop.index0 }})">
                     <span>{{ ts|excelDate(data['interval']) }}</span>
