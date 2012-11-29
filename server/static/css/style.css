@@ -181,6 +181,7 @@ div#content {
 div#dashboard_container{
     margin:  0  0 0 10px;
     padding-bottom: 20px;
+    min-height: 700px;
 }
 
 table {

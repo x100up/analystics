@@ -10,8 +10,16 @@ from services.WorkerService import WorkerService
 from components.NameConstructor import NameConstructor
 import tornado, time
 
+class BaseResultAction(AjaxController):
 
-class ResultAction(AjaxController):
+    def prepare(self):
+        super(AjaxController, self).prepare()
+        self.dbSession = self.getDBSession()
+
+    def getWorker(self, workerId):
+        return self.dbSession.query(Worker).filter_by(workerId = int(workerId)).first()
+
+class ResultAction(BaseResultAction):
 
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
@@ -20,29 +28,25 @@ class ResultAction(AjaxController):
             raise RuntimeError('Cant find app code in dashboard')
         appCode = args[0]
 
-        dbSession = self.getDBSession()
         user = self.get_current_user()
 
         # get app
-        app = dbSession.query(App).filter(App.code == appCode).first()
+        app = self.dbSession.query(App).filter(App.code == appCode).first()
         if app is None:
             raise RuntimeError('Cant find app by code ' + appCode)
 
         # check access
-        ruleService = RuleService(dbSession)
+        ruleService = RuleService(self.dbSession)
         if not ruleService.isAllow(user.userId, app.appId):
             raise RuntimeError('Access denied')
 
         workerId = self.get_argument('jobId')
 
-        worker = dbSession.query(Worker).filter_by(workerId = workerId).first()
+        worker = self.getWorker(workerId)
         service = WorkerService(self.application.getResultPath(), worker)
 
-        if worker.status == Worker.STATUS_ALIVE:
-            self.redirect('/')
-            return
-        elif worker.status == Worker.STATUS_DIED or worker.status == Worker.STATUS_ERROR:
-            self.render('dashboard/task_failed.jinja2', {'errors': [service.getError()]})
+        if worker.status != Worker.STATUS_SUCCESS:
+            self.renderJSON({'redirect': 'status/' + str(workerId)})
             return
 
         # configuration name services
@@ -84,4 +88,19 @@ class ResultAction(AjaxController):
                 'minStartDate': time.mktime(minStartDate.timetuple()),
                 'maxEndDate': time.mktime(maxEndDate.timetuple()),
             }})
+
+class ShowTaskStatus(BaseResultAction):
+    def get(self, *args, **kwargs):
+        appcode, workerId = args
+        worker = self.getWorker(workerId)
+
+        if (worker.status == Worker.STATUS_ALIVE):
+            self.renderJSON({'redirect': 1})
+        elif (worker.status == Worker.STATUS_ERROR) or (worker.status == Worker.STATUS_DIED):
+            service = WorkerService(self.application.getResultPath(), worker)
+            self.renderJSON({'html': self.render('dashboard/result/taskFailed.jinja2', {'errors': [service.getError()]}, _return=True) })
+        elif (worker.status == Worker.STATUS_SUCCESS):
+            self.renderJSON({'redirect': 'result/job=' + workerId })
+        else:
+            raise Exception('Unknown worker state')
 

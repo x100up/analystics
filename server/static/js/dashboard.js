@@ -98,6 +98,10 @@ function loadDashboardContent(page) {
 
     $.ajax('/dashboard/app/' + app + '/' + page,{
         success: function(data){
+            if (data.redirect != undefined){
+                loadDashboardContent(data.redirect);
+                return;
+            }
             contentContainer.html(data.html);
             if (typeof data.vars != 'undefined'){
                 for (var key in data.vars){

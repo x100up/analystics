@@ -12,6 +12,7 @@ from components.NameConstructor import NameConstructor
 from models.TaskTemplate import TaskTemplate, TaskTemplateFile
 from sqlalchemy.sql import or_, and_
 import tornado.web
+from services import ThredService
 
 
 class CreateTaskController():
@@ -122,7 +123,7 @@ class CreateAction(CreateTaskController, AjaxController):
         workerThread = self.createHiveWorker(workerService)
         workerThread.start()
 
-        self.redirect('/dashboard/app/' + app.code + '/')
+        self.redirect('/dashboard/app/' + app.code + '/#new_task/' + str(worker.workerId))
 
 class RecalculateAction(CreateTaskController, BaseController):
 
@@ -153,3 +154,11 @@ class RecalculateAction(CreateTaskController, BaseController):
         self.redirect('/dashboard/app/' + app.code + '/')
 
 
+class ShowNewTaskAction(AjaxController):
+    def get(self, *args, **kwargs):
+        appcode, workerId = args
+        aliveThreadNames = ThredService.getAliveThreads()
+        if not 'worker-' + workerId in aliveThreadNames:
+            self.renderJSON({'redirect':'status/' + workerId})
+        else:
+            self.renderJSON({'html': self.render('/dashboard/create/responseOnCreate.jinja2', _return = True), 'vars':{}})

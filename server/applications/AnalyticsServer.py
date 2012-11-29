@@ -157,6 +157,8 @@ class AnalyticsServer(tornado.web.Application):
             (r"/dashboard/app/([^/]+)/recalculate/?", CreateTaskController.RecalculateAction),
             (r"/dashboard/empty/?", DashboardController.EmptyAppAction),
             (r"/dashboard/selectapp/?", DashboardController.SelectAppAction),
+            (r"/dashboard/app/([^/]+)/new_task/([^/]+)/?", CreateTaskController.ShowNewTaskAction),
+            (r"/dashboard/app/([^/]+)/status/([^/]+)/?", ResultController.ShowTaskStatus),
 
             # --------- LOGIN & LOGOUT ---------
 
