@@ -20,7 +20,12 @@ class AppService():
         return list of available config apps
         stored in app_config_path
         '''
-        return [self.nameR.search(file).group(1) for file in os.listdir(self.folder)]
+        list = []
+        for file in os.listdir(self.folder):
+            match = self.nameR.search(file)
+            if match:
+                list.append(match.group(1))
+        return list
 
     def getAppConfig(self, appCode):
         '''

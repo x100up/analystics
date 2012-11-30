@@ -65,6 +65,11 @@ input {
     background: #FFF;
 }
 
+#content > div {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
 
 /* Sidebar Left
 -----------------------------------------------------------------------------*/

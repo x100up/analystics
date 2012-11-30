@@ -1,7 +1,9 @@
 # coding=utf-8
+
 from AdminIndexController import AdminAction
 from services.AppService import AppService
 from components.AnalyticsException import AnalyticsException
+
 class TagEditAction(AdminAction):
     def prepare(self):
         super(TagEditAction, self).prepare()
@@ -162,5 +164,5 @@ class TagEditAction(AdminAction):
                 for bunch_code in key_data[AppService.BUNCHES_JSON_INDEX].keys():
                     relation_cache['bunch'][index].append(bunch_indexes[bunch_code])
 
-        dict['js_vars'] = {'relation_cache': relation_cache, 'bunch_cache':bunch_cache, 'appCode': '"' + self.app_code + '"'}
+        dict['js_vars'] = {'relation_cache': relation_cache, 'bunch_cache':bunch_cache, 'appCode': self.app_code}
         self.render('admin/editTags.jinja2', dict)

@@ -1,12 +1,8 @@
-{% extends 'layout/gum.jinja2' %}
+{% extends 'admin/adminLayout.jinja2' %}
 
-{% block head %}
-    <link href="{{ static_url_prefix }}/css/admin.editTags.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src="{{ static_url_prefix }}/js/admin.editTags.js"></script>
-{% endblock %}
 
 {% block content %}
-    <h2>Конфигурация</h2>
+    <h2>Конфигурация1</h2>
 
     {% include 'blocks/error.jinja2' %}
 
@@ -79,5 +75,6 @@
         <input type="input" onclick="saveForm()" value="Сохранить" class="awesome green" style="margin-top: 20px">
 
     </form>
+    <div class="clearfix"></div>
 
 {% endblock %}

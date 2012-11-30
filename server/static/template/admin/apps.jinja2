@@ -1,10 +1,11 @@
-{% extends 'layout/gum.jinja2' %}
+{% extends 'admin/adminLayout.jinja2' %}
 
-{% block head %}
-    <link href="/static/css/app.css" rel="stylesheet" type="text/css">
-{% endblock %}
 
 {% block content %}
+
+    <h2>Приложения</h2>
+    <br />
+
     <a href="/admin/app/edit" class="green awesome">Добавить приложение</a>
 
     <form action="" method="POST">
@@ -28,6 +29,9 @@
                 </td>
                 <td>
                     <a href="/admin/app/{{ app.code }}/tags">Настройка тегов</a>
+                </td>
+                <td>
+                    <a href="/admin/app/{{ app.code }}/spell">Словарь</a>
                 </td>
                 <td class="action">
                     <input type="checkbox" name="appIds" value="{{ app.appId }}" />

@@ -9,7 +9,9 @@ import logging
 from components.jinja import *
 from models.Config import Config
 from controllers import  IndexController, UserController
-from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController, AdminSettingsController, AdminTagController
+from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController
+from controllers.admin import AdminSettingsController, AdminAppConfigController, AdminAppSpellController
+
 from controllers.api import APIController
 from controllers.dashboard import ResultController, AjaxController, DashboardController, CreateTaskController, TemplateController
 from controllers.cluster import NameNodeController
@@ -24,10 +26,14 @@ from datetime import datetime
 
 class AnalyticsServer(tornado.web.Application):
 
+    spellFolder = None
+
     def __init__(self, debug = False):
         # define app root path
         thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
         self.appRoot = os.path.abspath(thisPath + '/../../')
+
+        self.spellFolder = self.appRoot + '/app_configs/spells/'
 
         level = logging.WARNING
         if debug:
@@ -179,7 +185,8 @@ class AnalyticsServer(tornado.web.Application):
 
             (r'/admin/settings/?', AdminSettingsController.IndexAction),
 
-            (r'/admin/app/([^/]+)/tags/?', AdminTagController.TagEditAction),
+            (r'/admin/app/([^/]+)/tags/?', AdminAppConfigController.TagEditAction),
+            (r'/admin/app/([^/]+)/spell/?', AdminAppSpellController.IndexAction),
             # --------- CLUSTER -----------
             (r'/cluster/namenode/?', NameNodeController.IndexAction),
 

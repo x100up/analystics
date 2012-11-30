@@ -6,6 +6,8 @@ from datetime import datetime, timedelta
 from models.Config import Config
 from services.HiveService import HiveService
 from services.AppService import AppService
+from optparse import OptionParser
+import time
 
 __author__ = 'pavlenko.roman.spb@gmail.com'
 
@@ -26,6 +28,20 @@ TABLE_PREFIX = config.get('hive_prefix')
 
 appService = AppService(rootPath + '/../app_configs/')
 
+
+optParser = OptionParser()
+optParser.add_option("-d", "--day", dest="day", help="day To Pack")
+optParser.add_option("-m", "--month", dest="month", help="month To Pack")
+optParser.add_option("-y", "--year", dest="year", help="year To Pack")
+optParser.add_option("-k", "--key", dest="key", help="key To Pack")
+
+(options, args) = optParser.parse_args()
+options = options.__dict__
+
+appService = AppService(rootPath + '/../app_configs/')
+availale_apps = appService.getAppConfigList()
+
+
 PACK_TABLE_QUERY = """insert overwrite table stat_{0} PARTITION (year={1},month={2},day={3}) select params, userId, `timestamp`, `hour`, minute, second
 from stat_{0} WHERE year={1} AND month={2} AND day={3}
 """
@@ -35,15 +51,25 @@ class Packer():
     def __init__(self, appService, hiveClient):
         self.appService = appService
         self.hiveClient = hiveClient
+        self.hiveClient.execute('SET hive.exec.compress.output=true')
+        self.hiveClient.execute('SET mapred.job.priority=VERY_LOW')
+        self.hiveClient.execute('SET mapred.output.compression.codec=org.apache.hadoop.io.compress.SnappyCodec')
+        self.hiveClient.execute('SET mapred.output.compression.type=BLOCK')
+        self.hiveClient.execute('SET hive.merge.mapfiles=true')
 
     def getApplications(self):
         return ['topface']
 
-    def pack(self, year, month, day):
+    def pack(self, year, month, day, key = None):
         for app in self.getApplications():
             appConfig = appService.getAppConfig(app)
 
-            for key in appConfig['keys']:
+            if key:
+                keys = [key]
+            else:
+                keys = appConfig['keys']
+
+            for key in keys:
                 print 'start pack key {}'.format(key)
                 try:
                     start = datetime.now()
@@ -51,15 +77,27 @@ class Packer():
                     query = PACK_TABLE_QUERY.format(key, year, month, day)
                     self.hiveClient.execute('USE {}'.format(app))
                     self.hiveClient.execute(query)
+                    end = datetime.now()
                     print end - start
+                    time.sleep(90)
                 except Exception as ex:
                     print ex.message
 
+key = None
+if options.has_key('year') and options.has_key('month') and options.has_key('day'):
+    year = options['year']
+    month = options['month']
+    day = options['day']
+else:
+    datetime = datetime.now() - timedelta(days=1)
+    day = datetime.day
+    month = datetime.month
+    year = datetime.year
 
-
-datetime = datetime.now() - timedelta(days=1)
+if options.has_key('key'):
+    key = options['key']
 
 hiveClient = HiveService(config.get('hive_host'), config.get('hive_port'))
 packer = Packer(appService, hiveClient)
-print 'start pack for date {}.{}.{}'.format(datetime.year, datetime.month, datetime.day)
-packer.pack(datetime.year, datetime.month, datetime.day)
+print 'start pack for date {}.{}.{}'.format(year, month,day)
+packer.pack(year, month,day, key = key)

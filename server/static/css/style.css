@@ -176,6 +176,8 @@ div#content {
     padding-top: 15px;
     -webkit-box-shadow: -1px 0px 4px 4px rgba(00, 00, 00, 0.4);
     box-shadow: -1px 0px 4px 4px rgba(00, 00, 00, 0.4);
+    padding-bottom: 15px;
+    min-height: 700px;
 }
 
 div#dashboard_container{

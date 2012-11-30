@@ -183,7 +183,7 @@ class AnalyticsMonitor():
         print message
 
 
-hiveclient = HiveService(config.get('hive_host'), config.get('hive_port'))
+hiveclient = HiveService(config.get('hive_host'), int(config.get('hive_port')))
 monitor = AnalyticsMonitor(appService, hiveclient, host=HDFS_HOST, port=HDFS_PORT, username=HDFS_USER)
 monitor.TABLE_PREFIX = TABLE_PREFIX
 for appname in appnames:

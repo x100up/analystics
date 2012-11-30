@@ -1,0 +1,51 @@
+{% extends 'admin/adminLayout.jinja2' %}
+
+{% block content %}
+    <h1>Словарь</h1>
+    <br />
+    <h2>Ключи</h2>
+    <br />
+<form action="" method="POST">
+    <table>
+    <tr>
+        <th></th>
+        {% for s in spell.keyFields %}
+            <th>{{ spell.keyFields[s] }}</th>
+        {% endfor %}
+    </tr>
+    {% for k in appconfig['keys'] %}
+        <tr>
+            <td>{{ appconfig['keys'][k]['description'] or k }}</td>
+            {% for spellKey in spell.keyFields %}
+                <th>
+                    <input type="text" style="width: 100%" value="{{ spellService.get('key', k, spellKey) or '' }}" name="spellKey|{{ spellKey }}|{{ k }}">
+                </th>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </table>
+
+    <h2>Теги</h2>
+    <br />
+    <table>
+        <tr>
+            <th></th>
+            {% for s in spell.tagFields %}
+                <th>{{ spell.tagFields[s] }}</th>
+            {% endfor %}
+        </tr>
+        {% for k in appconfig['tags'] %}
+            <tr>
+                <td>{{ appconfig['tags'][k]['name'] or k }}</td>
+                {% for spellKey in spell.tagFields %}
+                    <th>
+                        <input type="text" style="width: 100%" value="{{ spellService.get('tag', k, spellKey) or '' }}" name="spellTag|{{ spellKey }}|{{ k }}">
+                    </th>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+<input type="submit" value="Сохранить" class="awesome green">
+</form>
+
+{% endblock %}
