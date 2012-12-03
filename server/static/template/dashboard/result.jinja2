@@ -1,7 +1,11 @@
 {% block content %}
     {% include 'blocks/error.jinja2' %}
 
-    <h1>Полученные монеты Vkontakte, Facebook</h1>
+    <h1><span id="taskNameLabel">{{ name or 'Нет названия' }}</span>
+        <span class="button editTaskName" onclick="editName(this, {{ workerId }})"> </span>
+    </h1>
+    <input style="display: none" name="taskName" id="taskName" value="{{ name or 'Нет названия' }}"
+           onblur="saveTaskName()" onkeydown="keyDownHandlerTaskName(event)">
 
     <div class="clearfix"></div>
     <div id="chartBox">
@@ -16,11 +20,11 @@
             <span class="button chart compare" id="compare_button" onclick="switchToCompare()"
                   title="Режим сравнения серий"></span>
 
-            <a href="/dashboard/app/{{ app.code }}/recalculate/?workerId={{ workerId }}" class="button chart recalculate"
-                    title="Пересчитать"></a>
+            <a href="/dashboard/app/{{ app.code }}/recalculate/?workerId={{ workerId }}"
+               class="button chart recalculate"
+               title="Пересчитать"></a>
         </div>
         <div id="chart_container"></div>
-
     </div>
 
     <div class="clearfix"></div>

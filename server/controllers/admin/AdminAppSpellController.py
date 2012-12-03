@@ -44,7 +44,6 @@ class IndexAction(AdminAction):
                     data['tag'][tagCode][spellKey] = val
 
         self.spellService.save(data)
-
         self._render()
 
     def _render(self):

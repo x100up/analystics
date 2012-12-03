@@ -84,20 +84,22 @@ class Packer():
                     print ex.message
 
 key = None
-if options.has_key('year') and options.has_key('month') and options.has_key('day'):
+print options
+if options['year'] and options['month'] and options['day']:
     year = options['year']
     month = options['month']
     day = options['day']
 else:
+    print 'Use -1 day'
     datetime = datetime.now() - timedelta(days=1)
-    day = datetime.day
-    month = datetime.month
-    year = datetime.year
+    day = datetime.date().day
+    month = datetime.date().month
+    year = datetime.date().year
 
-if options.has_key('key'):
+if options['key']:
     key = options['key']
 
 hiveClient = HiveService(config.get('hive_host'), config.get('hive_port'))
 packer = Packer(appService, hiveClient)
-print 'start pack for date {}.{}.{}'.format(year, month,day)
-packer.pack(year, month,day, key = key)
+print 'start pack for date {}.{}.{}'.format(year, month, day)
+packer.pack(year, month, day, key = key)

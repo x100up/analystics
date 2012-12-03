@@ -36,7 +36,14 @@ function getProgress() {
     }
 }
 
-function editName(workerId) {
+var currentWorkerId = null;
+
+function editName(button, workerId) {
+    currentWorkerId = workerId;
+    $(button).parent().hide();
+    $('#taskName').show().focus();
+
+    return '';
     var a = $('#link_' + workerId);
     var editor = $('<input/>').val(a.text()).width(a.width());
     a.after(editor).remove();
@@ -57,13 +64,29 @@ function editName(workerId) {
         });
     };
 
-    editor.blur(callback);
-    editor.keydown(function(event){
-        if (event.keyCode == 13) {
-            event.stopPropagation();
-            callback();
-        }
-    })
+}
+
+function keyDownHandlerTaskName(event){
+    if (event.keyCode == 13) {
+        event.stopPropagation();
+        saveTaskName();
+    }
+}
+
+function saveTaskName() {
+    var editor = $('#taskName');
+    var name = editor.val();
+    editor.hide();
+    $('#taskNameLabel').html(name).parent().show();
+    if (currentWorkerId != undefined) {
+        $.ajax('/ajax/saveWorkerName', {
+            type: 'POST',
+            data: {'name':name, 'workerId':currentWorkerId},
+            success: function(data, textStatus, jqXHR){
+
+            }
+        });
+    }
 }
 
 function loadResult(workerId) {

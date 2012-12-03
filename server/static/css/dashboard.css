@@ -112,6 +112,17 @@ div#workers div.selected div._selector{
     display: block !important;
 }
 
+.button.editTaskName {
+    background: url('/static/img/sprite.png') no-repeat -200px 0;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+}
+#taskName{
+    height: 24px;
+    font-size: 23px;
+}
+
 /** -------------------------- **/
 
 

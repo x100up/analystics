@@ -7,14 +7,14 @@
 
 
     <div class="container_12">
+        <form action="/dashboard/app/{{ app.code }}/new" method="post" id="new_task_form">
         <div class="grid_4">
-            <h1>Новая задача <sup>{{ app.name }}</sup></h1>
+            <h1><span id="taskNameLabel">Новая задача</span> <span class="button editTaskName" onclick="editName(this)"> </span></h1>
+            <input style="display: none" name="taskName" id="taskName" value="Новая задача" onblur="saveTaskName()" onkeydown="keyDownHandlerTaskName(event)">
         </div>
         <div class="grid_1">
             <span class="awesome small yellow" onclick="selectTemplate()">шаблоны</span>
         </div>
-        <form action="/dashboard/app/{{ app.code }}/new" method="post" id="new_task_form">
-
             <div class="grid_7">
                 <input type="hidden" id="group_interval" value="{{ task.interval }}" name="group_interval">
                 <ul id="interval_selector">

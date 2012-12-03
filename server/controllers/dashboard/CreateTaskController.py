@@ -96,12 +96,14 @@ class CreateAction(CreateTaskController, AjaxController):
         worker.startDate = datetime.now()
         worker.status = Worker.STATUS_ALIVE
         worker.appId = app.appId
+        worker.name = self.get_argument('taskName', default=None)
 
         # генерируем имя запроса
         appService = AppService(self.application.getAppConfigPath())
         appConfig = appService.getAppConfig(app.code)
         nameConstructor = NameConstructor(appConfig, task)
-        worker.name = nameConstructor.generateTaskName()
+        if not worker.name:
+            worker.name = nameConstructor.generateTaskName()
 
         session = self.getDBSession()
         session.add(worker)
