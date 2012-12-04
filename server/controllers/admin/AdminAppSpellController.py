@@ -16,7 +16,6 @@ class IndexAction(AdminAction):
     def get(self, *args, **kwargs):
         app = self.checkAppAccess(args)
         self._prepare(app.code)
-        print self.spellService.get('key', 'coins_spend_event_key', 'legend_name')
         self._render()
 
     def post(self, *args, **kwargs):

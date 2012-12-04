@@ -65,8 +65,6 @@ function onChartResultLoad() {
         type: 'spline'
     };
 
-
-
     switchToSpline();
     ChartManager.constructor(chart);
     for (i in globalData.tagCloudData){
@@ -74,7 +72,6 @@ function onChartResultLoad() {
             click: ChartManager.onTagClick.bind(ChartManager)
         };
     }
-    $("#tagcloud").jQCloud(globalData.tagCloudData);
 }
 
 
@@ -434,9 +431,9 @@ var ChartManager = {
         for (var i in this.chart.series) {
             var series = this.chart.series[i];
             var seriesId = series.options._id;
-            console.log(series);
             if ($.inArray(seriesId, seriesIds) != -1) {
                 var button = $('#switchSeriesButton_' + seriesId);
+
                 if (forceShow || button.hasClass('hide')) {
                     if (!series.visible){
                         series.show();
@@ -444,7 +441,7 @@ var ChartManager = {
 
                     button.removeClass('hide');
                 } else {
-                    if (!series.visible){
+                    if (series.visible){
                         series.hide();
                     }
                     button.addClass('hide');
@@ -482,13 +479,16 @@ var ChartManager = {
 
 
     onTagClick: function(e){
-        var tag = $(e.target).data('tag');
-        var value = $(e.target).data('value');
+        var span = $(e.target);
+        var tag = span.data('tag').toLowerCase();
+        var value = span.data('value');
+        $('div#tagcloud span').removeClass('selected');
+        span.addClass('selected');
         var seriesId = [];
-        $('#series_container li.series').each(function(i, li){
-            li = $(li);
-            if (li.data(tag) && li.data(tag) == value){
-                seriesId.push(parseInt(li.data('seriesid')));
+        $('#series_container .series').each(function(i, element){
+            element = $(element);
+            if (element.data(tag) && element.data(tag) == value){
+                seriesId.push(parseInt(element.data('seriesid')));
             }
         });
         this.switchDisplaySeries(seriesId, true, true);

@@ -30,7 +30,7 @@ class ChartSeries:
                 'tag': self.key,
                 'conditions': self.conditions,
                 'op': self.operation,
-                'color': self.color,
+                'color': self.color[0],
                 'visible': self.visible
             },
             'data': self.data,

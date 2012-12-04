@@ -182,7 +182,6 @@ class DownloadCSVAction(AjaxController):
                 i = i + 1
             else:
                 break
-        print rows
 
         index = random.randint(0, 1566666)
         self.application.setData(index, "\n".join(rows))

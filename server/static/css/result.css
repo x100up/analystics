@@ -159,14 +159,8 @@ div#chart_legend_container{
     margin: 10px 10px 40px 0;
 }
 
-/*
-div#series_container > ul.seriaGroup {
-    margin-left: 10px;
-    display: block;
-    float: left
-}*/
 
-div#series_container > ul.seriaGroup > li.groupName {
+div#series_container > .seriaGroup > .groupName {
     padding: 4px;
     font-weight: bold;
 }
@@ -212,11 +206,29 @@ table.data_table *::-moz-selection {
 
 div#tagcloud {
     height: 300px;
+    padding-top: 10px;
+}
+
+#tagcloud span {
+    background-color: #DDD;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    display: block;
+    float: left;
+    margin-right: 5px;
+    margin-bottom: 3px;
+    padding: 4px 6px;
+    cursor: pointer;
+}
+#tagcloud span.selected{
+    background-color: #FF8F00
 }
 
 
+
 span.legendKey {
-    border-radius: 4px 4px 4px 4px;
+    /*border-radius: 4px 4px 4px 4px;
     color: #FFFFFF;
     display: inline-block;
     margin-bottom: 4px;
@@ -225,8 +237,9 @@ span.legendKey {
     width: auto;
     box-shadow: inset #fff 1px -1px 1px -1px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+    text-shadow: #ba6e2d 0 -1px 1px;*/
     cursor: pointer;
-    text-shadow: #ba6e2d 0 -1px 1px;
+
 }
 
 
@@ -235,7 +248,7 @@ span.legendKey > span.name {
 }
 
 span.legendKey.hide {
-    background-color: #d1cdd4 !important;
+    color: #d1cdd4 !important;
     text-shadow: #CCCCCC 0 -1px 1px !important;
 }
 
@@ -247,14 +260,74 @@ span.legendKey > span.op {
     height: 17px;
 }
 
-span.legendKey > span.op.group {
-    background-position: -734px -25px;
+span.legendKey > span.op.group.red, span.legendKey > span.op.count.red {
+    background-position: -95px -101px;
 }
 
-span.legendKey > span.op.sum {
-    background-position: -734px -42px;
-}
+    span.legendKey > span.op.group.orange, span.legendKey > span.op.count.orange  {
+        background-position: -95px -120px;
+    }
 
-span.legendKey > span.op.count {
-    background-position: -734px -25px;
+    span.legendKey > span.op.group.blue, span.legendKey > span.op.count.blue  {
+        background-position: -95px -139px;
+    }
+
+    span.legendKey > span.op.group.green, span.legendKey > span.op.count.green  {
+        background-position: -95px -158px;
+    }
+
+    span.legendKey > span.op.group.yellow, span.legendKey > span.op.count.yellow  {
+        background-position: -95px -177px;
+    }
+
+    span.legendKey > span.op.group.violet, span.legendKey > span.op.count.violet  {
+        background-position: -95px -196px;
+    }
+
+span.legendKey > span.op.sum.red {
+    background-position: -116px -101px;
 }
+    span.legendKey > span.op.sum.orange {
+        background-position: -116px -120px;
+    }
+
+    span.legendKey > span.op.sum.blue {
+        background-position: -116px -139px;
+    }
+
+    span.legendKey > span.op.sum.green {
+        background-position: -116px -158px;
+    }
+
+    span.legendKey > span.op.sum.yellow {
+        background-position: -116px -177px;
+    }
+
+    span.legendKey > span.op.sum.violet {
+        background-position: -116px -196px;
+    }
+
+
+span.legendKey > span.op.avg.red {
+    background-position: -137px -101px;
+}
+    span.legendKey > span.op.avg.orange {
+        background-position: -137px -120px;
+    }
+    
+    span.legendKey > span.op.avg.blue {
+        background-position: -137px -139px;
+    }
+    
+    span.legendKey > span.op.avg.green {
+        background-position: -137px -158px;
+    }
+    
+    span.legendKey > span.op.avg.yellow {
+        background-position: -137px -177px;
+    }
+    
+    span.legendKey > span.op.avg.violet {
+        background-position: -137px -196px;
+    }
+

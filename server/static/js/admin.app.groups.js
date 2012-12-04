@@ -3,7 +3,6 @@ function addGroup(name){
     var iterator = parseInt(iField.val());
     iterator = iterator + 1;
 
-
     $('#' + name + 'Table > thead > tr').append('<th>' +
          '<input type="text" name="group_' + name + '_' + iterator + '" value="">' +
          '</th>');

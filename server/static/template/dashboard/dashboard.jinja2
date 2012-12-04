@@ -5,22 +5,15 @@
     <script type="text/javascript" src="/static/libs/highcharts/highcharts.js" ></script>
     <script type="text/javascript" src="/static/js/result.js" ></script>
     <link href="/static/css/result.css" rel="stylesheet" type="text/css">
-
     <script type="text/javascript" src="/static/js/zclip.min.js" ></script>
-
     <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery-ui-1.8.23.custom.min.js"></script>
     <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery.ui.picker.addon.js"></script>
-    <script type="text/javascript" src="{{ static_url_prefix }}/js/jcloud.min.js"></script>
-    <link href="/static/css/jcloud.css" rel="stylesheet" type="text/css">
-
     <script type="text/javascript" src="{{ static_url_prefix }}/libs/autocomplete/jquery.autocomplete-min.js"></script>
     <script type="text/javascript" src="{{ static_url_prefix }}/js/new_task.js"></script>
-
     <link href="{{ static_url_prefix }}/libs/autocomplete/styles.css" type="text/css" rel="stylesheet">
     <link href="{{ static_url_prefix }}/css/pepper-grinder/jquery-ui-1.8.23.custom.css" type="text/css"
           rel="stylesheet">
     <link href="{{ static_url_prefix }}/css/new_task.css" type="text/css" rel="stylesheet">
-
     <script type="text/javascript" src="/static/libs/reveal/jquery.reveal.js"></script>
     <link href="/static/libs/reveal/reveal.css" type="text/css" rel="stylesheet">
 {% endblock %}
@@ -45,17 +38,9 @@
             </div>
             <div class="main" title="{{worker.startDate|smartDateInterval(worker.endDate)}}" onclick="loadResult({{worker.workerId}})">
                 <span class="a" id="link_{{worker.workerId}}">{{worker.name}}</span>
-                {#
-                    <span class="button edit_name" onclick="editName({{worker.workerId}})"></span>
-
-
-                    <a class="copy_action button copy" href="/dashboard/app/{{ app.code }}/new?baseOn={{worker.workerId}}" title="create on base"></a>
-                    {{worker.startDate|smartDatePeriod(worker.endDate)}} <sup>{{worker.startDate|smartDateInterval(worker.endDate)}}</sup>
-                     #}
-
             </div>
             <div class="plus">
-                <span onclick="startNewTask({{worker.workerId}})"  title="create on base">+</a>
+                <span onclick="startNewTask({{worker.workerId}})"  title="create on base">+</span>
             </div>
             <div class="clearfix"></div>
             <div class="_selector"></div>

@@ -60,17 +60,24 @@ class ChartConstructor():
             for seriesGroup in self.seriesGroups:
                 seriesGroup.name = self.nameService.getSeriesGroupName(seriesGroup)
 
-            self.seriesGroups = sorted(self.seriesGroups, key=lambda seriesGroup: seriesGroup.exp, reverse=True)
+            self.seriesGroups = sorted(self.seriesGroups, key=lambda seriesGroup: seriesGroup.maxAvg, reverse=True)
             self.seriesGroups[0].setVisible(True)
 
         self.tagCloud = []
+        tagValueMax = max([value for tag, value in tagCloud.items()])
         for key in tagCloud:
             tag, value = key
             name = self.nameService.getTagValueName(tag, value)
-            self.tagCloud.append({'text': name, 'weight': tagCloud[key], 'html':{
-                'data-tag': tag,
-                'data-value': value,
-            }})
+            if tagCloud[key] == 0:
+                weight = 0
+            else:
+                weight = float(tagCloud[key]) / tagValueMax
+            self.tagCloud.append({'text': name, 'weight': weight,
+                'tag': tag,
+                'value': value,
+            })
+
+        self.tagCloud = sorted(self.tagCloud, key=lambda item: item['weight'], reverse=True)
 
 
     def getSeries(self):
@@ -120,7 +127,6 @@ class ChartConstructor():
             loop = False
             for exponent in rawGroups:
                 if not exponent == 0 and len(rawGroups[exponent]) < maxChartInGroups:
-                    print 'glue'
                     # в группе меньше чем макс, ищем рядом
                     _temp = {}
                     for i in [1, -1]:
@@ -142,11 +148,9 @@ class ChartConstructor():
                             loop = True
                             break
                 elif len(rawGroups[exponent]) > maxChartInGroups:
-                    print 'cell'
                     # если в серии больше 6-ти, то разделяем
                     rawGroups[exponent - 0.5] = rawGroups[exponent][0:6]
                     rawGroups[exponent + 0.5] = rawGroups[exponent][6:]
-                    print  '{} = {} + {}'.format(len(rawGroups[exponent]), len(rawGroups[exponent][0:6]), len(rawGroups[exponent][6:]))
                     del rawGroups[exponent]
                     loop = True
                     break

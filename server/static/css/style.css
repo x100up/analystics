@@ -113,12 +113,27 @@ ul#nav a, header a.analytics {
     border: none;
 }
 
-header a.analytics {
-    background-position:  -435px -59px;
-    position: relative;
+header form.analytics {
+    position: absolute;
     left: 200px;
     margin-top: 15px;
-    width: 125px;
+    width: 300px;
+    display: block;
+}
+
+header form.analytics span {
+    background: url("/static/img/sprite.png") no-repeat;
+    background-position:  -435px -59px;
+    display: inline-block;
+    width: 150px;
+    height: 30px;
+    float: left
+}
+
+header form.analytics select{
+    float: left;
+    display: inline-block;
+    width: 145px;
 }
 
 ul#nav a.manage{

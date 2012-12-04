@@ -22,7 +22,6 @@ class AppConfig():
             for tagCode in self.data['tags']:
                 self.data['tags'][tagCode]['code'] = tagCode
             self.tags = self.data['tags']
-            print self.tags
 
         if self.data.has_key('tagGroups'):
             self.tagGroups = self.data['tagGroups']
@@ -44,14 +43,12 @@ class AppConfig():
         return self.tagGroups
 
     def clearEventsGroups(self):
-        print 'clearEventsGroups'
         self.eventGroups = {}
         for event in self.getEvents():
             if event.has_key('group'):
                 del event['group']
 
     def clearTagGroups(self):
-        print 'clearTagGroups'
         self.tagGroups = {}
         for tag in self.getTags():
             if tag.has_key('group'):
@@ -72,7 +69,6 @@ class AppConfig():
             if not self.events[eventCode].has_key('group'):
                 self.events[eventCode]['group'] = []
             self.events[eventCode]['group'].append(groupId)
-            print self.events[eventCode]['group']
         else:
             raise Exception('No event with code {}'.format(eventCode))
 

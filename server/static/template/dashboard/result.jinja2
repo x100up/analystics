@@ -24,32 +24,25 @@
                class="button chart recalculate"
                title="Пересчитать"></a>
         </div>
-        <div id="chart_container"></div>
+        <div id="chart_container"></div
+
     </div>
 
     <div class="clearfix"></div>
 
     <div id="chart_legend_container" class="container_12">
         <div id="series_container" class="grid_8 alpha">
-            <div class="grid_6 alpha">
-                {% for seriesGroup in chartService.getSeries() %}
-                    {% if not loop.index % 2 == 0 %}
-                        {% include 'dashboard/result/seriaGroupLegend.jinja2' %}
-                    {% endif %}
-                {% endfor %}
-            </div>
 
-            <div class="grid_6 omega">
-                {% for seriesGroup in chartService.getSeries() %}
-                    {% if loop.index % 2 == 0 %}
-                        {% include 'dashboard/result/seriaGroupLegend.jinja2' %}
-                    {% endif %}
-                {% endfor %}
-            </div>
+            {% for seriesGroup in chartService.getSeries() %}
+                {% set groupIndex = loop.index %}
+                {% include 'dashboard/result/seriaGroupLegend.jinja2' %}
+            {% endfor %}
 
         </div>
 
-        <div id="tagcloud" class="grid_4 omega"></div>
+        <div id="tagcloud" class="grid_4 omega">
+            {% include 'dashboard/result/tagCloud.jinja2' %}
+        </div>
 
         <div class="clearfix"></div>
 

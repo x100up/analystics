@@ -3,6 +3,8 @@ from jinja2 import Environment, PackageLoader
 from models.User import User
 from models.App import  App
 from services.RuleService import RuleService
+from models.UserAppRule import RuleCollection
+
 import tornado.web, json
 
 
@@ -40,11 +42,17 @@ class BaseController(tornado.web.RequestHandler):
             dict = {}
         dict['static_url_prefix'] = self.application.settings['static_url_prefix']
         dict['is_login'] = self.get_secure_cookie('user.login')
-        u = self.get_current_user()
-        if u:
-            dict['__user__'] = {'name': u.fullname, 'isAdmin': u.role == User.ROLE_ADMIN}
+        user = self.get_current_user()
+
+        user_apps = None
+        if user:
+            dict['__user__'] = {'name': user.fullname, 'isAdmin': user.role == User.ROLE_ADMIN}
+            # доступные приложения
+            ruleCollection = RuleCollection(self.getDBSession())
+            dict['user_apps'] = ruleCollection.getUserApps(user.userId)
 
         dict['title'] = self.title
+        dict['currentAppCode'] = self.currentAppCode
 
         html = self.application.jinjaEnvironment.get_template(template_name).render(**dict)
         if _return:
@@ -70,6 +78,8 @@ class BaseController(tornado.web.RequestHandler):
         if app is None:
             raise RuntimeError('Cant find app by code ' + appCode)
 
+        self.currentAppCode = app.code
+
         # check access
         ruleService = RuleService(session)
         if not ruleService.isAllow(user.userId, app.appId):
@@ -79,6 +89,7 @@ class BaseController(tornado.web.RequestHandler):
 
     def prepare(self):
         self.title = u'Аналитика'
+        self.currentAppCode = None
         if not self.application.isInstalled:
             self.redirect('/install/')
 

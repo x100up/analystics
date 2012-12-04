@@ -1,0 +1,3 @@
+{% for item in tagCloud %}
+    <span onclick="ChartManager.onTagClick(event)" data-tag="{{ item.tag }}" data-value="{{ item.value }}" style="font-size: {{ 10 + 8 * item.weight }}pt ">{{ item.text }}</span>
+{% endfor %}

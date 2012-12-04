@@ -79,12 +79,11 @@ class ResultAction(BaseResultAction):
         else:
             html = self.render('dashboard/result.jinja2',
                     {'app': app, 'data':data, 'tablesdata': tableService.getData(), 'nameService':nameService,
-                     'chartService':chartService, 'name': worker.name, 'workerId':workerId}, _return = True)
+                     'chartService':chartService, 'name': worker.name, 'tagCloud':chartService.getTagCloud(), 'workerId':workerId}, _return = True)
 
             self.renderJSON({'html': html, 'vars': {
                 'chartdata': chartService.getResult(),
                 'interval': task.interval,
-                'tagCloudData': chartService.getTagCloud(),
                 'minStartDate': time.mktime(minStartDate.timetuple()),
                 'maxEndDate': time.mktime(maxEndDate.timetuple()),
             }})

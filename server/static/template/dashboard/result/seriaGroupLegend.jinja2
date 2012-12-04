@@ -1,25 +1,40 @@
-<ul class="seriaGroup">
-    <li class="groupName">
-        {{ seriesGroup.name }}
+<table class="seriaGroup">
+    <caption>{{ seriesGroup.name }}</caption>
+    <tr class="groupName">
+        <th>
+
         <button {% if not seriesGroup.visible %} class="hidden" {% endif %}
-                                                 onclick="ChartManager.switchVisibleChartGroup(this, {{ loop.index }}, true)">show/hide</button>
-        <button onclick="ChartManager.switchVisibleChartGroup(this, {{ loop.index }})">+ show</button>
-    </li>
+                                                 onclick="ChartManager.switchVisibleChartGroup(this, {{ groupIndex }}, true)">
+            show/hide
+        </button>
+        <button onclick="ChartManager.switchVisibleChartGroup(this, {{ groupIndex }})">+ show</button>
+        </th>
+    {% for tagCode in seriesGroup.containsTags %}
+        <th>
+            {{ seriesGroup.containsTags[tagCode] }}
+        </th>
+    {% endfor %}
+    </tr>
     {% for series in seriesGroup.getSeries() %}
-        <li class="series" data-seriesId="{{ series.id }}"
-        {% for tagName, valueName, tag, value in series.conditions %}
-            data-{{ tag }}="{{ value }}"
-        {% endfor %}
-        >
-                            <span id="switchSeriesButton_{{ series.id }}" class="legendKey{% if not series.visible %} hide{% endif %} %}" style="background-color: {{ series.color }}"
+        <tr class="series" data-seriesId="{{ series.id }}"
+                {% for tagName, valueName, tag, value in series.conditions %}
+                data-{{ tag }}="{{ value }}"
+                {% endfor %}
+                >
+                <td>
+                            <span id="switchSeriesButton_{{ series.id }}"
+                                  class="legendKey{% if not series.visible %} hide{% endif %} %}"
                                   onclick="ChartManager.switchDisplaySeries({{ series.id }})">
-                                <span class="op {{ series.operation }}"></span>
+                                <span class="op {{ series.operation }} {{ series.color[1] }}" ></span>
                                 <span class="name">{{ series.name }}</span>
-                                {% for tagName, valueName, tag, value in series.conditions %}
-                                    <strong>: {{ valueName }}</strong>
-                                {% endfor %}
                             </span>
 
-        </li>
+                </td>
+
+
+            {% for tagName, valueName, tag, value in series.conditions %}
+               <td> <strong>{{ valueName }}</strong></td>
+            {% endfor %}
+             </tr>
     {% endfor %}
-</ul>
+</table>

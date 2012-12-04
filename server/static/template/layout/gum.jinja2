@@ -29,7 +29,16 @@
                     <img src="{{ static_url_prefix }}/img/logo.png" alt="Analytics logo">
                 </a>
 
-                <a href="/dashboard" class="analytics"></a>
+                {% if user_apps %}
+                    <form class="analytics" id="switchApp" action="/dashboard/" method="post">
+                        <span></span>
+                        <select name="appCode" onchange="$('#switchApp').submit()">
+                            {% for app in user_apps %}
+                            <option value="{{ app.code }}" {% if currentAppCode == app.code %} selected="selected" {% endif %}>{{ app.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                {% endif %}
 
                 <ul id="nav">
                     <li><a href="/admin" class="manage"></a></li>

@@ -10,14 +10,18 @@ from services import ThredService
 from models.UserAppRule import RuleCollection
 from sqlalchemy import func
 
-class FirstAction(BaseController):
+class BaseDashboardAction(BaseController):
+    pass
+
+
+class FirstAction(BaseDashboardAction):
 
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         app = self.checkAppAccess(args)
         self.render('dashboard/first/first.jinja2', {'app':app})
 
-class SwitchApp(BaseController):
+class SwitchApp(BaseDashboardAction):
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         user = self.get_current_user()
@@ -30,13 +34,17 @@ class SwitchApp(BaseController):
         else:
             self.redirect("/dashboard/selectapp")
 
-class IndexAction(BaseController):
+    def post(self, *args, **kwargs):
+        appCode = self.get_argument('appCode')
+        self.redirect("/dashboard/app/" + appCode + '/')
+
+
+class IndexAction(BaseDashboardAction):
     def post(self, appName):
         self.get(appName)
 
     @tornado.web.authenticated
     def get(self, appName):
-
         app = self.checkAppAccess(appName)
 
         # get user and db session
@@ -96,12 +104,12 @@ class IndexAction(BaseController):
         self.render('dashboard/dashboard.jinja2', {'lastWorkers' : workers, 'app':app, 'pageCount':pageCount, 'currentPage': page,
                                                    'js_vars': {'app': app.code}})
 
-class EmptyAppAction(BaseController):
+class EmptyAppAction(BaseDashboardAction):
     @tornado.web.authenticated
     def get(self):
         self.render('dashboard/emptyApps.jinja2')
 
-class SelectAppAction(BaseController):
+class SelectAppAction(BaseDashboardAction):
     @tornado.web.authenticated
     def get(self):
         user = self.get_current_user()
