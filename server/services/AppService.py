@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import json, os, re
 from components.AnalyticsException import AnalyticsException
+from models.AppConfig import AppConfig
 
 class AppService():
 
@@ -38,6 +39,10 @@ class AppService():
             except ValueError as valueError:
                 raise AnalyticsException(u'Ошибка при чтении конфигурации приложения {}'.format(self.folder + '/' + appCode + '.json'), valueError)
         return self.appConfCache[appCode]
+
+    def getNewAppConfig(self, appCode):
+        return AppConfig(self.getAppConfig(appCode))
+
 
     def isConfigExist(self, appCode):
         return os.path.exists(self._getFilePath(appCode))
@@ -127,6 +132,8 @@ class AppService():
         else:
             raise Error('Cant find appname in config')
 
+    def newSaveConfig(self, appConfig):
+        self.saveConfig(appConfig.dumpToJSON())
 
     def getKnowAppList(self):
         return [ file.replace('.json', '') for file in os.listdir(self.folder)]

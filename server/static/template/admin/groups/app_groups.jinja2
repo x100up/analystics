@@ -1,0 +1,67 @@
+{% extends 'admin/adminLayout.jinja2' %}
+
+{% block head %}
+    <script type="text/javascript" src="/static/js/admin.app.groups.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h1>Группы</h1>
+
+    <br>
+<form action="" method="post">
+    <h2>Ключи</h2>
+
+    <table id="eventTable">
+        <thead>
+            <tr>
+                <th><span class="awesome green" onclick="addGroup('event')">Добавить группу</span></th>
+                    {% for groupId in appConfig.getEventGroups() %}
+                        <th><input type="text" name="group_event_{{ groupId }}" value="{{ appConfig.getEventGroups()[groupId] }}"></th>
+                    {% endfor %}
+            </tr>
+        </thead>
+    {% for event in appConfig.getEvents() %}
+        <tbody>
+            <tr data-code="{{ event.code }}">
+                <td>{{ event.name or event.code }}</td>
+                {% for groupId in appConfig.getEventGroups() %}
+                    <td><input type="checkbox" name="group_event_{{ event.code }}" value="{{ groupId }}"
+                            {% if appConfig.isEventInGroup(event.code, groupId)  %} checked="checked" {% endif %} ></td>
+                {% endfor %}
+            </tr>
+        </tbody>
+    {% endfor %}
+    </table>
+    <input id="eventGroupIterator" type="hidden" name="eventGroupIterator" value="{{ appConfig.getEventGroups()|length }}">
+
+
+
+    <h2>Теги</h2>
+
+    <table id="tagTable">
+        <thead>
+        <tr>
+            <th><span class="awesome green" onclick="addGroup('tag')">Добавить группу</span></th>
+                {% for groupId in appConfig.getTagGroups() %}
+                    <th><input type="text" name="group_tag_{{ groupId }}" value="{{ appConfig.getTagGroups()[groupId] }}"></th>
+                {% endfor %}
+        </tr>
+        </thead>
+        {% for tag in appConfig.getTags() %}
+            <tbody>
+            <tr data-code="{{ tag.code }}">
+                <td>{{ tag.name or tag.code }}</td>
+                {% for groupId in appConfig.getTagGroups() %}
+                    <td><input type="checkbox" name="group_tag_{{ tag.code }}" value="{{ groupId }}"
+                            {% if appConfig.isTagInGroup(tag.code, groupId) %} checked="checked" {% endif %}></td>
+                {% endfor %}
+            </tr>
+            </tbody>
+        {% endfor %}
+    </table>
+    <input id="tagGroupIterator" type="hidden" name="tagGroupIterator" value="{{ appConfig.getTagGroups()|length }}">
+
+    <input type="submit" name="Сохранить">
+</form>
+
+{% endblock %}

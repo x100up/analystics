@@ -10,7 +10,7 @@ from components.jinja import *
 from models.Config import Config
 from controllers import  IndexController, UserController
 from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController
-from controllers.admin import AdminSettingsController, AdminAppConfigController, AdminAppSpellController
+from controllers.admin import AdminSettingsController, AdminAppConfigController, AdminAppSpellController, AdminAppGroupsController
 
 from controllers.api import APIController
 from controllers.dashboard import ResultController, AjaxController, DashboardController, CreateTaskController, TemplateController
@@ -187,6 +187,7 @@ class AnalyticsServer(tornado.web.Application):
 
             (r'/admin/app/([^/]+)/tags/?', AdminAppConfigController.TagEditAction),
             (r'/admin/app/([^/]+)/spell/?', AdminAppSpellController.IndexAction),
+            (r'/admin/app/([^/]+)/groups/?', AdminAppGroupsController.IndexAction),
             # --------- CLUSTER -----------
             (r'/cluster/namenode/?', NameNodeController.IndexAction),
 

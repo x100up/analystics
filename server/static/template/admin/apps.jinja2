@@ -33,6 +33,9 @@
                 <td>
                     <a href="/admin/app/{{ app.code }}/spell">Словарь</a>
                 </td>
+                <td>
+                    <a href="/admin/app/{{ app.code }}/groups">Группы</a>
+                </td>
                 <td class="action">
                     <input type="checkbox" name="appIds" value="{{ app.appId }}" />
                 </td>
@@ -41,7 +44,7 @@
 
         {% for app_code in new_app_codes %}
         <tr>
-            <td colspan="4">
+            <td colspan="6">
                 <a href="/admin/app/edit?code={{ app_code }}">Добавить приложение с кодом {{ app_code }}</a>
             </td>
         </tr>
