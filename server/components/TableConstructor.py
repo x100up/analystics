@@ -24,6 +24,9 @@ class TableConstructor():
             data = {}
             for series in self.data[key]:
                 rowHeader = self.nameConstructor.getKeyNameByIndex(key)
+                tagHeader = []
+                for tagCode, tagValue in self.data[key][series]['params']['conditions']:
+                    tagHeader.append(self.nameConstructor.getTagValueName(tagCode, tagValue))
 
                 # пакуем данные
                 rowValues = []
@@ -38,12 +41,14 @@ class TableConstructor():
 
                 columnHeadersSet = True
 
+
                 self.result[tableCode]['rowsData'].append(
                         {
                         'header': rowHeader,
                         'sum': rowSum,
                         'avg': self._format(rowSum/len(rowValues)),
-                        'values': rowValues
+                        'values': rowValues,
+                        'tagHeader': ', '.join(tagHeader)
                         }
                 )
 

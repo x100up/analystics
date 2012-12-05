@@ -43,6 +43,10 @@ table.data_table th{
     text-align: center
 }
 
+table.data_table th em{
+    font-size: 11px;
+}
+
 table.data_table th.op{
     text-align: right;
     font-weight: bold;

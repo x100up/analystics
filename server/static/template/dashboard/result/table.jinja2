@@ -22,6 +22,9 @@
                 <tr class="datarow" data-sum="{{ rowData.sum }}" data-avg="{{ rowData.avg }}" data-index="{{ loop.index }}">
                     <th onclick="selectRow(this)">
                         <span>{{ rowData.header }}</span>
+                        <em>
+                        {{ rowData.tagHeader }}
+                        </em>
                     </th>
                     <td class="value r">{{ rowData.sum }}</td>
                     <td class="value r">{{ rowData.avg }}</td>
