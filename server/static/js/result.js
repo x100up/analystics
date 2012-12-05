@@ -77,6 +77,7 @@ function onChartResultLoad() {
 
 function prepareDataSeries() {
     var series = [];
+    console.log(chartdata);
     for (var index in chartdata['data'])
     {
         var seriesGroupData = chartdata['data'][index];
@@ -91,7 +92,6 @@ function prepareDataSeries() {
                     y: row[1]
             })
             }
-
             series.push({
                             name: seriesData.name,
                             data: xdata,
@@ -453,8 +453,6 @@ var ChartManager = {
                 }
             }
         }
-
-
     },
 
     switchVisibleChartGroup:function (button, groupId, append) {
@@ -462,9 +460,10 @@ var ChartManager = {
             append = false;
         }
         button = $(button);
-        var ul = button.parent().parent();
+        var parent = button.parent().parent().parent();
+
         var seriesIds = [];
-        ul.children('li.series').each(function (i, li) {
+        parent.children('tr.series').each(function (i, li) {
             seriesIds.push($(li).data('seriesid'))
         });
 

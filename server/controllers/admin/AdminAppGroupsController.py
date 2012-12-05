@@ -2,7 +2,6 @@
 
 from AdminIndexController import AdminAction
 from services.AppService import AppService
-from pprint import pprint
 
 class IndexAction(AdminAction):
     def _prepare(self, appCode):
@@ -45,13 +44,11 @@ class IndexAction(AdminAction):
                     eventGroups[groupId].append(event['code'])
 
         self.appConfig.clearEventsGroups()
-        print groups
-        print eventGroups
+
         for index in groups:
             i = self.appConfig.addEventGroup(groups[index])
             if eventGroups.has_key(index):
                 for eventCode in eventGroups[index]:
-                    print i, eventCode
                     self.appConfig.setEventGroup(i, eventCode)
 
         # tags

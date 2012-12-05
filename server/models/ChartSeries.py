@@ -24,6 +24,20 @@ class ChartSeries:
         if values:
             self.avg = self.sum / len(values)
 
+    def getTagValue(self, tagCode):
+        for tagName, valueName, tag, value in self.conditions:
+            if tag == tagCode:
+                return valueName
+
+        return None
+
+    def getTagsCodes(self):
+        tagCodes = []
+        for tagName, valueName, tag, value in self.conditions:
+            if not tag in tagCodes:
+                tagCodes.append(tag)
+        return tagCodes
+
     def getForJSON(self):
         return {
             'params': {

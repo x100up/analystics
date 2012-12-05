@@ -13,7 +13,6 @@ class TagEditAction(AdminAction):
     def post(self, *args, **kwargs):
         app_code, = args
         self.app_code = app_code
-        print self.app_code
 
         tag_indexes = self.get_arguments('tag_index')
 

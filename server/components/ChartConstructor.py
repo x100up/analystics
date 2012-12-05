@@ -2,7 +2,6 @@
 
 from models.ChartSeries import ChartSeries
 from models.ChartSeriesGroup import ChartSeriesGroup
-from pprint import pprint
 
 class ChartConstructor():
     '''
@@ -39,9 +38,12 @@ class ChartConstructor():
                     series.conditions = self.nameService.prepareConditions(params['conditions'])
                     for tag, value in params['conditions']:
                         key = (tag, value)
-                        if not tagCloud.has_key(key):
-                            tagCloud[key] = 0
-                        tagCloud[key] = tagCloud[key] + series.sum
+                        if not tagCloud.has_key(tag):
+                            tagCloud[tag] = {}
+                        if not tagCloud[tag].has_key(value):
+                            tagCloud[tag][value] = 0
+
+                        tagCloud[tag][value] = tagCloud[tag][value] + series.sum
 
                 series.operation = seriesData['params']['op']
                 series.operationName = self.nameService.getOperationName(seriesData['params']['op'])
@@ -52,8 +54,8 @@ class ChartConstructor():
                 seriesData['id'] = series.id = i
                 i = i + 1
 
-                # группируем
-                self.generateSeriesGroup()
+        # группируем
+        self.generateSeriesGroup()
 
 
         if self.seriesGroups:
@@ -63,21 +65,31 @@ class ChartConstructor():
             self.seriesGroups = sorted(self.seriesGroups, key=lambda seriesGroup: seriesGroup.maxAvg, reverse=True)
             self.seriesGroups[0].setVisible(True)
 
-        self.tagCloud = []
-        tagValueMax = max([value for tag, value in tagCloud.items()])
-        for key in tagCloud:
-            tag, value = key
-            name = self.nameService.getTagValueName(tag, value)
-            if tagCloud[key] == 0:
-                weight = 0
-            else:
-                weight = float(tagCloud[key]) / tagValueMax
-            self.tagCloud.append({'text': name, 'weight': weight,
-                'tag': tag,
-                'value': value,
-            })
 
-        self.tagCloud = sorted(self.tagCloud, key=lambda item: item['weight'], reverse=True)
+        self.tagCloud = {}
+
+        if tagCloud:
+            for tag in tagCloud:
+                tagValueMaxWeight = max([weight for value, weight in tagCloud[tag].items()])
+                tagCloudGroup = []
+                for value in tagCloud[tag]:
+                    name = self.nameService.getTagValueName(tag, value)
+                    if tagCloud[tag][value] == 0:
+                        weight = 0
+                    else:
+                        weight = float(tagCloud[tag][value]) / tagValueMaxWeight
+                    tagCloudGroup.append({
+                        'text': name,
+                        'weight': weight,
+                        'tag': tag,
+                        'value': value,
+                        })
+
+
+                tagCloudGroup = sorted(tagCloudGroup, key=lambda item: item['weight'], reverse=True)
+                self.tagCloud[self.nameService.getTagName(tag)] = tagCloudGroup
+
+
 
 
     def getSeries(self):
@@ -87,21 +99,50 @@ class ChartConstructor():
         return self.tagCloud
 
     def generateSeriesGroup(self):
-        groups = []
+        self.seriesGroups = []
         keys = []
 
         for series in self._series:
             if not series.key in keys:
                 keys.append(series.key)
 
-        if len(keys) == 1:
-            # если мы выбираем один ключ
-            groups = self.groupByValues(self._series)
-        else:
-            pass
+
+        # разделяем по операциям
+        _series = self.sliceByOperations(self._series)
+
+        # если мы выбираем не один ключ
+        # разделяем по набору тегов
+        if len(keys) > 1:
+            _tmp = {}
+            for hardKey in _series:
+                _tmp.update(self.groupByTags(_series[hardKey], hardKey[0]))
+            _series = _tmp
+        # группируем по значению
+        for hardKey in _series:
+            self.seriesGroups += self.groupByValues(_series[hardKey], hardKey)
 
 
-    def groupByValues(self, seriesList):
+    def sliceByOperations(self, seriesList):
+        byOperation = {}
+        for series in seriesList:
+            op = (series.operation,)
+            if not byOperation.has_key(op):
+                byOperation[op] = []
+            byOperation[op].append(series)
+        return byOperation
+
+    def groupByTags(self, seriesList, operation) :
+        byTags = {}
+        for series in seriesList:
+            hardKey = (operation, ) + (tuple(sorted(series.getTagsCodes())),)
+            if not byTags.has_key(hardKey):
+                byTags[hardKey] = []
+            byTags[hardKey].append(series)
+        return byTags
+
+
+
+    def groupByValues(self, seriesList, hardKey):
         '''
         Группирует по значениям
         '''
@@ -159,17 +200,19 @@ class ChartConstructor():
             # не было группировок - выходим
 
         # делаем объекты групп
-        self.seriesGroups = []
+        seriesGroups = []
         for exponent in rawGroups:
-            self.seriesGroups.append(ChartSeriesGroup(rawGroups[exponent], exponent))
+            seriesGroups.append(ChartSeriesGroup(rawGroups[exponent], exponent, hardKey[0]))
+
+        return seriesGroups
 
 
 
 
     def getChartSeriesJSON(self):
-        result  = {}
+        result  = []
         for seriesGroup in self.seriesGroups:
-            result[seriesGroup.exp] = seriesGroup.getForJSON()
+            result.append(seriesGroup.getForJSON())
         return result
 
 

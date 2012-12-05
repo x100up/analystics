@@ -11,11 +11,12 @@ class ChartSeriesGroup():
         ('#BB7BF1', 'violet'),
     ]
 
-    def __init__(self, series, exp):
+    def __init__(self, series, exp, operation):
         self.series = series
         self.exp = exp
         self.visible = False
         self.containsTags = {}
+        self.operation = operation
         self.minAvg = None
         self.maxAvg = None
         self.process()
