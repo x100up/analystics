@@ -69,6 +69,7 @@ class TaskItem():
         self.start = None
         self.end = None
         self.key = None
+        self.name = ''
         self.operations = {}
         self.conditions = {}
         # считать уникальную статистику

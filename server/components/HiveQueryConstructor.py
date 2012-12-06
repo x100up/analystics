@@ -110,9 +110,7 @@ class HiveQueryConstructor():
         if conditions:
             where = []
             for tagName, tagValue in conditions.items():
-                tagType = 'string'
-                if self.appConfig['tags'].has_key(tagName):
-                    tagType = self.appConfig['tags'][tagName]['type']
+                tagType = self.appConfig.getTag(tagName).type
 
                 if tagValue:
                     # TODO by settings int

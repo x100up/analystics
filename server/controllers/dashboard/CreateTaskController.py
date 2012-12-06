@@ -62,9 +62,7 @@ class CreateAction(CreateTaskController, AjaxController):
                 return
 
         else:
-            taskItem = TaskItem(index = 1)
             task = Task(appname = app.code)
-            task.addTaskItem(taskItem)
 
         keys_loaded = len(task.items)
 
@@ -73,14 +71,14 @@ class CreateAction(CreateTaskController, AjaxController):
             if taskItem.key:
                 keys.add(taskItem.key)
 
-        key_configs = {}
-        if len(keys):
-            appService = AppService(self.application.getAppConfigPath())
-            key_configs = appService.getKeyConfigs(app.code, keys)
+        appService = AppService(self.application.getAppConfigPath())
 
-        html = self.render('dashboard/new.jinja2', {'task':task, 'app':app, 'key_configs':key_configs}, _return = True)
+        # получаем конфигурацию приложения
+        appConfig = appService.getNewAppConfig(app.code)
 
-        self.renderJSON({'html': html, 'vars':{'keys_loaded':keys_loaded}})
+        html = self.render('dashboard/new.jinja2', {'task':task, 'app':app,  'appConfig':appConfig}, _return = True)
+
+        self.renderJSON({'html': html, 'vars':{'eventLoaded': keys_loaded}})
 
     def post(self, *args, **kwargs):
         app = self.checkAppAccess(args)

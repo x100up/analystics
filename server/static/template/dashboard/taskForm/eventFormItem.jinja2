@@ -1,9 +1,9 @@
 {#
  need taskItem
- key_configs
+ appConfig
  #}
 
-{% set is_loaded = (taskItem.key and key_configs.has_key(taskItem.key)) %}
+{% set is_loaded = (taskItem.key and appConfig.isEventExist(taskItem.key)) %}
 <div class="key_form_item grid_12 alpha omega" id="key_container_{{ taskItem.index  }}">
 
     <input type="hidden" name="indexes" value="{{ taskItem.index }}">
@@ -13,8 +13,12 @@
         <div class="grid_10 alpha">
             <ul class="top_key_menu">
                 <li>
-                    <input type="text" name="key_{{ taskItem.index }}" id="key_{{ taskItem.index }}"
-                       data-index="{{ taskItem.index }}" class="key_autocomplete key" value="{{ taskItem.key or '' }}">
+                    <h2 title="Код: {{ taskItem.key }}">{{ taskItem.name }}</h2>
+
+
+                    <input type="hidden" name="key_{{ taskItem.index }}" id="key_{{ taskItem.index }}"
+                       data-index="{{ taskItem.index }}" class="key_autocomplete key" value="{{ taskItem.key }}">
+
                     <input type="button" class="button find findkey" onclick="findKey({{ taskItem.index }})">
                 </li>
 
@@ -43,12 +47,25 @@
 
     <div id="key_{{ taskItem.index }}_tag_container" class="tag_container">
         {% if is_loaded %}
-           {% set tags = key_configs[taskItem.key] %}
+           {% set tags = appConfig.getEventTags(taskItem.key) %}
            {% set index = taskItem.index %}
            {% set key = taskItem.key %}
            {% set values = taskItem.conditions %}
 
-           {% include 'blocks/tag_container.jinja2' %}
+            {% for tag in tags %}
+                {% if values.has_key(tag.code) %}
+                    {% set value = values[tag.code] %}
+                {% else %}
+                    {% set value = None %}
+                {% endif %}
+                <div class="grid_2 {% if loop.first or loop.index % 6 == 1 %}alpha{% endif %} {% if loop.last or loop.index % 6 == 0 %}omega{% endif %} tag_container" >
+                    {% include 'blocks/tag_form_item.jinja2' %}
+                </div>
+
+                {% if loop.index % 6 == 0 %}
+                    <div class="grid_12 alpha omega tag_group_separator"></div>
+                {% endif %}
+            {% endfor %}
         {% endif %}
     </div>
 

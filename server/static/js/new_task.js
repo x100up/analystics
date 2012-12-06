@@ -4,6 +4,7 @@ var dayNamesMin = [ 'Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
 var findModal = false;
 var isLockDate = false;
 var synchronizedTags = [];
+var maxIndex = 0;
 
 function initNewTask() {
     $('input.key_autocomplete').each(function(x, item){
@@ -14,31 +15,28 @@ function initNewTask() {
                                   dateFormat:'dd M yy', monthNamesShort:monthNamesShort} );
 
     attachDateTimePicker($( "input.datepicker" ));
+    maxIndex = globalData['eventLoaded'];
 }
 
 function attachDateTimePicker(obj){
     obj.datetimepicker({timeFormat: 'hh:mm', onSelect: onDateSelect});
 }
 
-/**
- * Выбираем ключ в модальном окне
- * @param keyName
- * @param index
- */
-function onSelectKey(keyName, index) {
-    $('#key_' + index).val(keyName)
-    if (index === undefined)
-        index = $(this).data('index')
-    // загружаем конфигурацию
-    $('div#key_' + index + '_tag_container').load('/ajax/key_configuration', {'key':keyName, 'app': app, 'index':index},
-                                                  function (responseText, textStatus, XMLHttpRequest){
-                                                      initLoadedKey(index);
-                                                  });
-    $('#myModal').trigger('reveal:close');
-    $('#key_header_' + index).addClass('key_loaded');
-    $('#copy_key_' + index).removeClass('invisible');
-    globalData['keys_loaded']++;
+function selectAppEvent(eventCode) {
+    // create event index
+    maxIndex++;
+    $('#formContainer').append('<div id="key_' + maxIndex + '_tag_container"></div>');
+
+    $('div#key_' + maxIndex + '_tag_container').load(
+        '/ajax/key_configuration',
+        {eventCode: eventCode, appCode: app, index: maxIndex},
+        function (responseText, textStatus, XMLHttpRequest) {
+            initLoadedKey(maxIndex);
+            $('#formSaveBlock').show();
+        });
+    globalData['eventLoaded']++;
 }
+
 
 function getNextKeyIndex(){
     var next_index = $('div.key_form_item').length
@@ -152,8 +150,6 @@ function toDateString(date) {
  * @param index
  */
 function initLoadedKeyForm(index) {
-    $('input#key_' + index).autocomplete({ serviceUrl:'/ajax/key_autocomplete?app=' + app ,
-                                             onSelect: onSelectKey.bind($('#key_' + index)[0])});
     attachDateTimePicker($( "#start_" + index ));
     attachDateTimePicker($( "#end_" + index ));
     if (isLockDate) {
@@ -215,20 +211,15 @@ function initLoadedKey(index) {
  * @param key
  */
 function deleteKey(key) {
-    $('#key_container_' + key).remove();
+    $('#key_' + key + '_tag_container').remove();
+    globalData['eventLoaded']--;
+    if (globalData['eventLoaded'] < 1) {
+        $('#formSaveBlock').hide();
+    }
 }
 
 
 
-function findKey(index){
-    $.ajax({
-        url: '/ajax/getKeys/' + app + '/',
-        data: {index: index},
-        success: function(data){
-            findModal = $('#myModal').empty().append(data).reveal();
-        }
-    });
-}
 
 /**
  * Переключалка интервалов
@@ -342,7 +333,7 @@ function tagValueChange(type, input, tag_name, index) {
 }
 
 function sendForm() {
-    if (globalData['keys_loaded']){
+    if (globalData['eventLoaded']){
         $('#new_task_form').submit()
     } else {
         alert('Вы должны выбрать как минимум 1 ключ');
@@ -377,7 +368,7 @@ function selectTemplate(){
  * Сохранение шаблона
  */
 function doSaveTemplate(){
-    if (globalData['keys_loaded']){
+    if (globalData['eventLoaded']){
         $('#new_task_form').append($('#template_modal_form')).attr('action', '/template/create/' + app).submit();
     } else {
         alert('Вы должны выбрать как минимум 1 ключ');

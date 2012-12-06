@@ -4,12 +4,6 @@ from components.AnalyticsException import AnalyticsException
 from models.AppConfig import AppConfig
 
 class AppService():
-
-
-    KEYS_JSON_INDEX = 'keys'
-    BUNCHES_JSON_INDEX = 'bunches'
-    TAGS_JSON_INDEX = 'tags'
-
     nameR = re.compile('^(.*)\.json$')
 
     def __init__(self, config_folder):
@@ -48,35 +42,14 @@ class AppService():
         return os.path.exists(self._getFilePath(appCode))
 
     def createEmptyConfig(self, appCode):
-        config = {
-            'appname': appCode,
-            'keys' : {},
-            'tags':{}
-        }
+        config = AppConfig()
         self.appConfCache[appCode] = config
-        self.saveConfig(config)
+        self.newSaveConfig(AppConfig())
         pass
 
     def _getFilePath(self, appCode):
         return self.folder + '/' + appCode + '.json'
 
-    def getTagList(self, appName):
-        '''
-            return list of tags
-        '''
-        config = self.getAppConfig(appName)
-        if config.has_key('tags'):
-            return config['tags'].keys()
-        return []
-
-    def getTagSettings(self, appName):
-        '''
-            return list of tags
-        '''
-        config = self.getAppConfig(appName)
-        if config.has_key(u'tags'):
-            return config[u'tags']
-        return []
 
     def saveSettings(self, appName, tags = None, keys = None, bunches = None):
         config = self.getAppConfig(appName)
@@ -88,40 +61,6 @@ class AppService():
             config['bunches'] = bunches
         self.saveConfig(config)
 
-    def getAppTags(self, appName, keyName):
-        '''
-
-        '''
-        config = self.getAppConfig(appName)
-        keyConf = config['keys'][keyName]
-
-        raw_json = {}
-        if keyConf.has_key('tags'):
-            raw_json = keyConf['tags']
-
-        # load bunch
-        if keyConf.has_key('bunches'):
-            for bunchName in keyConf['bunches']:
-                for tag in config['bunches'][bunchName]['tags']:
-                    raw_json[tag] = None
-
-        settings = self.getTagSettings(appName)
-        for tag_name in raw_json.keys():
-            if settings.has_key(tag_name):
-                raw_json[tag_name] = settings[tag_name]
-
-        return raw_json
-
-
-    def getKeys(self, appName):
-        config = self.getAppConfig(appName)
-        return config['keys']
-
-    def getBunches(self, appName):
-        config = self.getAppConfig(appName)
-        if config.has_key(self.BUNCHES_JSON_INDEX):
-            return config[self.BUNCHES_JSON_INDEX]
-        return {}
 
     def saveConfig(self, data):
         if u'appname' in data.keys():
@@ -137,13 +76,3 @@ class AppService():
 
     def getKnowAppList(self):
         return [ file.replace('.json', '') for file in os.listdir(self.folder)]
-
-
-    def getKeyConfigs(self, app_code, keys):
-        key_configs = {}
-        for key in keys:
-            key_configs[key] = {
-                "tags": self.getAppTags(app_code, key)
-                }
-        return key_configs
-

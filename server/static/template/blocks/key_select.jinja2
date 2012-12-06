@@ -1,9 +1,0 @@
-<h1>{{ appName }}</h1>
-<table class="key_selector">
-{% for k in _keys.keys() %}
-    <tr onclick="onSelectKey('{{ k }}', {{ index }})">
-        <td>{{ k }}</td>
-        <td>{{ _keys[k].description or '------' }}</td>
-    </tr>
-{% endfor %}
-</table>

@@ -25,8 +25,9 @@ class TableConstructor():
             for series in self.data[key]:
                 rowHeader = self.nameConstructor.getKeyNameByIndex(key)
                 tagHeader = []
-                for tagCode, tagValue in self.data[key][series]['params']['conditions']:
-                    tagHeader.append(self.nameConstructor.getTagValueName(tagCode, tagValue))
+                if self.data[key][series]['params'].has_key('conditions'):
+                    for tagCode, tagValue in self.data[key][series]['params']['conditions']:
+                        tagHeader.append(self.nameConstructor.getTagValueName(tagCode, tagValue))
 
                 # пакуем данные
                 rowValues = []

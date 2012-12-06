@@ -63,7 +63,7 @@ class ResultAction(BaseResultAction):
         maxEndDate = max(endDates)
 
         appService = AppService(self.application.getAppConfigPath())
-        appConfig = appService.getAppConfig(app.code)
+        appConfig = appService.getNewAppConfig(app.code)
         nameService = NameConstructor(appConfig, task)
 
         try:

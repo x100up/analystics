@@ -193,10 +193,8 @@ class AnalyticsServer(tornado.web.Application):
 
             # --------- AJAX -----------
 
-            (r"/ajax/key_autocomplete/?", AjaxController.KeyAutocompleteAction),
             (r"/ajax/key_configuration/?", AjaxController.KeyConfigurationAction),
             (r"/ajax/get_key_form/?", AjaxController.GetKeyForm),
-            (r"/ajax/getKeys/([^/]+)/?", AjaxController.GetKeys),
             (r"/ajax/getTasksProgress/?", AjaxController.GatTasksProgress),
             (r"/ajax/copyTaskKey/?", AjaxController.CopyTaskKey),
             (r"/ajax/saveWorkerName?", AjaxController.SaveWorkerName),

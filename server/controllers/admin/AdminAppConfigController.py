@@ -129,9 +129,11 @@ class TagEditAction(AdminAction):
         self.showTags(app_code)
 
 
-    def run(self, tags, keys, bunches):
-        dict = {'tags': tags, 'keys': keys, 'bunches':bunches}
-        dict['errors'] = self.errors
+    def run(self, appConfig):
+        dict = {
+            'appConfig': appConfig,
+            'errors': self.errors
+        }
 
         tag_indexes = {}
         i = 0

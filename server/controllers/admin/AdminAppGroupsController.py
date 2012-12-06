@@ -35,13 +35,13 @@ class IndexAction(AdminAction):
 
         eventGroups = {}
         for event in self.appConfig.getEvents():
-            groupIDs = self.get_arguments('group_event_' + event['code'])
+            groupIDs = self.get_arguments('group_event_' + event.code)
             if groupIDs:
                 for groupId in groupIDs:
                     groupId = int(groupId)
                     if not eventGroups.has_key(groupId):
                         eventGroups[groupId] = []
-                    eventGroups[groupId].append(event['code'])
+                    eventGroups[groupId].append(event.code)
 
         self.appConfig.clearEventsGroups()
 

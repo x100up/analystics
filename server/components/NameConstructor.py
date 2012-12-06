@@ -4,7 +4,7 @@ from components.dateutil import smartPeriod
 
 class NameConstructor(object):
 
-    def __init__(self, appConfig, task):
+    def __init__(self, appConfig, task = None):
         self.appConfig = appConfig
         self.task = task
 
@@ -12,37 +12,22 @@ class NameConstructor(object):
         '''
         Генерирует имя задачи
         '''
-        result = ''
-        index, taskItem = self.task.items.items()[0]
-        key = taskItem.key
-        if self.appConfig['keys'].has_key(key) and self.appConfig['keys'][key].has_key('name'):
-            result = self.appConfig['keys'][key]['name']
-        _smartPeriod = smartPeriod(taskItem.start, taskItem.end)
-        result += ' ' + _smartPeriod
+        return "Новая задача"
 
-        if len(self.task.items) > 1:
-            result += ' (+' + str(len(self.task.items) - 1) + ')'
+    def getTaskItemName(self, taskItem):
+        return self.getEventName(taskItem.key)
 
-        return result
-
+    def getEventName(self, eventCode):
+        return self.appConfig.getEvent(eventCode).getName()
 
     def getKeyNameByIndex(self, index, params = None):
         '''
         return key name by taskItem index
         '''
 
-        tags = self.appConfig['tags']
-
         taskItem = self.task.getTaskItem(index)
         if taskItem:
-            key_name = ''
-            tag_name = u'Количество'
-            operation = ''
-
-            key = taskItem.key
-            if self.appConfig['keys'].has_key(key) and self.appConfig['keys'][key].has_key('description'):
-                key_name = self.appConfig['keys'][key]['description'] + key_name
-
+            eventName = self.getEventName(taskItem.key)
             operation = ''
             if params:
                 if params['op'] == 'group':
@@ -62,12 +47,12 @@ class NameConstructor(object):
                     for condition in params['conditions']:
                         tag_key = condition[0]
                         value = condition[1]
-                        if tags.has_key(tag_key) and tags[tag_key].has_key('name'):
-                            tag_name = tags[tag_key]['name']
-                            operation += '[' + tag_name + '=' + str(value) + ']'
+                        appTag = self.appConfig.getTag(tag_key)
+                        if appTag:
+                            operation += '[' + appTag.getName() + '=' + str(value) + ']'
 
 
-            return  key_name + operation
+            return  eventName + operation
 
         return 'not name for task item: ' + str(index)
 
@@ -87,19 +72,15 @@ class NameConstructor(object):
             Возвращает значение тега
         '''
         tag_value = value
+        tag = self.appConfig.getTag(tagCode)
+        if tag:
+                if tag.type == 'choose':
+                    if tag.values.has_key(value):
+                        tag_value = tag.values[value]
+                    else:
+                        tag_value = 'Unknow value"{}"'.format(tag_value)
 
-        if tagCode in self.appConfig['tags'].keys():
-            tagConf = self.appConfig['tags'][tagCode]
-
-            type = None
-            if tagConf.has_key('type'):
-                type = tagConf['type']
-
-                if type == 'choose':
-                    if tagConf.has_key('values') and isinstance(tagConf['values'], dict) and tagConf['values'].has_key(value):
-                        tag_value = tagConf['values'][value]
-
-                elif type == 'boolean':
+                elif tag.type == 'boolean':
                     if bool(value):
                         tag_value = u'Да'
                     else:
@@ -111,9 +92,10 @@ class NameConstructor(object):
         '''
             Возвращает имя тега по коду
         '''
-        if self.appConfig['tags'].has_key(tagCode) and self.appConfig['tags'][tagCode].has_key('name'):
-            return self.appConfig['tags'][tagCode]['name']
-        return tagCode
+        tag = self.appConfig.getTag(tagCode)
+        if tag:
+            return tag.getName()
+        return u'Нет тега'
 
     def prepareConditions(self, conditions):
         """
@@ -164,5 +146,3 @@ class NameConstructor(object):
             if _min == _max:
                 return op + u' в среднем {}'.format(int(_min))
             return op + u' от {} до {}'.format(int(_min), int(_max))
-
-        return u'Серия'

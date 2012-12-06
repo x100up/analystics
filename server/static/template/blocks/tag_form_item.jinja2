@@ -1,22 +1,16 @@
 {#
  taskItem
 #}
-<h3 title="{{ data.description or 'Нет описания' }}" class="{{ x }}">{{ data.name or name }}</h3>
+<h3 title="{{ tag.getDescription() }}" class="{{ x }}">{{ tag.getName() }}</h3>
 <input type="hidden" name="tag_{{ taskItem.index }}_name" value="{{ name }}">
 
-    <div class="tag_values_block {% if data.type == 'choose' and not data['values'].items and data['values']|length > 5 %} more_value{% endif %}">
+    <div class="tag_values_block {% if tag.type == 'choose' and not tag.values.items and tag.values|length > 5 %} more_value{% endif %}">
 
-    {% if data['extra'] %}
-        {% set extra = data['extra'] %}
-    {% else %}
-        {% set extra = [] %}
-    {% endif %}
+    {% if tag.type == 'choose' %}
 
-    {% if data.type == 'choose' %}
-
-        {% if data['values'].items %}
+        {% if tag.values.items %}
             <ul>
-            {% for v, k in data['values'].items() %}
+            {% for v, k in tag.values.items() %}
                 <li><input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
                     {% if value and v in value %} checked="checked" {% endif %}> : {{ k or v }}
                 </li>
@@ -25,27 +19,27 @@
 
         {% else %}
 
-            {% if data['values']|length < 6   %}
-                {% for v in data['values'] %}
+            {% if tag.values|length < 6   %}
+                {% for v in tag.values %}
                     {{ v }}: <input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
                         {% if value and v in value %} checked="checked" {% endif %}>
                 {% endfor %}
             {% else %}
-                {% for v in data['values'] %}
+                {% for v in tag.values %}
                     <ul>
-                        <li><input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
+                        <li> <input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
                                 {% if value and v in value %} checked="checked" {% endif %} > {{ v }}</li>
                     </ul>
                 {% endfor %}
             {% endif %}
         {% endif %}
 
-    {% elif data.type == 'boolean' %}
+    {% elif tag.type == 'boolean' %}
         Да: <input type="radio" name="tag_{{ taskItem.index }}_{{ name }}" id="tag_{{ taskItem.index }}_{{ name }}_1" value="1"
                 {% if value == '1' %}checked="checked" class="checked" {% endif %} onclick="resetRadio(this)">
         Нет: <input type="radio" name="tag_{{ taskItem.index }}_{{ name }}" id="tag_{{ taskItem.index }}_{{ name }}_0" value="0"
                 {% if value == '2' %}checked="checked" class="checked" {% endif %} onclick="resetRadio(this)">
-    {% elif data.type == 'int' %}
+    {% elif tag.type == 'int' %}
        <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" value="{{ value or '' }}">
     {% else %}
        {# default string type #}
@@ -74,7 +68,7 @@
         {# operation stacks #}
         <input type="hidden" name="tag_{{ taskItem.index }}_{{ name }}_ops" id="tag_{{ taskItem.index }}_{{ name }}_ops" value="{{ operations|join('/') }}">
         <span class="group{% if 'group' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'group', this)">group</span>
-        {% if data.type == 'int' %}
+        {% if tag.type == 'int' %}
         <span class="sum{% if 'sum' in operations %} selected{% endif %}" id="sum_{{ taskItem.index }}_{{ name }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'sum', this)">sum</span>
         <span class="avg{% if 'avg' in operations %} selected{% endif %}" id="avg_{{ taskItem.index }}_{{ name }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'avg', this)">avg</span>
         {% endif %}

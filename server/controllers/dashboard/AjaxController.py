@@ -3,67 +3,42 @@ from controllers.BaseController import AjaxController
 from services.AppService import AppService
 from models.Task import TaskItem
 from models.Worker import Worker
-from models.App import App
 from services import ThredService
 from components.TaskFactory import createTaskFromRequestArguments
 from models.TaskTemplate import TaskTemplate
-import re
 import random
-
-
-class KeyAutocompleteAction(AjaxController):
-
-    def get(self, *args, **kwargs):
-        appName = self.get_argument('app', None)
-        query = self.get_argument('query', None)
-        if appName is None:
-            self.send_ajax_error('Неверный запрос')
-
-        appService = AppService(self.application.getAppConfigPath())
-        config = appService.getAppConfig(appName)
-        keysList = config['keys'].keys()
-
-        regexp = re.compile('^' + query + '.*')
-        list = filter(lambda x:regexp.match(x) , keysList)
-
-        self.renderJSON({'query' : query, 'suggestions' : list})
+from components.NameConstructor import NameConstructor
 
 
 class KeyConfigurationAction(AjaxController):
 
     def post(self, *args, **kwargs):
-        keyName = self.get_argument('key', None)
-        appName = self.get_argument('app', None)
+        eventCode = self.get_argument('eventCode', None)
+        appCode = self.get_argument('appCode', None)
         index = self.get_argument('index', 1)
 
-        taskItem = TaskItem(index = index, key = keyName)
+        taskItem = TaskItem(index = index, key = eventCode)
 
         appService = AppService(self.application.getAppConfigPath())
-        tags = {
-            "tags": appService.getAppTags(appName, keyName)
-        }
+        appConfig = appService.getNewAppConfig(appCode)
 
-        self.render('blocks/tag_container.jinja2', {'tags':tags, 'taskItem': taskItem, 'values':{}})
+        nameConstructor = NameConstructor(appConfig)
+        taskItem.name = nameConstructor.getTaskItemName(taskItem)
+
+        self.render('dashboard/taskForm/eventFormItem.jinja2', {
+            'taskItem': taskItem,
+            'appConfig': appConfig,
+            'values':{
+
+            }
+        })
 
 class GetKeyForm(AjaxController):
     def post(self, *args, **kwargs):
         appCode = self.get_argument('appCode')
         index = self.get_argument('index')
         taskItem = TaskItem(index = index)
-        self.render('blocks/key_container.jinja2', {'taskItem':taskItem})
-
-class GetKeys(AjaxController):
-
-    def get(self, appCode):
-        keyIndex = self.get_argument('index')
-        self.checkAppAccess(appCode)
-        appService = AppService(self.application.getAppConfigPath())
-        keys = appService.getKeys(appCode)
-
-        app = self.getDBSession().query(App).filter(App.code == appCode).first()
-
-        self.render('blocks/key_select.jinja2', {'_keys':keys, 'index':keyIndex, 'appName':app.name})
-
+        self.render('dashboard/taskForm/eventFormItem.jinja2', {'taskItem':taskItem})
 
 class SaveWorkerName(AjaxController):
     def post(self):
@@ -141,13 +116,13 @@ class CopyTaskKey(AjaxController):
     def post(self, *args, **kwargs):
         copy_index = self.get_argument('copy_key_index')
         new_index = self.get_argument('new_index')
-        appname = self.get_argument('appname')
+        appCode = self.get_argument('appname')
         task = createTaskFromRequestArguments(self.request.arguments)
         taskItem = task.getTaskItem(copy_index)
         taskItem.index = new_index
         appService = AppService(self.application.getAppConfigPath())
-        key_configs = appService.getKeyConfigs(appname, [taskItem.key])
-        self.render('blocks/key_container.jinja2', {'taskItem': taskItem, 'key_configs':key_configs})
+        appConfig = appService.getNewAppConfig(appCode)
+        self.render('dashboard/taskForm/eventFormItem.jinja2', {'taskItem': taskItem, 'appConfig':appConfig})
 
 
 class getTemplateModal(AjaxController):

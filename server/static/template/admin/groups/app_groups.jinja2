@@ -15,8 +15,8 @@
         <thead>
             <tr>
                 <th><span class="awesome green" onclick="addGroup('event')">Добавить группу</span></th>
-                    {% for groupId in appConfig.getEventGroups() %}
-                        <th><input type="text" name="group_event_{{ groupId }}" value="{{ appConfig.getEventGroups()[groupId] }}"></th>
+                    {% for group in appConfig.getEventGroups() %}
+                        <th><input type="text" name="group_event_{{ group.index }}" value="{{ group.name }}"></th>
                     {% endfor %}
             </tr>
         </thead>
@@ -24,9 +24,9 @@
         <tbody>
             <tr data-code="{{ event.code }}">
                 <td>{{ event.name or event.code }}</td>
-                {% for groupId in appConfig.getEventGroups() %}
-                    <td><input type="checkbox" name="group_event_{{ event.code }}" value="{{ groupId }}"
-                            {% if appConfig.isEventInGroup(event.code, groupId)  %} checked="checked" {% endif %} ></td>
+                {% for eventGroup in appConfig.getEventGroups() %}
+                    <td><input type="checkbox" name="group_event_{{ event.code }}" value="{{ eventGroup.index }}"
+                            {% if appConfig.isEventInGroup(event.code, eventGroup.index)  %} checked="checked" {% endif %} ></td>
                 {% endfor %}
             </tr>
         </tbody>
