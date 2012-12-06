@@ -15,7 +15,7 @@ class IndexAction(AdminAction):
 
     def renderPage(self):
         self.render('admin/groups/app_groups.jinja2', {
-            'appConfig':self.appConfig,
+            'appConfig': self.appConfig,
             'js_vars': {
                 'groupsCount': 0
             }
@@ -62,13 +62,13 @@ class IndexAction(AdminAction):
 
         tagGroups = {}
         for tag in self.appConfig.getTags():
-            groupIds = self.get_arguments('group_tag_' + tag['code'])
+            groupIds = self.get_arguments('group_tag_' + tag.code)
             if groupIds:
                 for groupId in groupIds:
                     groupId = int(groupId)
                     if not tagGroups.has_key(groupId):
                         tagGroups[groupId] = []
-                    tagGroups[groupId].append(tag['code'])
+                    tagGroups[groupId].append(tag.code)
 
         self.appConfig.clearTagGroups()
         for index in groups:

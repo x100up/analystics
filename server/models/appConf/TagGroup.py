@@ -1,4 +1,4 @@
-class EventGroup():
+class TagGroup():
     def __init__(self, data = None):
         self.index = None
         self.name = None

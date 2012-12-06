@@ -4,6 +4,7 @@ __author__ = 'pavlenko.roman.spb@gmail.com'
 class AppTag():
 
     def __init__(self, data = None):
+        self.groups = []
         self.type = "string"
         self.code = \
         self.name = \

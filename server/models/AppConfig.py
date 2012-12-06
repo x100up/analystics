@@ -1,5 +1,6 @@
 
 from models.appConf.EventGroup import EventGroup
+from models.appConf.TagGroup import TagGroup
 from models.appConf.AppEvent import AppEvent
 from models.appConf.AppTag import AppTag
 from models.appConf.AppTagBunch import AppTagBunch
@@ -29,10 +30,11 @@ class AppConfig():
                 self.tags[appTag.code] = appTag
 
         if self.data.has_key('tagGroups'):
-            self.tagGroups = self.data['tagGroups']
+            for rawTagGroups in self.data['tagGroups']:
+                tagGroup = TagGroup(rawTagGroups)
+                self.tagGroups[tagGroup.index] = tagGroup
 
         if self.data.has_key('eventGroups'):
-            self.eventGroups = self.data['eventGroups']
             for rawEventGroups in self.data['eventGroups']:
                 eventGroup = EventGroup(rawEventGroups)
                 self.eventGroups[eventGroup.index] = eventGroup
@@ -44,7 +46,7 @@ class AppConfig():
 
 
     def getEvents(self):
-        return self.events
+        return self.events.values()
 
     def getEvent(self, eventCode):
         return self.events[eventCode]
@@ -56,10 +58,10 @@ class AppConfig():
         return self.tags[tagCode]
 
     def getEventGroups(self):
-        return self.eventGroups
+        return self.eventGroups.values()
 
     def getTagGroups(self):
-        return self.tagGroups
+        return self.tagGroups.values()
 
     def getEventsInGroup(self, groupIndex):
         result = []
@@ -82,13 +84,14 @@ class AppConfig():
 
     def clearTagGroups(self):
         self.tagGroups = {}
-        for tag in self.getTags():
-            if tag.has_key('group'):
-                del tag['group']
+        for appTag in self.getTags():
+            appTag.groups = []
 
     def addEventGroup(self, groupName):
         index = len(self.eventGroups)
-        eventGroup = EventGroup(index, groupName)
+        eventGroup = EventGroup()
+        eventGroup.index = index
+        eventGroup.name = groupName
         self.eventGroups[index] = eventGroup
         return index
 
@@ -126,8 +129,9 @@ class AppConfig():
             raise Exception('No tag with code {}'.format(eventCode))
 
     def isEventInGroup(self, eventCode, groupId):
-        if self.events.has_key(eventCode):
-            return groupId in self.events[eventCode].groups
+        event = self.getEvent(eventCode)
+        if event:
+            return groupId in event.groups
         else:
             raise Exception('No event with code {}'.format(eventCode))
 

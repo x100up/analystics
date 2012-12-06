@@ -23,7 +23,7 @@
     {% for event in appConfig.getEvents() %}
         <tbody>
             <tr data-code="{{ event.code }}">
-                <td>{{ event.name or event.code }}</td>
+                <td>{{ event.getName() }}</td>
                 {% for eventGroup in appConfig.getEventGroups() %}
                     <td><input type="checkbox" name="group_event_{{ event.code }}" value="{{ eventGroup.index }}"
                             {% if appConfig.isEventInGroup(event.code, eventGroup.index)  %} checked="checked" {% endif %} ></td>
