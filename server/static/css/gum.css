@@ -59,6 +59,7 @@ input {
 	width: 100%;
 	float: left;
 	overflow: hidden;
+    z-index: 10;
 }
 #content {
 	margin: 0 0 0 320px;
@@ -78,6 +79,7 @@ input {
 	width: 300px;
 	margin-left: -100%;
 	position: relative;
+    z-index: 1;
 
 }
 

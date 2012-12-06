@@ -24,8 +24,6 @@
 {% endblock %}
 
 {% block sidebar %}
-    <h2>Список отчетов</h2>
-
 <form action="" method="post">
 <div id="workers">
     {% for worker in lastWorkers %}
@@ -38,17 +36,14 @@
                 <span class="a" id="link_{{worker.workerId}}">{{worker.name}}</span>
             </div>
             <div class="plus">
-                <span onclick="startNewTask({{worker.workerId}})"  title="create on base">+</span>
+                <span onclick="startNewTask({{worker.workerId}})" class="plus" title="create on base"></span>
+                <span class="status"></span>
             </div>
-            <div class="clearfix"></div>
-            <div class="_selector"></div>
-            <div class="line"></div>
-
         </div>
-        <div class="clearfix"></div>
     {% endfor %}
 </div>
-<div style="margin-left: 10px;">
+
+<div id="workerFooter">
     <input type="submit" name="action" value="Удалить" class=" awesome orange small">
 
     {% if pageCount > 1 %}

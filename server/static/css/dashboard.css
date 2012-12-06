@@ -26,45 +26,62 @@ table#workersTable td.action > input {
 
 
 /** -------------------------- **/
-div#workers {
-    margin-top: 10px;
-}
 div#workers > div > div{
    float: left;
-    min-height: 26px;
-    padding-top: 5px;
 }
 
 div#workers > div{
-    margin-bottom: 5px;
     vertical-align: middle;
     width: 320px;
+    border-bottom: 1px solid #686868
 }
 
 div#workers div.q {
     width: 24px;
     margin-left: 10px;
+    height: 88px;
+    line-height: 69px;
 }
 div#workers div.main {
     width: 250px;
     cursor: pointer;
     color: #DDDDDD;
+    display: inline-block;
+    height: 90px;
+    vertical-align: middle;
+    float: left;
+}
+
+div.job {
+    background: url(/static/img/item_bg.jpg);
+    height: 90px;
+
+}
+div#workers div.main span {
+    display: block;
+    margin-top: 20px;
+    font-size: 14pt;
 }
 
 div#workers div.plus {
     width: 20px;
     color: #FFF;
     margin: 0;
-    padding: 0
+    padding: 0;
+    height: 88px;
+    line-height: 45px;
 }
 
-div#workers div.plus span {
-    padding-top: 10px;
+div#workers div.plus span.plus {
     display: block;
     font-size: 20pt;
     border-bottom: none;
     color: #fff;
-    cursor: pointer
+    cursor: pointer;
+    height: 20px;
+    background: url(/static/img/sprite.png) no-repeat;
+    background-position: -200px -152px;
+    margin-top: 10px;
 }
 
 div#workers div.line{
@@ -74,8 +91,8 @@ div#workers div.line{
     float: left;
 }
 
-div#workers div.selected > div.main {
-    color: #FFFFFF !important;
+div#workers div.selected {
+    background: url(/static/img/item_bg_s.jpg);
 }
 
 div#workers div:HOVER {
@@ -84,16 +101,25 @@ div#workers div:HOVER {
 }
 
 
-div.job_SUCCESS > div.line {
-    border-bottom: solid 4px #99C700 !important;
+
+div.job  > div.plus > span.status {
+    display: block;
+    width: 20px;
+    height: 20px !important;
+    background: url(/static/img/sprite.png) no-repeat;
+    margin-top: 35px;
 }
 
-div.job_ERROR > div.line{
-    border-bottom: solid 4px #FFCD45 !important;
+div.job_SUCCESS > div.plus > span.status {
+    background-position: -200px -131px;
 }
 
-div.job_DIED > div.line{
-    border-bottom: solid 4px #F3624C !important;
+div.job_ERROR > div.plus > span.status {
+    background-position: -200px -109px;
+}
+
+div.job_DIED  > div.plus > span.status {
+    background-position: -200px -109px;
 }
 
 
@@ -108,9 +134,7 @@ div#workers div._selector{
     display: none;
 }
 
-div#workers div.selected div._selector{
-    display: block !important;
-}
+
 
 .button.editTaskName {
     background: url('/static/img/sprite.png') no-repeat -200px 0;
@@ -282,4 +306,16 @@ Animate the stripes
 
 .job_ALIVE > td.plus span {
     color: GREEN;
+}
+
+
+#workerFooter{
+    margin: 0 -20px 0 0;
+    background: url(/static/img/item_bg.jpg);
+    padding: 20px 10px;
+    -webkit-box-shadow: -2px 2px 1px 2px rgba(50, 50, 50, 0.8);
+    box-shadow: -2px 2px 1px 2px rgba(50, 50, 50, 0.8);
+    -webkit-border-radius: 0 0 8px 8px;
+    border-radius: 0 08px 8px;
+    border-bottom: 1px solid #1F1F1F;
 }
