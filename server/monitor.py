@@ -79,13 +79,13 @@ class AnalyticsMonitor():
     def readAppConfig(self, appCode):
         appConfig = None
         try:
-            appConfig = appService.getAppConfig(appCode)
+            appConfig = appService.getNewAppConfig(appCode)
         except IOError as e:
             self.log('error reading app (%(appname)s) configuration'%{'appname':appname})
-        self.real_keys = appConfig['keys'].keys()
+        self.real_keys = [appEvent.code for appEvent in appConfig.getEvents()]
 
     def processApp(self, appCode):
-        self.log('ProcessApp:'+appCode)
+        self.log('ProcessApp:' + appCode)
         self.readAppConfig(appCode)
         # получаем список директорий -ключей
         key_folders = {}

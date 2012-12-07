@@ -1,4 +1,4 @@
-
+# coding=utf-8
 from models.appConf.EventGroup import EventGroup
 from models.appConf.TagGroup import TagGroup
 from models.appConf.AppEvent import AppEvent
@@ -48,8 +48,15 @@ class AppConfig():
     def getEvents(self):
         return self.events.values()
 
+    def getEventsCodes(self):
+        return self.events.keys()
+
     def getEvent(self, eventCode):
         return self.events[eventCode]
+
+    def deleteEvent(self, eventCode):
+        if self.isEventExist(eventCode):
+            del self.events[eventCode]
 
     def getTags(self):
         return self.tags.values()
@@ -110,12 +117,14 @@ class AppConfig():
         appEvent = self.events[eventCode]
         tags = []
 
-        for tagCode in appEvent.tags:
-            tags.append(self.tags[tagCode])
-
-        for bunchCode in appEvent.bunches:
-            for tagCode in self.bunches[bunchCode].tags:
+        if appEvent.tags:
+            for tagCode in appEvent.tags:
                 tags.append(self.tags[tagCode])
+
+        if appEvent.bunches:
+            for bunchCode in appEvent.bunches:
+                for tagCode in self.bunches[bunchCode].tags:
+                    tags.append(self.tags[tagCode])
 
         return tags
 
@@ -154,4 +163,18 @@ class AppConfig():
             'tagGroups': [tagGroup.toObject() for tagGroup in self.tagGroups.values()],
             'tags': [appTag.toObject() for appTag in self.tags.values()],
         }
+
+
+    def mergeAppEvent(self, newEvent, oldEventCode):
+        if oldEventCode in self.events.keys():
+            # обновили старый
+            appEventDict = self.events[oldEventCode].toObject()
+            appEventDict.update(newEvent.toObject())
+            appEvent = AppEvent(appEventDict)
+            del self.events[oldEventCode]
+            self.events[appEvent.code] = appEvent
+        else:
+            # добавили новый
+            self.events[newEvent.code] = newEvent
+
 

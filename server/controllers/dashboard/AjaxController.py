@@ -6,6 +6,7 @@ from models.Worker import Worker
 from services import ThredService
 from components.TaskFactory import createTaskFromRequestArguments
 from models.TaskTemplate import TaskTemplate
+from models.appConf.AppEvent import AppEvent
 import random
 from components.NameConstructor import NameConstructor
 
@@ -53,10 +54,9 @@ class AddNewKey(AjaxController):
     def post(self):
         data = {
             'index': self.get_argument('index'),
-            'key':'',
-            'values':{}
+            'event': AppEvent(),
         }
-        self.render('blocks/edit_key.jinja2', data)
+        self.render('admin/appConfig/editOneEvent.jinja2', data)
 
 class AddNewTag(AjaxController):
     def post(self):

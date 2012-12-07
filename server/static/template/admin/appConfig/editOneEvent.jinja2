@@ -1,0 +1,26 @@
+<div id="key_{{ index }}">
+    <h3 id="key_{{ index }}_h">{{ event.getName() }}</h3>
+
+    <div class="grid_10 alpha">
+        <input type="hidden" name="key_index" value="{{ index }}">
+        <input type="hidden" name="key_{{ index }}_code_old" value="{{ event.code }}">
+        <ul class="form">
+            <li>
+                <label>Код:</label>
+                <input type="text" value="{{ event.code }}" name="key_{{ index }}_code"
+                       id="key_{{ index }}_code" onkeyup="updateKey({{ index }})">
+            </li>
+            <li>
+                <label>Название:</label>
+                <input type="text" value="{{ event.getName() }}" name="key_{{ index }}_name"
+                       id="key_{{ index }}_name">
+            </li>
+        </ul>
+    </div>
+
+    <div class="grid_2 omega">
+        <span class="awesome small red" onclick="deleteKey({{ index }})">удалить</span>
+    </div>
+
+    <div class="clearfix"></div>
+</div>

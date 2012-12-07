@@ -62,12 +62,12 @@ class Packer():
 
     def pack(self, year, month, day, key = None):
         for app in self.getApplications():
-            appConfig = appService.getAppConfig(app)
+            appConfig = appService.getNewAppConfig(app)
 
             if key:
                 keys = [key]
             else:
-                keys = appConfig['keys']
+                keys = [appEvent.code for appEvent in appConfig.getEvents()]
 
             for key in keys:
                 print 'start pack key {}'.format(key)

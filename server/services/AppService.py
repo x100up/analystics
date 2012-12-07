@@ -29,13 +29,13 @@ class AppService():
         if not self.appConfCache.has_key(appCode):
             try:
                 f = open(self._getFilePath(appCode), 'r')
-                self.appConfCache[appCode] = json.load(f)
+                self.appConfCache[appCode] = AppConfig(json.load(f))
             except ValueError as valueError:
                 raise AnalyticsException(u'Ошибка при чтении конфигурации приложения {}'.format(self.folder + '/' + appCode + '.json'), valueError)
         return self.appConfCache[appCode]
 
     def getNewAppConfig(self, appCode):
-        return AppConfig(self.getAppConfig(appCode))
+        return self.getAppConfig(appCode)
 
 
     def isConfigExist(self, appCode):

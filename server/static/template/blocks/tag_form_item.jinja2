@@ -2,7 +2,7 @@
  taskItem
 #}
 <h3 title="{{ tag.getDescription() }}" class="{{ x }}">{{ tag.getName() }}</h3>
-<input type="hidden" name="tag_{{ taskItem.index }}_name" value="{{ name }}">
+<input type="hidden" name="tag_{{ taskItem.index }}_name" value="{{ tag.code }}">
 
     <div class="tag_values_block {% if tag.type == 'choose' and not tag.values.items and tag.values|length > 5 %} more_value{% endif %}">
 
@@ -11,7 +11,7 @@
         {% if tag.values.items %}
             <ul>
             {% for v, k in tag.values.items() %}
-                <li><input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
+                <li><input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ tag.code }}"
                     {% if value and v in value %} checked="checked" {% endif %}> : {{ k or v }}
                 </li>
             {% endfor %}
@@ -21,13 +21,13 @@
 
             {% if tag.values|length < 6   %}
                 {% for v in tag.values %}
-                    {{ v }}: <input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
+                    {{ v }}: <input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ tag.code }}"
                         {% if value and v in value %} checked="checked" {% endif %}>
                 {% endfor %}
             {% else %}
                 {% for v in tag.values %}
                     <ul>
-                        <li> <input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ name }}"
+                        <li> <input type="checkbox" value="{{ v }}" name="tag_{{ taskItem.index }}_{{ tag.code }}"
                                 {% if value and v in value %} checked="checked" {% endif %} > {{ v }}</li>
                     </ul>
                 {% endfor %}
@@ -35,41 +35,41 @@
         {% endif %}
 
     {% elif tag.type == 'boolean' %}
-        Да: <input type="radio" name="tag_{{ taskItem.index }}_{{ name }}" id="tag_{{ taskItem.index }}_{{ name }}_1" value="1"
+        Да: <input type="radio" name="tag_{{ taskItem.index }}_{{ tag.code }}" id="tag_{{ taskItem.index }}_{{ tag.code }}_1" value="1"
                 {% if value == '1' %}checked="checked" class="checked" {% endif %} onclick="resetRadio(this)">
-        Нет: <input type="radio" name="tag_{{ taskItem.index }}_{{ name }}" id="tag_{{ taskItem.index }}_{{ name }}_0" value="0"
+        Нет: <input type="radio" name="tag_{{ taskItem.index }}_{{ tag.code }}" id="tag_{{ taskItem.index }}_{{ tag.code }}_0" value="0"
                 {% if value == '2' %}checked="checked" class="checked" {% endif %} onclick="resetRadio(this)">
     {% elif tag.type == 'int' %}
-       <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" value="{{ value or '' }}">
+       <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" value="{{ value or '' }}">
     {% else %}
        {# default string type #}
         {% if value %}
 
             {% for val in value %}
-                <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" value="{{ val or '' }}" data-index="{{ loop.index0 }}"
-                       onkeydown="tagValueChange('string', this, '{{ name }}', {{ taskItem.index }})"
-                       class="tag_{{ name }} i_{{ loop.index0 }}">
+                <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" value="{{ val or '' }}" data-index="{{ loop.index0 }}"
+                       onkeydown="tagValueChange('string', this, '{{ tag.code }}', {{ taskItem.index }})"
+                       class="tag_{{ tag.code }} i_{{ loop.index0 }}">
             {% endfor %}
         {% else %}
-            <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" value="" data-index="0" class="tag_{{ name }} i_0"
-                   onkeydown="tagValueChange('string', this, '{{ name }}', {{ taskItem.index }})">
+            <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" value="" data-index="0" class="tag_{{ tag.code }} i_0"
+                   onkeydown="tagValueChange('string', this, '{{ tag.code }}', {{ taskItem.index }})">
         {% endif %}
-       <input type="text" name="tag_{{ taskItem.index }}_{{ name }}" id="{{ name }}_value_cloner_{{ taskItem.index }}"
-        onclick="addTextField({{ taskItem.index }}, '{{ name }}')" class="new tag_{{ name }}"
-        onkeydown="tagValueChange('string', this, '{{ name }}', {{ taskItem.index }})">
+       <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" id="{{ tag.code }}_value_cloner_{{ taskItem.index }}"
+        onclick="addTextField({{ taskItem.index }}, '{{ tag.code }}')" class="new tag_{{ tag.code }}"
+        onkeydown="tagValueChange('string', this, '{{ tag.code }}', {{ taskItem.index }})">
     {% endif %}
     </div>
 
     <div class="op_controll">
         {#
-        <span class="sync sync_{{ name }}" onclick="switchTagSync({{ taskItem.index }}, '{{ name }}', this)">sync</span>
+        <span class="sync sync_{{ tag.code }}" onclick="switchTagSync({{ taskItem.index }}, '{{ tag.code }}', this)">sync</span>
          #}
         {% set operations = taskItem.getTagOperations(name)  %}
         {# operation stacks #}
-        <input type="hidden" name="tag_{{ taskItem.index }}_{{ name }}_ops" id="tag_{{ taskItem.index }}_{{ name }}_ops" value="{{ operations|join('/') }}">
-        <span class="group{% if 'group' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'group', this)">group</span>
+        <input type="hidden" name="tag_{{ taskItem.index }}_{{ tag.code }}_ops" id="tag_{{ taskItem.index }}_{{ tag.code }}_ops" value="{{ operations|join('/') }}">
+        <span class="group{% if 'group' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'group', this)">group</span>
         {% if tag.type == 'int' %}
-        <span class="sum{% if 'sum' in operations %} selected{% endif %}" id="sum_{{ taskItem.index }}_{{ name }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'sum', this)">sum</span>
-        <span class="avg{% if 'avg' in operations %} selected{% endif %}" id="avg_{{ taskItem.index }}_{{ name }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ name }}', 'avg', this)">avg</span>
+        <span class="sum{% if 'sum' in operations %} selected{% endif %}" id="sum_{{ taskItem.index }}_{{ tag.code }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'sum', this)">sum</span>
+        <span class="avg{% if 'avg' in operations %} selected{% endif %}" id="avg_{{ taskItem.index }}_{{ tag.code }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'avg', this)">avg</span>
         {% endif %}
     </div>

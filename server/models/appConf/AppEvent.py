@@ -5,9 +5,9 @@ class AppEvent():
 
     def __init__(self, data = None):
         self.groups = []
-        self.code = \
-        self.bunches = \
-        self.name = \
+        self.code = ''
+        self.name = ''
+        self.bunches =\
         self.description = \
         self.tags = \
         None

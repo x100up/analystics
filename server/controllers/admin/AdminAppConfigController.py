@@ -3,6 +3,55 @@
 from AdminIndexController import AdminAction
 from services.AppService import AppService
 from components.AnalyticsException import AnalyticsException
+from models.appConf.AppEvent import AppEvent
+
+
+class BaseEditConfigAction(AdminAction):
+    def prepare(self):
+        super(BaseEditConfigAction, self).prepare()
+        self.errors = []
+        self.appService = AppService(self.application.getAppConfigPath())
+
+    def getAppConfig(self, appCode):
+        return self.appService.getNewAppConfig(appCode)
+
+    def listDiff(self, a, b):
+        b = set(b)
+        return [aa for aa in a if aa not in b]
+
+
+class EventEditAction(BaseEditConfigAction):
+
+    def get(self, *args, **kwargs):
+        self.render('admin/appConfig/editEvents.jinja2', {'events': self.getAppConfig(args[0]).getEvents()})
+
+    def post(self, *args, **kwargs):
+        appConfig = self.getAppConfig(args[0])
+
+        eventIndexes = self.get_arguments('key_index')
+        if eventIndexes:
+            eventCodes = []
+            for index in eventIndexes:
+                appEvent = AppEvent()
+                appEvent.code = self.get_argument('key_{}_code'.format(index), None)
+                appEvent.name = self.get_argument('key_{}_name'.format(index), None)
+                oldEventCode = self.get_argument('key_{}_code_old'.format(index), None)
+                appConfig.mergeAppEvent(appEvent, oldEventCode)
+                eventCodes.append(appEvent.code)
+
+            # удаляем удаленные
+            existCodes = appConfig.getEventsCodes()
+
+            forRemove = self.listDiff(existCodes, eventCodes)
+            if forRemove:
+                for code in forRemove:
+                    appConfig.deleteEvent(code)
+
+        self.appService.saveConfig(appConfig.dumpToJSON())
+
+        self.render('admin/appConfig/editEvents.jinja2', {'events':self.appService.getNewAppConfig(args[0]).getEvents()})
+
+
 
 class TagEditAction(AdminAction):
     def prepare(self):
@@ -65,32 +114,21 @@ class TagEditAction(AdminAction):
             for tag_index in tag_indexes:
                 bunches[bunch_code]['tags'].append(tag_codes[tag_index])
 
-        keys = {}
-        key_indexes = self.get_arguments('key_index')
-        if key_indexes:
-            keys = {}
-            for index in key_indexes:
-                key_code = self.get_argument('key_{}_name'.format(index), False)
-                if key_code:
-                    keys[key_code] = {}
-                    desc = self.get_argument('key_{}_desc'.format(index), False)
-                    if desc:
-                        keys[key_code]['description'] = desc
 
-                tag_indexes = self.get_arguments('key_tag_' + index)
-                if tag_indexes:
-                    for tag_index in tag_indexes:
-                        tag_code = tag_codes[tag_index]
-                        if tag_code and tags.has_key(tag_code):
-                            if not keys[key_code].has_key('tags'):
-                                keys[key_code]['tags'] = {}
-                            keys[key_code]['tags'][tag_code] = {}
+            tag_indexes = self.get_arguments('key_tag_' + index)
+            if tag_indexes:
+                for tag_index in tag_indexes:
+                    tag_code = tag_codes[tag_index]
+                    if tag_code and tags.has_key(tag_code):
+                        if not keys[eventCode].has_key('tags'):
+                            keys[eventCode]['tags'] = {}
+                        keys[eventCode]['tags'][tag_code] = {}
 
                 bunch_indexes = self.get_arguments('key_bunch_' + index)
                 if bunch_indexes:
-                    keys[key_code]['bunches'] = {}
+                    keys[eventCode]['bunches'] = {}
                     for bunch_index in bunch_indexes:
-                        keys[key_code]['bunches'][bunch_codes[bunch_index]] = {}
+                        keys[eventCode]['bunches'][bunch_codes[bunch_index]] = {}
 
         if not self.errors:
             self.appService.saveSettings(app_code, tags = tags, keys = keys, bunches = bunches)

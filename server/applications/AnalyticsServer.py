@@ -185,7 +185,8 @@ class AnalyticsServer(tornado.web.Application):
 
             (r'/admin/settings/?', AdminSettingsController.IndexAction),
 
-            (r'/admin/app/([^/]+)/tags/?', AdminAppConfigController.TagEditAction),
+            (r'/admin/app/([^/]+)/editEvent/?', AdminAppConfigController.EventEditAction),
+            (r'/admin/app/([^/]+)/editTags/?', AdminAppConfigController.TagEditAction),
             (r'/admin/app/([^/]+)/spell/?', AdminAppSpellController.IndexAction),
             (r'/admin/app/([^/]+)/groups/?', AdminAppGroupsController.IndexAction),
             # --------- CLUSTER -----------
