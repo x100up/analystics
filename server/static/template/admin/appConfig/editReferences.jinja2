@@ -1,0 +1,71 @@
+{% extends 'admin/adminLayout.jinja2' %}
+
+
+{% block content %}
+    <h2>Редактирование связей</h2>
+
+    {% include 'blocks/error.jinja2' %}
+
+    <form action="" method="post" id="tag_form">
+
+        <div class="container_12">
+            {% for event in appConfig.getEvents() %}
+                {% set index = loop.index0 %}
+                {% set tagInEvent = appConfig.getEventTagsCodes(event.code, True) %}
+                {% set tagInBunchEvent = appConfig.getEventBunchTagsCodes(event.code) %}
+                <h2>{{ event.getName() }}</h2>
+
+                <div class="grid_2">
+                    <h3>Теги</h3>
+                    <ul>
+                        {% for tag in appConfig.getTags() %}
+                            <li>
+                                <input type="checkbox" name="ref_tag_{{ event.code }}" value="{{ tag.code }}"
+                                       {% if tag.code in tagInBunchEvent %}
+                                           disabled="disabled"
+                                           checked="checked"
+                                       {% else %}
+                                            {% if tag.code in tagInEvent %}
+                                                checked="checked"
+                                            {% endif %}
+                                       {% endif %}
+                                        class="event_{{ event.code }}"
+                                        data-tag="{{ tag.code }}"
+                                >
+                                <label>{{ tag.getName() }}</label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="grid_2">
+                    <h3>Группы тегов</h3>
+                    <ul>
+                        {% for bunch in appConfig.getBunches() %}
+                        {% set bunchesForEvent = appConfig.getEventBunchCodes(event.code) %}
+                            <li>
+                                <input type="checkbox" name="ref_bunch_{{ event.code }}" value="{{ bunch.code }}"
+                                        {% if bunch.code in bunchesForEvent %}
+                                       checked="checked"
+                                        {% endif %}
+                                onclick="onBunchSwitch(this,'{{ event.code }}', ['{{ "','".join(bunch.tags) }}'] )"
+                                >
+                                <label>{{ bunch.getName() }}</label>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="clearfix"></div>
+            {% endfor %}
+
+
+        </div>
+
+        <input type="submit" onclick="saveForm()" value="Сохранить" class="awesome green" style="margin-top: 20px">
+
+    </form>
+
+    <div class="clearfix"></div>
+
+{% endblock %}

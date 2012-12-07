@@ -8,43 +8,11 @@
 
     <form action="" method="post" id="tag_form">
         <div id="tabber">
-            <ul id="tab_ul">
-                <li onclick="showTab(this)" data-tab="key" class="active">Ключи</li>
-                <li onclick="showTab(this)" data-tab="tags">Теги</li>
-                <li onclick="showTab(this)" data-tab="bunches">Группы</li>
-                <li onclick="showTab(this)" data-tab="relation">Связи</li>
-            </ul>
 
-            <div class="grid_12 active" id="tab_key">
-                    {% for key_name, values in keys.items() %}
-                        {% set index = loop.index0 %}
-                        {% include 'blocks/edit_key.jinja2' %}
-                    {% endfor %}
-
-                    <span class="awesome orange" onclick="addKey(this)">Добавить ключ</span>
-                <div class="clearfix"></div>
-            </div>
-
-            <div class="grid_12" id="tab_tags">
-
-                {% for tag_name, values in tags.items() %}
-                    {% set index = loop.index0 %}
-                    {% include 'blocks/edit_tag.jinja2' %}
-                {% endfor %}
-
-                <span class="awesome orange" onclick="addTag(this)">Добавить тег</span>
-                <div class="clearfix"></div>
-            </div>
 
             <div class="grid_12" id="tab_bunches">
 
-                {% for bunch_code, data in bunches.items() %}
-                    {% set index = loop.index0 %}
-                    {% set bunch_name = data['name'] or '' %}
-                    {% include 'blocks/edit_bunch.jinja2' %}
-                {% endfor %}
 
-                <span class="awesome orange" onclick="addBunch(this)">Добавить группу</span>
                 <div class="clearfix"></div>
             </div>
 

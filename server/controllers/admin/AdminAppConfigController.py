@@ -4,6 +4,8 @@ from AdminIndexController import AdminAction
 from services.AppService import AppService
 from components.AnalyticsException import AnalyticsException
 from models.appConf.AppEvent import AppEvent
+from models.appConf.AppTag import AppTag
+from models.appConf.AppTagBunch import AppTagBunch
 
 
 class BaseEditConfigAction(AdminAction):
@@ -52,156 +54,131 @@ class EventEditAction(BaseEditConfigAction):
         self.render('admin/appConfig/editEvents.jinja2', {'events':self.appService.getNewAppConfig(args[0]).getEvents()})
 
 
+class EditTagAction(BaseEditConfigAction):
 
-class TagEditAction(AdminAction):
-    def prepare(self):
-        super(TagEditAction, self).prepare()
-        self.errors = []
-        self.appService = AppService(self.application.getAppConfigPath())
+    def get(self, *args, **kwargs):
+        self.render('admin/appConfig/editTags.jinja2', {'tags':self.appService.getNewAppConfig(args[0]).getTags()})
 
     def post(self, *args, **kwargs):
         app_code, = args
         self.app_code = app_code
+        appConfig = self.getAppConfig(app_code)
 
-        tag_indexes = self.get_arguments('tag_index')
-
-        tags = {}
-        tag_codes = {}
-        for tag_index in tag_indexes:
-            tag_code = self.get_argument('tag_{}_code'.format(tag_index), False)
-            if not tag_code:
+        tagIndexes = self.get_arguments('tag_index')
+        for tagIndex in tagIndexes:
+            tagCode = self.get_argument('tag_{}_code'.format(tagIndex), False)
+            tagOldCode = self.get_argument('tag_{}_old_code'.format(tagIndex), False)
+            if not tagCode:
                 continue
 
-            tag_codes[tag_index] = tag_code
+            # создаем или берем событие на основе формы
+            if tagOldCode:
+                newTag = appConfig.getTag(tagOldCode)
+            else:
+                newTag = AppTag()
 
-            tags[tag_code] = {}
-            tags[tag_code]['type'] = self.get_argument("tag_{}_type".format(tag_index))
-            tags[tag_code]['name'] = self.get_argument("tag_{}_name".format(tag_index), default='')
-            if tags[tag_code]['type'] == 'choose':
-                count = int(self.get_argument('tag_{}_values_count'.format(tag_index), default=0))
+            # меняем его свойства
+            newTag.name = self.get_argument("tag_{}_name".format(tagIndex), default='')
+            newTag.code = tagCode
+            newTag.type = self.get_argument("tag_{}_type".format(tagIndex))
+
+            if newTag.type == 'choose':
+                count = int(self.get_argument('tag_{}_values_count'.format(tagIndex), default=0))
                 values = {}
-                isDict = False
-
                 for index in range(0, count + 1):
-                    key = self.get_argument('tag_{}_values_key_{}'.format(tag_index, index), default=None)
-                    value = self.get_argument('tag_{}_values_value_{}'.format(tag_index, index), default=None)
+                    key = self.get_argument('tag_{}_values_key_{}'.format(tagIndex, index), default=None)
                     if key is None:
                         continue
-                    if not isDict:
-                        isDict = not value is None
-                    values[key] = value
-
-                if not isDict:
-                    values = values.keys()
+                    values[key] = self.get_argument('tag_{}_values_value_{}'.format(tagIndex, index), default=None)
 
                 if not len(values):
-                    self.errors.append(u'Для типа выбора (тег {0}) должен быть хотя бы один вариант'.format(tag_code))
+                    self.errors.append(u'Для типа выбора (тег {0}) должен быть хотя бы один вариант'.format(tagCode))
 
-                tags[tag_code]['values'] = values
+                newTag.values = values
 
-        bunch_indexes = self.get_arguments('bunch_index')
-        bunches = {}
-        bunch_codes = {}
-        for bunch_index in bunch_indexes:
-            bunch_code = self.get_argument('bunch_code_{}'.format(bunch_index), False)
-            bunch_name = self.get_argument('bunch_name_{}'.format(bunch_index), False)
-            bunch_codes[bunch_index] = bunch_code
-            bunches[bunch_code] = {'tags':[]}
-            if bunch_name:
-                bunches[bunch_code]['name'] = bunch_name
+            if tagOldCode:
+                appConfig.deleteTag(tagOldCode)
 
-            tag_indexes = self.get_arguments('bunch_tag_{}'.format(bunch_index))
-            for tag_index in tag_indexes:
-                bunches[bunch_code]['tags'].append(tag_codes[tag_index])
-
-
-            tag_indexes = self.get_arguments('key_tag_' + index)
-            if tag_indexes:
-                for tag_index in tag_indexes:
-                    tag_code = tag_codes[tag_index]
-                    if tag_code and tags.has_key(tag_code):
-                        if not keys[eventCode].has_key('tags'):
-                            keys[eventCode]['tags'] = {}
-                        keys[eventCode]['tags'][tag_code] = {}
-
-                bunch_indexes = self.get_arguments('key_bunch_' + index)
-                if bunch_indexes:
-                    keys[eventCode]['bunches'] = {}
-                    for bunch_index in bunch_indexes:
-                        keys[eventCode]['bunches'][bunch_codes[bunch_index]] = {}
+            appConfig.addTag(newTag)
 
         if not self.errors:
-            self.appService.saveSettings(app_code, tags = tags, keys = keys, bunches = bunches)
+            self.appService.saveConfig(appConfig.dumpToJSON())
 
-        self.run(tags, keys, bunches)
+        self.render('admin/appConfig/editTags.jinja2', {'tags':appConfig.getTags()})
 
 
-    def showTags(self, app_code):
-        tags = {}
-        try:
-            raw_tags = self.appService.getTagList(app_code)
-            settings = self.appService.getTagSettings(app_code)
-            for tag in raw_tags:
-                tags[tag] = {}
-                if settings.has_key(tag):
-                    tags[tag] = settings[tag]
-        except AnalyticsException as analyticsException:
-            self.errors.append(analyticsException.message)
+class EditBunchAction(BaseEditConfigAction):
+    def get(self, *args, **kwargs):
+        app_code, = args
+        appConfig = self.getAppConfig(app_code)
+        self.render('admin/appConfig/editBunches.jinja2',
+                {'tags': appConfig.getTags(), 'bunches': appConfig.getBunches(),
+                 'js_vars': {'appCode': app_code}})
 
-        keys = {}
-        bunches = {}
-        try:
-            bunches = self.appService.getBunches(app_code)
-            keys = self.appService.getKeys(app_code)
-        except AnalyticsException as analyticsException:
-            self.errors.append(analyticsException.message)
+    def post(self, *args, **kwargs):
+        app_code, = args
+        appConfig = self.getAppConfig(app_code)
 
-        self.run(tags, keys, bunches)
+        bunchIndexes = self.get_arguments('bunch_index')
+        for bunchIndex in bunchIndexes:
+            bunchCode = self.get_argument('bunch_code_{}'.format(bunchIndex), False)
+            if not bunchCode:
+                continue
+
+            oldBunchCode = self.get_argument('bunch_old_code_{}'.format(bunchIndex), False)
+            if oldBunchCode:
+                bunch = appConfig.getBunch(oldBunchCode)
+            else:
+                bunch = AppTagBunch()
+
+            bunch.code = bunchCode
+            bunch.name = self.get_argument('bunch_name_{}'.format(bunchIndex), '')
+            bunch.tags = self.get_arguments('bunch_tag_{}'.format(bunchIndex), [])
+
+            if oldBunchCode:
+                appConfig.deleteBunch(oldBunchCode)
+
+            appConfig.addBunch(bunch)
+
+
+        self.appService.saveConfig(appConfig.dumpToJSON())
+
+
+        self.render('admin/appConfig/editBunches.jinja2',
+                {'tags': appConfig.getTags(), 'bunches': appConfig.getBunches(),
+                 'js_vars': {'appCode': app_code}})
+
+
+class EditReferencesAction(BaseEditConfigAction):
 
     def get(self, *args, **kwargs):
         app_code, = args
+        appConfig = self.getAppConfig(app_code)
+        self.render('admin/appConfig/editReferences.jinja2', {
+            'appConfig': appConfig
+        })
 
-        if not self.appService.isConfigExist(app_code):
-            self.appService.createEmptyConfig(app_code)
-        self.app_code = app_code
-        self.showTags(app_code)
+    def post(self, *args, **kwargs):
+        app_code, = args
+        appConfig = self.getAppConfig(app_code)
 
+        for appEvent in appConfig.getEvents():
+            # теги
+            tags = self.get_arguments('ref_tag_{}'.format(appEvent.code))
+            appEvent.tags = {}
+            if tags:
+                for tag in tags:
+                    appEvent.tags[tag] = {}
 
-    def run(self, appConfig):
-        dict = {
-            'appConfig': appConfig,
-            'errors': self.errors
-        }
+            # банчи
+            bunches = self.get_arguments('ref_bunch_{}'.format(appEvent.code))
+            appEvent.bunches = {}
+            if bunches:
+                for bunch in bunches:
+                    appEvent.bunches[bunch] = {}
 
-        tag_indexes = {}
-        i = 0
-        for tag_name, tag_data in tags.items():
-            tag_indexes[tag_name] = i
-            i += 1
+        self.appService.saveConfig(appConfig.dumpToJSON())
 
-        bunch_indexes = {}
-        bunch_cache = {}
-        i = 0
-        for bunch_code, bunch_data in bunches.items():
-            bunch_indexes[bunch_code] = i
-            bunch_cache[i] = []
-            for tag_code in bunch_data['tags']:
-                bunch_cache[i].append(tag_indexes[tag_code])
-            i += 1
-
-        # кеш связей
-        relation_cache = {'tag':{}, 'bunch':{}}
-        for index, key_code in enumerate(keys):
-            index = int(index)
-            relation_cache['tag'][index] = []
-            relation_cache['bunch'][index] = []
-            key_data = keys[key_code]
-            if key_data.has_key(AppService.TAGS_JSON_INDEX):
-                for tag_code in key_data[AppService.TAGS_JSON_INDEX].keys():
-                    relation_cache['tag'][index].append(tag_indexes[tag_code])
-            if key_data.has_key(AppService.BUNCHES_JSON_INDEX):
-                for bunch_code in key_data[AppService.BUNCHES_JSON_INDEX].keys():
-                    relation_cache['bunch'][index].append(bunch_indexes[bunch_code])
-
-        dict['js_vars'] = {'relation_cache': relation_cache, 'bunch_cache':bunch_cache, 'appCode': self.app_code}
-        self.render('admin/editTags.jinja2', dict)
+        self.render('admin/appConfig/editReferences.jinja2', {
+            'appConfig': appConfig
+        })

@@ -1,39 +1,35 @@
 {#
  index
  tag_name
- values
+ tag.values
 #}
 <div id="tag_{{ index }}">
-    <h3 class="tag_{{ index }}_h">Тег: {{ tag_name }}</h3>
+    <h3 class="tag_{{ index }}_h">Тег: {{ tag.code }}</h3>
 <div class="grid_6 alpha">
     <input type="hidden" name="tag_index" value="{{ index }}">
-
+    <input type="hidden" name="tag_{{ index }}_old_code" id="tag_{{ index }}_code" value="{{ tag.code }}">
     <ul>
         <li>
             <label>Код</label>
-            <input type="text" name="tag_{{ index }}_code" id="tag_{{ index }}_code" value="{{ tag_name }}">
+            <input type="text" name="tag_{{ index }}_code" id="tag_{{ index }}_code" value="{{ tag.code }}">
         </li>
         <li>
             <label for="tag_{{ index }}_name">Название:</label>
-            <input type="text" name="tag_{{ index }}_name" id="tag_{{ index }}_name" value="{{ values.name or "" }}">
+            <input type="text" name="tag_{{ index }}_name" id="tag_{{ index }}_name" value="{{ tag.name or "" }}">
         </li>
         <li>
             <label for="tag_{{ index }}_type">Тип: </label>
             <select name="tag_{{ index }}_type" id="tag_{{ index }}_type" onchange="onChangeType(this, {{ index }})">
-                <option value="string" {% if values.type == 'string' %}selected="selected"{% endif %}>Строка</option>
-                <option value="int" {% if values.type == 'int' %}selected="selected"{% endif %}>Целое (int)</option>
-                <option value="choose" {% if values.type == 'choose' %}selected="selected"{% endif %}>Выбор</option>
-                <option value="boolean" {% if values.type == 'boolean' %}selected="selected"{% endif %}>Логический (bool)</option>
+                <option value="string" {% if tag.type == 'string' %}selected="selected"{% endif %}>Строка</option>
+                <option value="int" {% if tag.type == 'int' %}selected="selected"{% endif %}>Целое (int)</option>
+                <option value="choose" {% if tag.type == 'choose' %}selected="selected"{% endif %}>Выбор</option>
+                <option value="boolean" {% if tag.type == 'boolean' %}selected="selected"{% endif %}>Логический (bool)</option>
             </select>
         </li>
     </ul>
 
-    <div class="grid_6 choose alpha omega" id="tag_choose_{{ index }}" {% if values.type != 'choose' %} style="display: none" {% endif %}>
-        {% if not values.has_key('values') %}
-            {% set tag_values = [] %}
-        {% else %}
-            {% set tag_values = values['values'] %}
-        {% endif %}
+    <div class="grid_6 choose alpha omega" id="tag_choose_{{ index }}" {% if tag.type != 'choose' %} style="display: none" {% endif %}>
+         {% set tag_values = tag.values %}
 
         <table>
             <thead>
@@ -45,7 +41,7 @@
 
             <tbody>
             {% set new_index = 0 %}
-            {% if values.type == 'choose' %}
+            {% if tag.type == 'choose' %}
                 {% set isDict = False %}
                 {% if tag_values.items %}
                     {% set isDict = True %}
@@ -53,7 +49,7 @@
                 {% set new_index = tag_values|length %}
                 {% for key in tag_values %}
                     <tr>
-                        <td><input type="text" name="tag_{{ index }}_values_key_{{ loop.index0 }}" value="{{ key }}" class="tag_{{ index }}_values_key"> :</td>
+                        <td><input type="text" name="tag_{{ index }}_values_key_{{ loop.index0 }}" value="{{ key }}" class="tag_{{ index }}_values_key"></td>
                         <td><input type="text" name="tag_{{ index }}_values_value_{{ loop.index0 }}" value="{% if isDict %}{{ tag_values[key] or ''}} {% endif %}"></td>
                     </tr>
 

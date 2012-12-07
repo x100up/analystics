@@ -6,9 +6,8 @@ class AppTag():
     def __init__(self, data = None):
         self.groups = []
         self.type = "string"
-        self.code = \
-        self.name = \
-        None
+        self.code = ''
+        self.name = ''
         self.values = []
 
         if data:

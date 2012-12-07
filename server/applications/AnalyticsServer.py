@@ -186,7 +186,9 @@ class AnalyticsServer(tornado.web.Application):
             (r'/admin/settings/?', AdminSettingsController.IndexAction),
 
             (r'/admin/app/([^/]+)/editEvent/?', AdminAppConfigController.EventEditAction),
-            (r'/admin/app/([^/]+)/editTags/?', AdminAppConfigController.TagEditAction),
+            (r'/admin/app/([^/]+)/editTags/?', AdminAppConfigController.EditTagAction),
+            (r'/admin/app/([^/]+)/editBunches/?', AdminAppConfigController.EditBunchAction),
+            (r'/admin/app/([^/]+)/editReferences/?', AdminAppConfigController.EditReferencesAction),
             (r'/admin/app/([^/]+)/spell/?', AdminAppSpellController.IndexAction),
             (r'/admin/app/([^/]+)/groups/?', AdminAppGroupsController.IndexAction),
             # --------- CLUSTER -----------
@@ -202,6 +204,7 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/add_new_key?", AjaxController.AddNewKey),
             (r"/ajax/add_new_tag?", AjaxController.AddNewTag),
             (r"/ajax/add_new_bunch?", AjaxController.AddNewBunch),
+
             (r"/ajax/getTemplateModal?", AjaxController.getTemplateModal),
             (r"/ajax/getTemplateListModal/([^/]+)/?", AjaxController.getTemplateListModal),
             (r"/ajax/getTagUniqueValues/?", HiveAJAXController.getTagUniqueValues),

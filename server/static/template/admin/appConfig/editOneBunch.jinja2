@@ -1,0 +1,32 @@
+<div id="bunch_{{ index }}" class="grid_12">
+    <h3 id="bunch_{{ index }}_h">{{ bunch.code or '&nbsp' }}</h3>
+
+    <input name="bunch_index" value="{{ index }}" type="hidden">
+    <input id="bunch_old_code_{{ index }}" type="hidden" name="bunch_old_code_{{ index }}" value="{{ bunch.code }}">
+
+    <ul>
+        <li>
+            <label for="bunch_code_{{ index }}">Код:</label>
+            <input id="bunch_code_{{ index }}" name="bunch_code_{{ index }}" value="{{ bunch.code }}">
+        </li>
+        <li>
+            <label for="bunch_name_{{ index }}">Имя:</label>
+            <input id="bunch_name_{{ index }}" name="bunch_name_{{ index }}" value="{{ bunch.name }}">
+        </li>
+        <li>
+            <ul>
+                {% for tag in tags %}
+                    <li>
+                        <input type="checkbox" name="bunch_tag_{{ index }}" value="{{ tag.code }}"
+                                {% if tag.code in bunch.tags %}
+                               checked="checked"
+                                {% endif %}
+                                > {{ tag.getName() }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </li>
+    </ul>
+
+
+</div>

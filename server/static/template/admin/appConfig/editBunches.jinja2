@@ -1,0 +1,30 @@
+{% extends 'admin/adminLayout.jinja2' %}
+
+
+{% block content %}
+    <h2>Редактирование групп тегов</h2>
+
+    {% include 'blocks/error.jinja2' %}
+
+    <form action="" method="post" id="tag_form">
+
+        <div class="container_12" id="tab_key">
+
+            {% for bunch in bunches %}
+                {% set index = loop.index0 %}
+                {% include 'admin/appConfig/editOneBunch.jinja2' %}
+            {% endfor %}
+
+            <span class="awesome orange" onclick="addBunch(this)">Добавить группу</span>
+        </div>
+
+        <input type="submit" onclick="saveForm()" value="Сохранить" class="awesome green" style="margin-top: 20px">
+
+    </form>
+
+    <div class="clearfix"></div>
+
+{% endblock %}
+
+
+

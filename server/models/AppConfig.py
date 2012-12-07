@@ -58,14 +58,38 @@ class AppConfig():
         if self.isEventExist(eventCode):
             del self.events[eventCode]
 
+    def deleteTag(self, tagCode):
+        if self.isTagExist(tagCode):
+            del self.tags[tagCode]
+
     def getTags(self):
         return self.tags.values()
 
     def getTag(self, tagCode):
         return self.tags[tagCode]
 
+    def addTag(self, appTag):
+        self.tags[appTag.code] = appTag
+
     def getEventGroups(self):
         return self.eventGroups.values()
+
+
+    def getBunches(self):
+        return self.bunches.values()
+
+    def getBunch(self, bunchCode):
+        return self.bunches[bunchCode]
+
+    def addBunch(self, bunch):
+        self.bunches[bunch.code] = bunch
+
+    def deleteBunch(self, bunchCode):
+        if self.isBunchExist(bunchCode):
+            del self.bunches[bunchCode]
+
+    def isBunchExist(self, bunchCode):
+        return self.bunches.has_key(bunchCode)
 
     def getTagGroups(self):
         return self.tagGroups.values()
@@ -113,7 +137,7 @@ class AppConfig():
         else:
             raise Exception('No event with code {}'.format(eventCode))
 
-    def getEventTags(self, eventCode):
+    def getEventTags(self, eventCode, skipBunches = False):
         appEvent = self.events[eventCode]
         tags = []
 
@@ -121,12 +145,39 @@ class AppConfig():
             for tagCode in appEvent.tags:
                 tags.append(self.tags[tagCode])
 
-        if appEvent.bunches:
-            for bunchCode in appEvent.bunches:
-                for tagCode in self.bunches[bunchCode].tags:
+        if not skipBunches:
+            for bunch in self.getEventBunches(eventCode):
+                for tagCode in bunch.tags:
                     tags.append(self.tags[tagCode])
 
         return tags
+
+    def getEventTagsCodes(self, eventCode, skipBunches = False):
+        tags = self.getEventTags(eventCode, skipBunches = skipBunches)
+        return [appTag.code for appTag in tags]
+
+    def getEventBunches(self, eventCode):
+        appEvent = self.events[eventCode]
+        bunches = []
+        if appEvent.bunches:
+            for bunchCode in appEvent.bunches:
+                bunches.append(self.bunches[bunchCode])
+
+        return bunches
+
+    def getEventBunchCodes(self, eventCode):
+        bunches = self.getEventBunches(eventCode)
+        return [bunch.code for bunch in bunches]
+
+    def getEventBunchTagsCodes(self, eventCode):
+        # возвращает коды тегов которые в банчах события
+        tagCodes = []
+        bunches = self.getEventBunches(eventCode)
+        for bunch in bunches:
+            for tagCode in bunch.tags:
+                tagCodes.append(tagCode)
+
+        return tagCodes
 
 
     def setTagGroup(self, groupId, tagCode):
@@ -154,6 +205,9 @@ class AppConfig():
     def isEventExist(self, eventCode):
         return self.events.has_key(eventCode)
 
+    def isTagExist(self, tagCode):
+        return self.tags.has_key(tagCode)
+
     def dumpToJSON(self):
         return {
             'appname': self.data['appname'],
@@ -168,13 +222,14 @@ class AppConfig():
     def mergeAppEvent(self, newEvent, oldEventCode):
         if oldEventCode in self.events.keys():
             # обновили старый
-            appEventDict = self.events[oldEventCode].toObject()
-            appEventDict.update(newEvent.toObject())
-            appEvent = AppEvent(appEventDict)
+            oldEvent = self.events[oldEventCode]
+            oldEvent.code = newEvent.code
+            oldEvent.name = newEvent.name
             del self.events[oldEventCode]
-            self.events[appEvent.code] = appEvent
+            self.events[oldEvent.code] = oldEvent
         else:
             # добавили новый
             self.events[newEvent.code] = newEvent
+
 
 

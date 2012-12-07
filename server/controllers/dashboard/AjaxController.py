@@ -7,6 +7,8 @@ from services import ThredService
 from components.TaskFactory import createTaskFromRequestArguments
 from models.TaskTemplate import TaskTemplate
 from models.appConf.AppEvent import AppEvent
+from models.appConf.AppTag import AppTag
+from models.appConf.AppTagBunch import AppTagBunch
 import random
 from components.NameConstructor import NameConstructor
 
@@ -62,19 +64,21 @@ class AddNewTag(AjaxController):
     def post(self):
         data = {
             'index': self.get_argument('index'),
-            'tag_name':'',
-            'values':{}
+            'tag': AppTag(),
         }
-        self.render('blocks/edit_tag.jinja2', data)
+        self.render('admin/appConfig/editOneTag.jinja2', data)
 
 class AddNewBunch(AjaxController):
-    def post(self):
+    def post(self, *args, **kwargs):
+        appCode = self.get_argument('appCode')
+        appService = AppService(self.application.getAppConfigPath())
+        appConfig = appService.getNewAppConfig(appCode)
         data = {
             'index': self.get_argument('index'),
-            'bunch_name':'',
-            'tags':{}
+            'bunch': AppTagBunch(),
+            'tags': appConfig.getTags()
         }
-        self.render('blocks/edit_bunch.jinja2', data)
+        self.render('admin/appConfig/editOneBunch.jinja2', data)
 
 class GatTasksProgress(AjaxController):
     def post(self, *args, **kwargs):
