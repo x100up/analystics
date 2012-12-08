@@ -17,7 +17,7 @@
 
 
                     <input type="hidden" name="key_{{ taskItem.index }}" id="key_{{ taskItem.index }}"
-                       data-index="{{ taskItem.index }}" class="key_autocomplete key" value="{{ taskItem.key }}">
+                       data-index="{{ taskItem.index }}" class="key" value="{{ taskItem.key }}">
 
                     <input type="button" class="button find findkey" onclick="findKey({{ taskItem.index }})">
                 </li>
@@ -59,7 +59,7 @@
                     {% set value = None %}
                 {% endif %}
                 <div class="grid_2 {% if loop.first or loop.index % 6 == 1 %}alpha{% endif %} {% if loop.last or loop.index % 6 == 0 %}omega{% endif %} tag_container" >
-                    {% include 'blocks/tag_form_item.jinja2' %}
+                    {% include 'dashboard/taskForm/tagFormItem.jinja2' %}
                 </div>
 
                 {% if loop.index % 6 == 0 %}

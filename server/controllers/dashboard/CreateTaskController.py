@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __builtin__ import len
 from components import HiveWorker
 from components.HiveQueryConstructor import  HiveQueryConstructor
 from controllers.BaseController import BaseController, AjaxController
@@ -37,14 +38,23 @@ class CreateAction(CreateTaskController, AjaxController):
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         app = self.checkAppAccess(args)
+        appService = AppService(self.application.getAppConfigPath())
+        appConfig = appService.getNewAppConfig(app.code)
         dbSession = self.getDBSession()
         baseTask = self.get_argument('baseOn', False)
         template = self.get_argument('template', False)
+        nameConstructor = NameConstructor(appConfig)
         if baseTask:
             # задача основана на другой задаче
             worker = dbSession.query(Worker).filter_by(workerId = baseTask).first()
             workerService = WorkerService(self.application.getResultPath(), worker)
             task = workerService.getTask()
+            for taskItem in task.getTaskItems():
+                print dir(taskItem)
+                if not taskItem.name:
+
+                    taskItem.name = nameConstructor.getTaskItemName(taskItem)
+
         elif template:
             templateId = int(template)
             userId = self.get_current_user().userId
@@ -64,21 +74,13 @@ class CreateAction(CreateTaskController, AjaxController):
         else:
             task = Task(appname = app.code)
 
-        keys_loaded = len(task.items)
+        eventsLoaded = len(task.items)
 
-        keys = set()
-        for index, taskItem in task.items.items():
-            if taskItem.key:
-                keys.add(taskItem.key)
 
-        appService = AppService(self.application.getAppConfigPath())
-
-        # получаем конфигурацию приложения
-        appConfig = appService.getNewAppConfig(app.code)
 
         html = self.render('dashboard/new.jinja2', {'task':task, 'app':app,  'appConfig':appConfig}, _return = True)
 
-        self.renderJSON({'html': html, 'vars':{'eventLoaded': keys_loaded}})
+        self.renderJSON({'html': html, 'vars':{'eventLoaded': eventsLoaded}})
 
     def post(self, *args, **kwargs):
         app = self.checkAppAccess(args)

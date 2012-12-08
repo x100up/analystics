@@ -38,6 +38,10 @@ class Task(object):
             return self.items[index]
 
 
+    def getTaskItems(self):
+        return self.items.values()
+
+
     def getFields(self, index):
         if self.items.has_key(index):
             return self.items[index].getFields()
@@ -62,7 +66,7 @@ class Task(object):
 
 
 
-class TaskItem():
+class TaskItem(object):
 
     def __init__(self, *args, **kwargs):
         self.index = 0

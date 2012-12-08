@@ -52,6 +52,8 @@ class ChartConstructor():
 
                 # выставляем ID-шники
                 seriesData['id'] = series.id = i
+                series.seriesIndex = seriesIndex
+                series.taskItemIndex = taskItemIndex
                 i = i + 1
 
         # группируем

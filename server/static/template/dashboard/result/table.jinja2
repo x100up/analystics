@@ -6,10 +6,10 @@
         <thead>
             <tr>
                 <th id="emptyData">_</th>
-                <th class="r"><span>Сумма <span class="button sort down" onclick="sortResultTable(this, 'sum')"></span></span></th>
-                <th class="r"><span>Среднее <span class="button sort down"  onclick="sortResultTable(this, 'avg')"></span></span></th>
+                <th class="r m" onclick="selectColumn(this, 'sum')"><span>Сумма <span class="button sort down" onclick="sortResultTable(event, this, 'sum')"></span></span></th>
+                <th class="r m" onclick="selectColumn(this, 'avg')"><span>Среднее <span class="button sort down"  onclick="sortResultTable(event, this, 'avg')"></span></span></th>
                 {% for ts in tabledata['columnHeaders'] %}
-                <th onclick="selectColumn(this, {{ loop.index0 }})">
+                <th onclick="selectColumn(this, {{ loop.index0 }})" data-timestamp="{{ ts }}" class="date m">
                     <span>{{ ts|excelDate(data['interval']) }}</span>
                    {#  <br /> {{ ts|excelTime(data['interval']) }} #}
                 </th>
@@ -20,14 +20,14 @@
         <tbody>
             {% for rowData in tabledata['rowsData'] %}
                 <tr class="datarow" data-sum="{{ rowData.sum }}" data-avg="{{ rowData.avg }}" data-index="{{ loop.index }}">
-                    <th onclick="selectRow(this)">
+                    <th onclick="selectRow(this)" data-seriesindex="{{ rowData.seriesIndex }}" data-chartindex="{{ rowData.chartIndex }}">
                         <span>{{ rowData.header }}</span>
                         <em>
                         {{ rowData.tagHeader }}
                         </em>
                     </th>
-                    <td class="value r">{{ rowData.sum }}</td>
-                    <td class="value r">{{ rowData.avg }}</td>
+                    <td class="value r col_sum">{{ rowData.sum }}</td>
+                    <td class="value r col_avg">{{ rowData.avg }}</td>
                     {% for value in rowData['values'] %}
                         <td class="value col_{{ loop.index0 }}">{{ value }}</td>
                     {% endfor %}
@@ -43,5 +43,5 @@
 <div id="tableMenu">
     <button onclick="copyToBuffer()">выделить выбранное</button>
     <button onclick="exportToExcel()">экспортировать в эксель</button>
-    <button>построить график</button>
+    <button onclick="createChartWithSelectedData()">построить график</button>
 </div>

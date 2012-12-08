@@ -22,17 +22,17 @@ class TableConstructor():
             columnHeadersSet = False
 
             data = {}
-            for series in self.data[key]:
+            for seriesIndex in self.data[key]:
                 rowHeader = self.nameConstructor.getKeyNameByIndex(key)
                 tagHeader = []
-                if self.data[key][series]['params'].has_key('conditions'):
-                    for tagCode, tagValue in self.data[key][series]['params']['conditions']:
+                if self.data[key][seriesIndex]['params'].has_key('conditions'):
+                    for tagCode, tagValue in self.data[key][seriesIndex]['params']['conditions']:
                         tagHeader.append(self.nameConstructor.getTagValueName(tagCode, tagValue))
 
                 # пакуем данные
                 rowValues = []
                 rowSum = 0
-                for ts, value in self.data[key][series]['data']:
+                for ts, value in self.data[key][seriesIndex]['data']:
                     rowSum += value
 
                     if not columnHeadersSet:
@@ -49,7 +49,9 @@ class TableConstructor():
                         'sum': rowSum,
                         'avg': self._format(rowSum/len(rowValues)),
                         'values': rowValues,
-                        'tagHeader': ', '.join(tagHeader)
+                        'tagHeader': ', '.join(tagHeader),
+                        'seriesIndex': key,
+                        'chartIndex': seriesIndex,
                         }
                 )
 

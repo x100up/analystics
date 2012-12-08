@@ -14,6 +14,8 @@ class ChartSeries:
         self.taskItemIndex = taskItemIndex
         self.color = '#666666'
         self.visible = False
+        self.seriesIndex = None
+        self.taskItemIndex = None
 
         values = []
         for date, value in self.data:
@@ -48,5 +50,7 @@ class ChartSeries:
                 'visible': self.visible
             },
             'data': self.data,
-            'id': self.id
+            'id': self.id,
+            'seriesIndex': self.seriesIndex,
+            'taskItemIndex': self.taskItemIndex
         }

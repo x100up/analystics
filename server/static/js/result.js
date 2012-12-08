@@ -13,16 +13,12 @@ Highcharts.setOptions({
     }
 });
 
-var dateWidths = {
-    'month': 50
-};
 
 var chart = null;
 var isComapare = false;
 var chartconf, chartdata, interval;
-
-
 var minStartDate, maxEndDate, dateMode;
+var currentChartData;
 
 
 var intervalsSeconds = {
@@ -32,7 +28,9 @@ var intervalsSeconds = {
     'day': 60 * 60000 * 24,
     'week': 60 * 60000 * 24 * 7
 };
-
+/**
+ * Запускается при загрузке новых результатов
+ */
 function onChartResultLoad() {
     chartconf = globalData.chartdata.chartconf;
     chartdata = globalData.chartdata;
@@ -65,8 +63,12 @@ function onChartResultLoad() {
         type: 'spline'
     };
 
+    // по умолчанию рисуем данные пришедшие с сервера
+    currentChartData = chartdata['data'];
+
     switchToSpline();
     ChartManager.constructor(chart);
+
     for (i in globalData.tagCloudData){
         globalData.tagCloudData[i]['handlers'] = {
             click: ChartManager.onTagClick.bind(ChartManager)
@@ -74,13 +76,16 @@ function onChartResultLoad() {
     }
 }
 
-
+/**
+ * Показывает серии данных
+ * @return {Array}
+ */
 function prepareDataSeries() {
     var series = [];
-    console.log(chartdata);
-    for (var index in chartdata['data'])
+    var chartData = getChartData();
+    for (var index in chartData)
     {
-        var seriesGroupData = chartdata['data'][index];
+        var seriesGroupData = chartData[index];
         for (var seriesIndex  in seriesGroupData)
         {
             var xdata = [];
@@ -103,9 +108,6 @@ function prepareDataSeries() {
                         })
         }
     }
-
-
-
     return series;
 }
 
@@ -154,6 +156,99 @@ function prepareCompareSeries() {
     return series;
 }
 
+function getChartData() {
+    return currentChartData;
+}
+
+/**
+ * Сбрасывает данные на данные сервера
+ */
+function resetChartToDefault(){
+    currentChartData = chartdata['data'];
+    switchToSpline();
+}
+
+/**
+ * Рисуем данные, которые выбрали в таблице
+ */
+function createChartWithSelectedData(){
+    var selectionMatrix = getSectionInTabel();
+    var timestamps = [];
+    var chartSeries = [];
+    var item;
+    for (var rowIndex in selectionMatrix) {
+        var row = selectionMatrix[rowIndex];
+        if (rowIndex == 0) {
+            // заголовки таблица - узнаем, по каким датам будем строить
+            for (var columnIndex in row){
+                item = $(row[columnIndex]);
+                if (item.hasClass('date')) {
+                    timestamps.push(parseInt(item.data('timestamp')));
+                }
+            }
+        } else {
+            item = $(row[0]);
+            // если нет - пошли данные
+            chartSeries.push(item.data('chartindex') + '::' +  item.data('seriesindex'));
+        }
+    }
+
+    // фильтруем данные
+    var newData = clone(chartdata['data']);
+    for (var index in newData){
+        for (var chartIndex in newData[index]){
+            var d = newData[index][chartIndex];
+            var key = d['seriesIndex'] + '::' + d['taskItemIndex'];
+            if ($.inArray(key, chartSeries) == -1){
+                delete newData[index][chartIndex];
+            } else {
+                // фильтруем по дате
+                if (timestamps.length){
+                    for (var dataIndex in d['data']) {
+                        if ($.inArray(d['data'][dataIndex][0], timestamps) == -1) {
+                            delete newData[index][chartIndex]['data'][dataIndex];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    currentChartData = newData;
+    switchToSpline();
+}
+
+function clone(obj) {
+    // Handle the 3 simple types, and null or undefined
+    if (null == obj || "object" != typeof obj) return obj;
+
+    // Handle Date
+    if (obj instanceof Date) {
+        var copy = new Date();
+        copy.setTime(obj.getTime());
+        return copy;
+    }
+
+    // Handle Array
+    if (obj instanceof Array) {
+        var copy = [];
+        for (var i = 0, len = obj.length; i < len; i++) {
+            copy[i] = clone(obj[i]);
+        }
+        return copy;
+    }
+
+    // Handle Object
+    if (obj instanceof Object) {
+        var copy = {};
+        for (var attr in obj) {
+            if (obj.hasOwnProperty(attr)) copy[attr] = clone(obj[attr]);
+        }
+        return copy;
+    }
+
+    throw new Error("Unable to copy obj! Its type isn't supported.");
+}
 
 
 
@@ -183,7 +278,9 @@ function renderChart(chartconf) {
             }
         };
     }
-
+    if (chart) {
+        chart.destroy();
+    }
     chart = new Highcharts.Chart(chartconf);
 }
 
@@ -496,9 +593,6 @@ var ChartManager = {
 };
 
 
-function checkboxIsChecked(checkbox){
-    return $(checkbox).attr('checked') != undefined
-}
 
 
 /*---------------------------------------------------
@@ -533,7 +627,8 @@ function selectColumn(th ,columnIndex) {
  *
  * @param field
  */
-function sortResultTable(button, field) {
+function sortResultTable(event, button, field) {
+    event.stopPropagation();
     button = $(button);
     var turn = button.data('sorted');
     if (turn == 'ask') {
@@ -571,6 +666,10 @@ function sortResultTable(button, field) {
     }
 }
 
+/**
+ * Возвращает сатрицу выделенных элементов
+ * @return {Array}
+ */
 function getSectionInTabel() {
     var columns = $('table.data_table > thead th.selected');
     var rows = $('table.data_table > tbody tr.selected');
@@ -580,6 +679,7 @@ function getSectionInTabel() {
 
     // выделены только строки
     if (columns.length == 0) {
+        data.push($('table.data_table > thead > tr > th.m').toArray());
         rows.each(function(index, row){
             var rowData = [];
             $(row).children().each(function(i, child){
@@ -588,7 +688,7 @@ function getSectionInTabel() {
             data.push(rowData)
         });
     }
-
+    // выделены только столбцы
     else if (rows.length == 0) {
         rowData = [$('#emptyData')[0]];
         columns.each(function(i, th){
@@ -597,7 +697,8 @@ function getSectionInTabel() {
         data.push(rowData);
 
         $('table.data_table > tbody tr').each(function(index, row){
-            var rowData = [];
+            row = $(row);
+            var rowData = [$(row).children()[0]];
             $(row).children('.cSelected').each(function(i, child){
                 rowData.push(child);
             });
@@ -625,6 +726,9 @@ function getSectionInTabel() {
     return data;
 }
 
+/**
+ * по факту выделяет выбранные столбцы и строки
+ */
 function copyToBuffer() {
     var data = getSectionInTabel();
 

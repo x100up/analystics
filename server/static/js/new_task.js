@@ -7,10 +7,6 @@ var synchronizedTags = [];
 var maxIndex = 0;
 
 function initNewTask() {
-    $('input.key_autocomplete').each(function(x, item){
-        $(item).autocomplete({ serviceUrl:'/ajax/key_autocomplete?app=' + app , onSelect: onSelectKey.bind(item)});
-    });
-
     $.datepicker.setDefaults( {'monthNames':months, 'dayNamesMin':dayNamesMin, 'firstDay':1, 'maxDate': Date.now(),
                                   dateFormat:'dd M yy', monthNamesShort:monthNamesShort} );
 

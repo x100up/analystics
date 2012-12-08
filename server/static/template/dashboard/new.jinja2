@@ -1,4 +1,5 @@
     <div class="container_12">
+    {{ task }}
         <form action="/dashboard/app/{{ app.code }}/new" method="post" id="new_task_form">
         <div class="grid_4">
             <h1><span id="taskNameLabel">Новая задача</span> <span class="button editTaskName" onclick="editName(this)"> </span></h1>
@@ -24,15 +25,9 @@
 
 
             <div id="formContainer">
-
-                {#
-                <div class="grid_12 alpha omega">
-                    {% for index, taskItem in task.items.items() %}
-                        {% include 'dashboard/taskForm/eventFormItem.jinja2' %}
-                    {% endfor %}
-                </div>
-                #}
-
+               {% for index, taskItem in task.items.items() %}
+                   {% include 'dashboard/taskForm/eventFormItem.jinja2' %}
+               {% endfor %}
             </div>
 
             <div class="clearfix"></div>
