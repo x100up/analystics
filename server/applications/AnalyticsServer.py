@@ -165,6 +165,7 @@ class AnalyticsServer(tornado.web.Application):
             (r"/dashboard/selectapp/?", DashboardController.SelectAppAction),
             (r"/dashboard/app/([^/]+)/new_task/([^/]+)/?", CreateTaskController.ShowNewTaskAction),
             (r"/dashboard/app/([^/]+)/status/([^/]+)/?", ResultController.ShowTaskStatus),
+            (r"/ajax/dashboard/app/([^/]+)/workers/([^/]+)/??", DashboardController.GetWorkers),
 
             # --------- LOGIN & LOGOUT ---------
 

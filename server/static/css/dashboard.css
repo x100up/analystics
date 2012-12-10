@@ -177,7 +177,18 @@ ul.paging li {
     padding-right: 4px;
 }
 
+ul.paging li span{
+    cursor: pointer;
+    color: #0ebff5;
+}
+ul.paging li.current span{
+    cursor: pointer;
+    color: #FFF;
+    font-weight: bold;
+}
 
+
+/*
 Set the container for the bar
 */
 .bar {

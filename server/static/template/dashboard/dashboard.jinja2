@@ -25,21 +25,7 @@
 {% block sidebar %}
 <form action="" method="post">
 <div id="workers">
-    {% for worker in lastWorkers %}
-        <div class="job job_{{worker.status}}" id="worker_row_{{worker.workerId}}" data-workerid="{{worker.workerId}}">
-
-            <div class="q {{ worker.status }}">
-                <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
-            </div>
-            <div class="main" title="{{worker.startDate|smartDateInterval(worker.endDate)}}" onclick="loadResult({{worker.workerId}})">
-                <span class="a" id="link_{{worker.workerId}}">{{worker.name}}</span>
-            </div>
-            <div class="plus">
-                <span onclick="startNewTask({{worker.workerId}})" class="plus" title="create on base"></span>
-                <span class="status"></span>
-            </div>
-        </div>
-    {% endfor %}
+   {% include 'dashboard/workerList.jinja2' %}
 </div>
 
 <div id="workerFooter">
@@ -53,12 +39,7 @@
                     <li>...</li>
                     {% endif %}
                 {% else %}
-
-                    {% if currentPage == p %}
-                        <li>{{ p }}</li>
-                    {% else %}
-                        <li><a href="?page={{ p }}">{{ p }}</a></li>
-                    {% endif %}
+                        <li{% if currentPage == p %} class="current"{% endif %} id="workerPager{{ p }}"><span onclick="loadPage({{ p }})">{{ p }}</span></li>
                 {% endif %}
             {% endfor %}
         </ul>

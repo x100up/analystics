@@ -1,15 +1,6 @@
 var globalData = {};
 var contentContainer ;
 
-
-
-function switchAll(cb){
-    if (cb.checked)
-        $('input.jobcb').attr('checked', 'checked')
-    else
-        $('input.jobcb').removeAttr('checked')
-}
-
 var aliveWorkerIds = {};
 
 
@@ -153,8 +144,18 @@ $(function(){
 
     contentContainer = $('#dashboard_container');
     loadDashboardContent(location.hash.substr(1));
-
 });
+
+
+/**
+ * Загружает список задачь в левую колонку
+ * @param page
+ */
+function loadPage(page){
+    $('.paging > li.current').removeClass('current');
+    $('#workerPager' + page).addClass('current');
+    $('#workers').load('/ajax/dashboard/app/' + app + '/workers/' + page);
+}
 
 
 
