@@ -24,14 +24,20 @@ div#wrapper {
 aside#sideLeft {
     color: #FFF;
 }
+aside#sideLeft > div
+{
+    margin-left: 10px;
+    -webkit-border-radius: 0 0 8px 8px;
+    border-radius: 0 0 8px 8px;
+    border: 1px solid #DADADA;
+    background: url('/static/img/item_bg.jpg');
+}
 
 aside#sideLeft a {
     color: #00ddff;
 }
 
-aside#sideLeft h2{
-    margin-left: 15px;
-}
+
 
 a#logo {
     left: 20px;
@@ -194,8 +200,6 @@ header > div#user_block {
 
 div#content {
     padding-top: 15px;
-    -webkit-box-shadow: -1px 0px 4px 4px rgba(00, 00, 00, 0.4);
-    box-shadow: -1px 0px 4px 4px rgba(00, 00, 00, 0.4);
     padding-bottom: 15px;
     min-height: 700px;
 }
@@ -376,31 +380,26 @@ div#topPanel .selectedApp {
     text-align: center
 }
 
-button#addTaskButton {
-    background: url('/static/img/sprite.png') no-repeat -493px 10px;
-    width: 100px;
-    height: 75px;
+#addTaskButton, #fromTemplateButton {
+    width: 125px;
+    height: 100px;
     display: inline-block;
     border: none;
     cursor: pointer;
-    margin-top: 5px;
+    background: url('/static/img/sprite.png') no-repeat;
 }
 
-button#addTaskButton:hover{
-    border: 1px inset #CECECE
+#addTaskButton {
+    background-position:  -493px 10px;
+    margin-left: 30px;
 }
 
-button#fromTemplateButton {
-    background: url('/static/img/sprite.png') no-repeat -587px 10px;
-    width: 100px;
-    height: 75px;
-    display: inline-block;
-    border: none;
-    cursor: pointer;
-    margin-top: 5px;
+#fromTemplateButton {
+    background-position:  -500px -93px;
+    margin-left: 90px;
 }
 
-button#fromTemplateButton:hover{
+#fromTemplateButton:hover, #addTaskButton:hover{
     border: 1px inset #CECECE
 }
 

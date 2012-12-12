@@ -1,14 +1,14 @@
-<table class="seriaGroup">
-    <caption>{{ seriesGroup.name }}</caption>
-    <tr class="groupName">
-        <th>
+<div>
+    <span class="legend-group-head">{{ seriesGroup.name }}</span>
+    <button class="show-charts-group{% if not seriesGroup.visible %} hidden{% endif %}"
+                                             onclick="ChartManager.switchVisibleChartGroup(this, {{ groupIndex }}, true)">
+    </button>
+    <button class="plus-charts-group" onclick="ChartManager.switchVisibleChartGroup(this, {{ groupIndex }})"></button>
+</div>
 
-        <button {% if not seriesGroup.visible %} class="hidden" {% endif %}
-                                                 onclick="ChartManager.switchVisibleChartGroup(this, {{ groupIndex }}, true)">
-            show/hide
-        </button>
-        <button onclick="ChartManager.switchVisibleChartGroup(this, {{ groupIndex }})">+ show</button>
-        </th>
+<table class="seriaGroup">
+    <tr class="groupName">
+        <th>&nbsp;</th>
     {% for tagCode in seriesGroup.containsTags %}
         <th style="width: {{ 100 / (seriesGroup.containsTags|length + 1) }}%">
             {{ seriesGroup.containsTags[tagCode] }}

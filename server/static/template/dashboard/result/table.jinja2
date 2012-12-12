@@ -1,4 +1,6 @@
-<h1>Сводная таблица</h1>
+{% set showTime = interval in ['minute', 'hour', '10minutes'] %}
+
+<h1>Сводная таблица </h1>
 <div id="tableBox">
 {% for key in tablesdata %}
     {% set tabledata = tablesdata[key] %}
@@ -11,7 +13,9 @@
                 {% for ts in tabledata['columnHeaders'] %}
                 <th onclick="selectColumn(this, {{ loop.index0 }})" data-timestamp="{{ ts }}" class="date m">
                     <span>{{ ts|excelDate(data['interval']) }}</span>
-                   {#  <br /> {{ ts|excelTime(data['interval']) }} #}
+                    {% if showTime %}
+                     <em> {{ ts|excelTime(data['interval']) }}</em>
+                    {% endif %}
                 </th>
                 {% endfor %}
             </tr>

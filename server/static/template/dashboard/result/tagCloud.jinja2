@@ -1,6 +1,10 @@
 {% for name in tagCloud %}
-    {{ name }}
+    <h2>{{ name }}</h2>
     {%  for item in tagCloud[name] %}
-    <span onclick="ChartManager.onTagClick(event)" data-tag="{{ item.tag }}" data-value="{{ item.value }}" style="font-size: {{ 10 + 8 * item.weight }}pt ">{{ item.text }}</span>
+    <span class="tag" onclick="ChartManager.onTagClick(event)" data-tag="{{ item.tag }}" data-value="{{ item.value }}" style="font-size: {{ 10 + 8 * item.weight }}pt ">{{ item.text }}</span>
     {% endfor %}
 {% endfor %}
+
+{% if tagCloud %}
+<span class="awesome orange reset-select-tag" onclick="ChartManager.resetTags()">Отменить</span>
+{% endif %}

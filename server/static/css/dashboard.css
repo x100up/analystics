@@ -26,14 +26,27 @@ table#workersTable td.action > input {
 
 
 /** -------------------------- **/
+
+#workers, #workerFooter{
+    width: 390px;
+
+}
 div#workers > div > div{
    float: left;
 }
 
-div#workers > div{
+div#workers > div {
     vertical-align: middle;
-    width: 320px;
-    border-bottom: 1px solid #686868
+    border-bottom: 1px dashed #ACACAC;
+    margin: 0 10px ;
+}
+
+#sideLeft h2 {
+    margin: 30px 10px 10px 10px;
+    padding: 0 0 30px 35px;
+    color: #140f06;
+    border-bottom: 1px dashed #ACACAC;
+    font-size: 20pt;
 }
 
 div#workers div.q {
@@ -42,20 +55,25 @@ div#workers div.q {
     height: 88px;
     line-height: 69px;
 }
-div#workers div.main {
-    width: 250px;
+div#workers .main {
+    width: 310px;
     cursor: pointer;
-    color: #DDDDDD;
+    color: #232323;
     display: inline-block;
     height: 90px;
     vertical-align: middle;
     float: left;
 }
 
-div.job {
-    background: url(/static/img/item_bg.jpg);
-    height: 90px;
+#workers em {
+    font-size: 11pt;
+    padding-top: 6px;
+    line-height: 16pt;
+    vertical-align: bottom;
+}
 
+div.job {
+    height: 110px;
 }
 div#workers div.main span {
     display: block;
@@ -91,14 +109,11 @@ div#workers div.line{
     float: left;
 }
 
-div#workers div.selected {
-    background: url(/static/img/item_bg_s.jpg);
+.job.selected {
+    -webkit-box-shadow: inset 0 0 5px 1px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 0 5px 1px rgba(0, 0, 0, 0.5);
 }
 
-div#workers div:HOVER {
-    text-shadow: 0 0 5px #0ebff5;
-    filter: dropshadow(color=#0ebff5, offx=0, offy=0);
-}
 
 
 
@@ -107,7 +122,7 @@ div.job  > div.plus > span.status {
     width: 20px;
     height: 20px !important;
     background: url(/static/img/sprite.png) no-repeat;
-    margin-top: 35px;
+    margin-top: 50px;
 }
 
 div.job_SUCCESS > div.plus > span.status {
@@ -188,131 +203,11 @@ ul.paging li.current span{
 }
 
 
-/*
-Set the container for the bar
-*/
-.bar {
-    height:20px;
-    width:200px;
-    padding:10px;
-    margin:200px auto 0;
-    background-color:rgba(0,0,0,.1);
-    -webkit-border-radius:25px;
-    -moz-border-radius:25px;
-    -ms-border-radius:25px;
-    border-radius:20px;
-    -webkit-box-shadow:0 1px 0 rgba(255,255,255,.03),inset 0 1px 0 rgba(0,0,0,.1);
-    -moz-box-shadow:0 1px 0 rgba(255,255,255,.03),inset 0 1px 0 rgba(0,0,0,.1);
-    -ms-box-shadow:0 1px 0 rgba(255,255,255,.03),inset 0 1px 0 rgba(0,0,0,.1);
-    box-shadow:0 1px 0 rgba(255,255,255,.03),inset 0 1px 0 rgba(0,0,0,.1);
-}
 
 /*
 This is the actual bar with stripes
 */
 .job_ALIVE {
-    height:100%;
-    width:100%;
-
-    -webkit-box-sizing:border-box;
-    -moz-box-sizing:border-box;
-    -ms-box-sizing:border-box;
-    box-sizing:border-box;
-    background-image:
-        -webkit-linear-gradient(
-            -45deg,
-            rgba(111, 158, 216, 1) 25%,
-            transparent 25%,
-            transparent 50%,
-            rgba(111, 158, 216, 1) 50%,
-            rgba(111, 158, 216, 1) 75%,
-            transparent 75%,
-            transparent
-        );
-    background-image:
-        -moz-linear-gradient(
-            -45deg,
-            rgba(111, 158, 216, 1) 25%,
-            transparent 25%,
-            transparent 50%,
-            rgba(111, 158, 216, 1) 50%,
-            rgba(111, 158, 216, 1) 75%,
-            transparent 75%,
-            transparent
-        );
-    background-image:
-        -ms-linear-gradient(
-            -45deg,
-            rgba(111, 158, 216, 1) 25%,
-            transparent 25%,
-            transparent 50%,
-            rgba(111, 158, 216, 1) 50%,
-            rgba(111, 158, 216, 1) 75%,
-            transparent 75%,
-            transparent
-        );
-    background-image:
-        linear-gradient(
-            -45deg,
-            rgba(111, 158, 216, 1) 25%,
-            transparent 25%,
-            transparent 50%,
-            rgba(111, 158, 216, 1) 50%,
-            rgba(111, 158, 216, 1) 75%,
-            transparent 75%,
-            transparent
-        );
-    -webkit-background-size:15px 15px;
-    -moz-background-size:15px 15px;
-    -ms-background-size:15px 15px;
-    background-size:15px 15px;
-    -webkit-animation:move 2s linear infinite;
-    -moz-animation:move 2s linear infinite;
-    -ms-animation:move 2s linear infinite;
-    animation:move 3s linear infinite;
-    -webkit-border-radius:20px;
-    -moz-border-radius:20px;
-    -ms-border-radius:20px;
-    overflow: hidden;
-    -webkit-box-shadow:inset 0 10px 0 rgba(255,255,255,.2);
-    -moz-box-shadow:inset 0 10px 0 rgba(255,255,255,.2);
-    -ms-box-shadow:inset 0 10px 0 rgba(255,255,255,.2);
-}
-
-/*
-Animate the stripes
-*/
-@-webkit-keyframes move{
-  0% {
-  	background-position: 0 0;
-  }
-  100% {
-  	background-position: 50px 50px;
-  }
-}
-@-moz-keyframes move{
-  0% {
-  	background-position: 0 0;
-  }
-  100% {
-  	background-position: 50px 50px;
-  }
-}
-@-ms-keyframes move{
-  0% {
-  	background-position: 0 0;
-  }
-  100% {
-  	background-position: 50px 50px;
-  }
-}
-@keyframes move{
-  0% {
-  	background-position: 0 0;
-  }
-  100% {
-  	background-position: 50px 50px;
-  }
 }
 
 .job_ALIVE > td.plus span {
@@ -321,12 +216,10 @@ Animate the stripes
 
 
 #workerFooter{
-    margin: 0 -20px 0 0;
-    background: url(/static/img/item_bg.jpg);
-    padding: 20px 10px;
-    -webkit-box-shadow: -2px 2px 1px 2px rgba(50, 50, 50, 0.8);
-    box-shadow: -2px 2px 1px 2px rgba(50, 50, 50, 0.8);
-    -webkit-border-radius: 0 0 8px 8px;
-    border-radius: 0 08px 8px;
-    border-bottom: 1px solid #1F1F1F;
+    margin: 0 0 0 0;
+}
+
+#workerFooter > div{
+    padding: 20px 10px 10px 10px;
+    margin-bottom: 10px;
 }

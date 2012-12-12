@@ -24,12 +24,16 @@
 
 {% block sidebar %}
 <form action="" method="post">
+<div>
+    <h2>Список отчетов</h2>
+</div>
 <div id="workers">
    {% include 'dashboard/workerList.jinja2' %}
 </div>
 
 <div id="workerFooter">
-    <input type="submit" name="action" value="Удалить" class=" awesome orange small">
+    <div>
+    <input type="submit" name="action" value="Удалить выбранные отчеты" class=" awesome orange">
 
     {% if pageCount > 1 %}
         <ul class="paging">
@@ -45,6 +49,7 @@
         </ul>
     {% endif %}
     </div>
+</div>
 </form>
 
 {% endblock %}

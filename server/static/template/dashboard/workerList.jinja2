@@ -6,6 +6,7 @@
         </div>
         <div class="main" title="{{worker.startDate|smartDateInterval(worker.endDate)}}" onclick="loadResult({{worker.workerId}})">
             <span class="a" id="link_{{worker.workerId}}">{{worker.name}}</span>
+            <em>Запущена: {{worker.startDate|datetofiled}}</em>
         </div>
         <div class="plus">
             <span onclick="startNewTask({{worker.workerId}})" class="plus" title="create on base"></span>

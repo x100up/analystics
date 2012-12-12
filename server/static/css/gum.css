@@ -7,7 +7,7 @@ header, nav, section, article, aside, footer {
 }
 body {
 	font: 12px/18px Arial, Tahoma, Verdana, sans-serif;
-    background: url('/static/img/background.jpg');
+
 }
 a {
 	color: blue;
@@ -29,7 +29,7 @@ input {
 #wrapper {
 	width: 100%;
 	min-width: 1000px;
-    margin: 0 0px;
+    margin: 0 0;
 }
 
 
@@ -62,7 +62,7 @@ input {
     z-index: 10;
 }
 #content {
-	margin: 0 0 0 320px;
+	margin: 0 0 0 410px;
     background: #FFF;
 }
 
@@ -76,7 +76,7 @@ input {
 -----------------------------------------------------------------------------*/
 #sideLeft {
 	float: left;
-	width: 300px;
+	width: 400px;
 	margin-left: -100%;
 	position: relative;
     z-index: 1;
