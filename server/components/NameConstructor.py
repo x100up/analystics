@@ -81,7 +81,7 @@ class NameConstructor(object):
                         tag_value = 'Unknow value"{}"'.format(tag_value)
 
                 elif tag.type == 'boolean':
-                    if bool(value):
+                    if int(value):
                         tag_value = u'Да'
                     else:
                         tag_value = u'Нет'
