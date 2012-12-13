@@ -186,6 +186,8 @@ class AnalyticsServer(tornado.web.Application):
 
             (r'/admin/settings/?', AdminSettingsController.IndexAction),
 
+
+            (r'/admin/app/([^/]+)/settings/?', AdminAppConfigController.IndexAction),
             (r'/admin/app/([^/]+)/editEvent/?', AdminAppConfigController.EventEditAction),
             (r'/admin/app/([^/]+)/editTags/?', AdminAppConfigController.EditTagAction),
             (r'/admin/app/([^/]+)/editBunches/?', AdminAppConfigController.EditBunchAction),

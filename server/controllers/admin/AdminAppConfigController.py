@@ -21,14 +21,25 @@ class BaseEditConfigAction(AdminAction):
         b = set(b)
         return [aa for aa in a if aa not in b]
 
+class IndexAction(BaseEditConfigAction):
+
+    def get(self, *args, **kwargs):
+        app, = args
+
+        self.render('admin/appConfig/index.jinja2', {'app': app})
+
+
+
 
 class EventEditAction(BaseEditConfigAction):
 
     def get(self, *args, **kwargs):
-        self.render('admin/appConfig/editEvents.jinja2', {'events': self.getAppConfig(args[0]).getEvents()})
+        appCode = args[0]
+        self.render('admin/appConfig/editEvents.jinja2', {'events': self.getAppConfig(args[0]).getEvents(), 'app':appCode})
 
     def post(self, *args, **kwargs):
-        appConfig = self.getAppConfig(args[0])
+        appCode = args[0]
+        appConfig = self.getAppConfig(appCode)
 
         eventIndexes = self.get_arguments('key_index')
         if eventIndexes:
@@ -51,18 +62,19 @@ class EventEditAction(BaseEditConfigAction):
 
         self.appService.saveConfig(appConfig.dumpToJSON())
 
-        self.render('admin/appConfig/editEvents.jinja2', {'events':self.appService.getNewAppConfig(args[0]).getEvents()})
+        self.render('admin/appConfig/editEvents.jinja2', {'events':self.appService.getNewAppConfig(args[0]).getEvents(), 'app':appCode})
 
 
 class EditTagAction(BaseEditConfigAction):
 
     def get(self, *args, **kwargs):
-        self.render('admin/appConfig/editTags.jinja2', {'tags':self.appService.getNewAppConfig(args[0]).getTags()})
+        appCode = args[0]
+        self.render('admin/appConfig/editTags.jinja2', {'tags':self.appService.getNewAppConfig(appCode).getTags(), 'app':appCode})
 
     def post(self, *args, **kwargs):
-        app_code, = args
-        self.app_code = app_code
-        appConfig = self.getAppConfig(app_code)
+        appCode, = args
+        self.app_code = appCode
+        appConfig = self.getAppConfig(appCode)
 
         tagIndexes = self.get_arguments('tag_index')
         for tagIndex in tagIndexes:
@@ -104,20 +116,20 @@ class EditTagAction(BaseEditConfigAction):
         if not self.errors:
             self.appService.saveConfig(appConfig.dumpToJSON())
 
-        self.render('admin/appConfig/editTags.jinja2', {'tags':appConfig.getTags()})
+        self.render('admin/appConfig/editTags.jinja2', {'tags':appConfig.getTags(), 'app':appCode})
 
 
 class EditBunchAction(BaseEditConfigAction):
     def get(self, *args, **kwargs):
-        app_code, = args
-        appConfig = self.getAppConfig(app_code)
+        appCode, = args
+        appConfig = self.getAppConfig(appCode)
         self.render('admin/appConfig/editBunches.jinja2',
-                {'tags': appConfig.getTags(), 'bunches': appConfig.getBunches(),
-                 'js_vars': {'appCode': app_code}})
+                {'tags': appConfig.getTags(), 'bunches': appConfig.getBunches(), 'app':appCode,
+                 'js_vars': {'appCode': appCode}})
 
     def post(self, *args, **kwargs):
-        app_code, = args
-        appConfig = self.getAppConfig(app_code)
+        appCode, = args
+        appConfig = self.getAppConfig(appCode)
 
         bunchIndexes = self.get_arguments('bunch_index')
         for bunchIndex in bunchIndexes:
@@ -145,22 +157,23 @@ class EditBunchAction(BaseEditConfigAction):
 
 
         self.render('admin/appConfig/editBunches.jinja2',
-                {'tags': appConfig.getTags(), 'bunches': appConfig.getBunches(),
-                 'js_vars': {'appCode': app_code}})
+                {'tags': appConfig.getTags(), 'bunches': appConfig.getBunches(), 'app':appCode,
+                 'js_vars': {'appCode': appCode}})
 
 
 class EditReferencesAction(BaseEditConfigAction):
 
     def get(self, *args, **kwargs):
-        app_code, = args
-        appConfig = self.getAppConfig(app_code)
+        appCode, = args
+        appConfig = self.getAppConfig(appCode)
         self.render('admin/appConfig/editReferences.jinja2', {
-            'appConfig': appConfig
+            'appConfig': appConfig,
+            'app':appCode,
         })
 
     def post(self, *args, **kwargs):
-        app_code, = args
-        appConfig = self.getAppConfig(app_code)
+        appCode, = args
+        appConfig = self.getAppConfig(appCode)
 
         for appEvent in appConfig.getEvents():
             # теги
@@ -180,5 +193,6 @@ class EditReferencesAction(BaseEditConfigAction):
         self.appService.saveConfig(appConfig.dumpToJSON())
 
         self.render('admin/appConfig/editReferences.jinja2', {
-            'appConfig': appConfig
+            'appConfig': appConfig,
+            'app':appCode,
         })

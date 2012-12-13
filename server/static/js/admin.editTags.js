@@ -102,6 +102,7 @@ function onBunchSwitch(checkbox, eventCode, tags) {
 
 function deleteKey(index) {
     $('#key_' + index).remove();
+    $('#key_'+index+'_h').remove();
 }
 
 /**
@@ -133,4 +134,8 @@ function addTagValue(value, tag_index, button) {
     } else {
         alert('Тип тега должен быть "Выбор"');
     }
+}
+
+function showBlock(blockId){
+    $('#' + blockId).show();
 }

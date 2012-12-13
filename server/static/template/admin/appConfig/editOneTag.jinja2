@@ -3,8 +3,10 @@
  tag_name
  tag.values
 #}
-<div id="tag_{{ index }}">
-    <h3 class="tag_{{ index }}_h">Тег: {{ tag.code }}</h3>
+<h3 class="tag_{{ index }}_h" onclick="showBlock('tag_{{ index }}')">Тег: {{ tag.code }}</h3>
+
+<div id="tag_{{ index }}" {% if tag.code %}style="display: none"  {% endif %}>
+
 <div class="grid_6 alpha">
     <input type="hidden" name="tag_index" value="{{ index }}">
     <input type="hidden" name="tag_{{ index }}_old_code" id="tag_{{ index }}_code" value="{{ tag.code }}">
@@ -66,9 +68,10 @@
         <input type="hidden" name="tag_{{ index }}_values_count" id="tag_{{ index }}_values_count" value="{{ new_index }}">
     </div>
 </div>
-    <div class="grid_6 omega" id="tag_distinct_{{ index }}">
+ {# }   <div class="grid_6 omega" id="tag_distinct_{{ index }}">
         <span class="awesome red" onclick="showTagValues({{ index }}, this)">Посмотреть варианты</span>
         <span id="tag_distinct_loading_{{ index }}" style="display:none;">.. загрузка ..</span>
     </div>
+#}
     <div class="clearfix"></div>
 </div>

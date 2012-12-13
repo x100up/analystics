@@ -1,5 +1,7 @@
-<div id="bunch_{{ index }}" class="grid_12">
-    <h3 id="bunch_{{ index }}_h">{{ bunch.code or '&nbsp' }}</h3>
+<h3 id="bunch_{{ index }}_h" onclick="showBlock('bunch_{{ index }}')">{{ bunch.code or '&nbsp' }}</h3>
+
+<div id="bunch_{{ index }}" class="grid_12" {% if bunch.code %}style="display: none"{% endif %}>
+
 
     <input name="bunch_index" value="{{ index }}" type="hidden">
     <input id="bunch_old_code_{{ index }}" type="hidden" name="bunch_old_code_{{ index }}" value="{{ bunch.code }}">
