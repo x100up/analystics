@@ -1,5 +1,5 @@
 
-<h3 style="cursor: pointer" id="key_{{ index }}_h" onclick="showBlock('key_{{ index }}')">{{ event.getName() }}</h3>
+<h3 style="cursor: pointer" id="key_{{ index }}_h" onclick="showBlock('key_{{ index }}')">{{ event.getName() }}<sup>{{ event.code }}</sup></h3>
 
 <div id="key_{{ index }}" {% if event.code %} style="display: none" {% endif  %}>
     <div class="grid_10 alpha">
