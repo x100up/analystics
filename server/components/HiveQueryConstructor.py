@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 from models.Task import Task
+from datetime import datetime
+from components.dateutil import repMonth
+import time, re, calendar
 
 class HiveQueryConstructor():
 
@@ -113,9 +116,28 @@ class HiveQueryConstructor():
                 tagType = self.appConfig.getTag(tagName).type
 
                 if tagValue:
-                    # TODO by settings int
                     if tagType == 'int':
                         where.append(self.parseIntValue(tagName, tagValue[0]))
+                    elif tagType == 'timestamp':
+                        start, end = self.getTSValues(tagValue[0])
+                        print start, end
+
+                        start2, end2 = (False, False)
+                        if len(tagValue) > 1:
+                            start2, end2 = self.getTSValues(tagValue[1])
+                            if start2:
+                                if end2:
+                                    end = end2
+                                else:
+                                    end = start2
+
+                        if end:
+                            startTs = int(time.mktime(start.timetuple()))
+                            endTs = int(time.mktime(end.timetuple()))
+                            where.append("(params['%(tagName)s'] >= %(tagValue1)s AND params['%(tagName)s'] <= %(tagValue2)s)"%{'tagName':tagName, 'tagValue1':startTs, 'tagValue2':endTs})
+                        else:
+                            ts = int(time.mktime(start.timetuple()))
+                            where.append("params['%(tagName)s'] = %(tagValue)s"%{'tagName':tagName, 'tagValue':ts})
                     else:
                         if len(tagValue) == 1:
                             where.append("params['%(tagName)s'] = '%(tagValue)s'"%{'tagName':tagName, 'tagValue':tagValue[0]})
@@ -129,6 +151,43 @@ class HiveQueryConstructor():
                 return ' AND ' + ' AND '.join(where)
 
         return ''
+
+    def getTSValues(self, val):
+        start = False
+        end = False
+        dt1 = repMonth(val, decode = False)
+        components1 = dt1.split(' ')
+
+        if len(components1) == 2:
+            year = int(components1[1])
+            month = int(components1[0])
+        else:
+            year = int(components1[2])
+            month = int(components1[1])
+
+        if len(components1) >= 3:
+            startDay = endDay = int(components1[0])
+        else:
+            startDay = 1
+            endDay = calendar.monthrange(year, month)[1]
+
+        if len(components1) < 4:
+            start = datetime(year, month, startDay, 0, 0, 0)
+            end = datetime(year, month, endDay, 23, 59, 59)
+        elif len(components1) == 4:
+            _time = components1[3]
+            _time = _time.split(':')
+            hour = int(_time[0])
+            minutes = 0
+            hasMinutes = len(_time) > 1
+            if hasMinutes:
+                minutes = int(_time[1])
+
+            start = datetime(year, month, startDay, hour, minute = minutes, second=0)
+            if not hasMinutes:
+                end = datetime(year, month, endDay, hour, minute = minutes, second=59)
+
+        return (start, end)
 
     def parseIntValue(self, tagName, tagValue):
         '''

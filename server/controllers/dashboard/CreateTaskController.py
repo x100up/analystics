@@ -85,8 +85,30 @@ class CreateAction(CreateTaskController, AjaxController):
     def post(self, *args, **kwargs):
         app = self.checkAppAccess(args)
 
+        saveAsTemplate = str(self.get_argument('saveAsTemplate', default=''))
+
         # создаем задачу из аргументов
         task = createTaskFromRequestArguments(self.request.arguments)
+        session = self.getDBSession()
+
+        if saveAsTemplate:
+            # сохраняем шаблон
+            taskTemplate = TaskTemplate()
+            taskTemplate.appId = app.appId
+            taskTemplate.name = self.get_argument('taskName', default = None)
+            taskTemplate.userId = self.get_current_user().userId
+            taskTemplate.shared =  TaskTemplate.SHARED_NO
+
+            session.add(taskTemplate)
+            session.commit()
+
+            # скидываем на диск
+            taskTemplateFile = TaskTemplateFile(self.application.getTemplatePath(), task = task, taskTemplate = taskTemplate)
+            taskTemplateFile.baseDate = datetime.now()
+            taskTemplateFile.save()
+
+            self.redirect('/dashboard/app/{}/#templates'.format(app.code))
+            return
 
         user = self.get_current_user()
 
@@ -105,7 +127,6 @@ class CreateAction(CreateTaskController, AjaxController):
         if not worker.name:
             worker.name = nameConstructor.generateTaskName()
 
-        session = self.getDBSession()
         session.add(worker)
         session.commit()
 
@@ -113,8 +134,10 @@ class CreateAction(CreateTaskController, AjaxController):
         constructor = HiveQueryConstructor(task, appConfig)
         query = constructor.getHiveQuery(worker.workerId)
 
+        self.write(query)
+        return False
 
-        task.stageCount = constructor.getStageCount()
+        #task.stageCount = constructor.getStageCount()
         # создаем WorkerService - он будет связывать тред с файловой системой
         workerService = WorkerService(self.application.getResultPath(), worker)
         workerService.setQuery(query)

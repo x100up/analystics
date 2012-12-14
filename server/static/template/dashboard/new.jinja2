@@ -6,7 +6,6 @@
             <input style="display: none" name="taskName" id="taskName" value="Новая задача" onblur="saveTaskName()" onkeydown="keyDownHandlerTaskName(event)">
         </div>
         <div class="grid_1">
-            <span class="awesome small yellow" onclick="selectTemplate()">шаблоны</span>
         </div>
             <div class="grid_7">
                 <input type="hidden" id="group_interval" value="{{ task.interval }}" name="group_interval">
@@ -35,7 +34,7 @@
             <div class="grid_12" id="formSaveBlock" {% if not task.items %} style="display: none" {% endif %}>
                 <input type="button" value="Отправить" class="awesome green" onclick="sendForm()">
 
-                <input type="button" value="Сохранить как шаблон" class="awesome orange" onclick="saveTemplate()">
+                <input type="button"  value="Сохранить как шаблон" class="awesome orange" onclick="saveTemplate()">
             </div>
 
             <div class="clearfix"></div>

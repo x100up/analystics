@@ -65,10 +65,13 @@ class WorkerService(object):
 
     def getTask(self):
         if not self.task:
-            picklerFile = open(self.getFolder() + '/task.pickle', 'rb')
-            pickler = cPickle.Unpickler(picklerFile)
-            self.task = pickler.load()
-            picklerFile.close()
+            try:
+                picklerFile = open(self.getFolder() + '/task.pickle', 'rb')
+                pickler = cPickle.Unpickler(picklerFile)
+                self.task = pickler.load()
+                picklerFile.close()
+            except IOError:
+                pass
         return self.task
 
     def saveResult(self, result, version, startDate, endDate):

@@ -94,6 +94,10 @@ function startNewTask(x){
     loadDashboardContent(l);
 }
 
+function showTemplates(){
+    loadDashboardContent('templates');
+}
+
 function loadDashboardContent(page) {
     var callback = null;
     if (typeof page == "undefined") {

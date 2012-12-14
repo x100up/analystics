@@ -1,6 +1,6 @@
 # coding=utf-8
 __author__ = 'pavlenko.roman.spb@gmail.com'
-from components.dateutil import smartPeriod
+from datetime import datetime
 
 class NameConstructor(object):
 
@@ -85,6 +85,9 @@ class NameConstructor(object):
                         tag_value = u'Да'
                     else:
                         tag_value = u'Нет'
+                elif tag.type == 'timestamp':
+                    value = int(value)
+                    tag_value = datetime.fromtimestamp(value).strftime('%d %m %Y %H:%M')
 
         return tag_value
 

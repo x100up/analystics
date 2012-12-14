@@ -266,3 +266,7 @@ div.eventSelector span:hover {
     -webkit-box-shadow: -1px 1px 1px 1px rgba(200, 200, 200, 0.5);
     box-shadow: -1px 1px 1px 1px rgba(200, 200, 200, 0.5);
 }
+
+.timestamp-type {
+    background-position:  100px -91px !important;
+}

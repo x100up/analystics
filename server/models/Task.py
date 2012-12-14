@@ -21,6 +21,7 @@ class Task(object):
     def __init__(self, *args, **kwargs):
         self.items = {}
         self.appname = ''
+        self.name = ''
         self.interval = self.INTERVAL_DAY
         self.stageCount = 0
 

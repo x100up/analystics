@@ -1,0 +1,6 @@
+<h2>Шаблоны</h2>
+<ul>
+{% for taskTemplate in userTemplates %}
+    <li><a href="/dashboard/app/{{ appCode }}/#new?template={{ taskTemplate.taskTemplateId }}">{{ taskTemplate.name }}</a></li>
+{% endfor %}
+</ul>

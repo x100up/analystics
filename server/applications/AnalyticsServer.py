@@ -161,6 +161,7 @@ class AnalyticsServer(tornado.web.Application):
             (r"/dashboard/app/([^/]+)/result/?", ResultController.ResultAction),
             (r"/dashboard/app/([^/]+)/new/?", CreateTaskController.CreateAction),
             (r"/dashboard/app/([^/]+)/recalculate/?", CreateTaskController.RecalculateAction),
+            (r"/dashboard/app/([^/]+)/templates/?", TemplateController.IndexAction),
             (r"/dashboard/empty/?", DashboardController.EmptyAppAction),
             (r"/dashboard/selectapp/?", DashboardController.SelectAppAction),
             (r"/dashboard/app/([^/]+)/new_task/([^/]+)/?", CreateTaskController.ShowNewTaskAction),
@@ -168,22 +169,17 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/dashboard/app/([^/]+)/workers/([^/]+)/??", DashboardController.GetWorkers),
 
             # --------- LOGIN & LOGOUT ---------
-
             (r"/user/login/?", UserController.AuthAction),
             (r"/user/logout/?", UserController.LogoutAction),
 
             # --------- ADMIN -----------
-
             (r"/admin/?", AdminIndexController.IndexAction),
             (r"/admin/users/?", AdminUserController.UserAction),
             (r"/admin/users/edit?", AdminUserController.EditUserAction),
-
             (r"/admin/apps/?", AdminAppController.IndexAction),
             (r"/admin/app/edit/?", AdminAppController.EditAction),
-
             (r"/admin/rules/?", AdminRulesController.IndexAction),
             (r"/admin/rules/switch?", AdminRulesController.SwitchAjaxAction),
-
             (r'/admin/settings/?', AdminSettingsController.IndexAction),
 
 
@@ -198,7 +194,6 @@ class AnalyticsServer(tornado.web.Application):
             (r'/cluster/namenode/?', NameNodeController.IndexAction),
 
             # --------- AJAX -----------
-
             (r"/ajax/key_configuration/?", AjaxController.KeyConfigurationAction),
             (r"/ajax/get_key_form/?", AjaxController.GetKeyForm),
             (r"/ajax/getTasksProgress/?", AjaxController.GatTasksProgress),
@@ -208,23 +203,17 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/add_new_tag?", AjaxController.AddNewTag),
             (r"/ajax/add_new_bunch?", AjaxController.AddNewBunch),
 
-            (r"/ajax/getTemplateModal?", AjaxController.getTemplateModal),
-            (r"/ajax/getTemplateListModal/([^/]+)/?", AjaxController.getTemplateListModal),
             (r"/ajax/getTagUniqueValues/?", HiveAJAXController.getTagUniqueValues),
             (r"/ajax/downloadCSV/?", AjaxController.DownloadCSVAction),
 
-
             # ----------- TEMPLATE ---------------
-            (r"/template/create/([^/]+)/?", TemplateController.CreateTemplateAction),
-
-
+            #(r"/template/create/([^/]+)/?", TemplateController.CreateTemplateAction),
 
             # ----------- HDFS ---------------
             (r"/hdfs/?", HDFSController.IndexAction),
             (r"/hdfs/ajax/getPath/?", HDFSAJAXController.GetPathAction),
             (r"/hdfs/ajax/getPathStat/?", HDFSAJAXController.GetPathStat),
             (r"/hdfs/ajax/getHiveStat/?", HDFSAJAXController.GetHiveStatus),
-
 
             (r"/api/putConfig/?", APIController.PutConfigAction),
 

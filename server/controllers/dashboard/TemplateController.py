@@ -1,9 +1,25 @@
 # -*- coding: utf-8 -*-
 
-from controllers.BaseController import BaseController
+from controllers.BaseController import BaseController, AjaxController
 from components.TaskFactory import createTaskFromRequestArguments
 from models.TaskTemplate import TaskTemplate, TaskTemplateFile
 from datetime import datetime
+from services.TemplateService import TemplateService
+
+class IndexAction(AjaxController):
+
+    def get(self, *args, **kwargs):
+        app = self.checkAppAccess(args)
+        userId = self.get_current_user().userId
+        templateService = TemplateService(self.getDBSession())
+        userTemplates = templateService.getUserTemplates(app.appId, userId)
+        print userTemplates
+        self.renderJSON({
+            'html': self.render('dashboard/template/index.jinja2',{
+                'userTemplates': userTemplates,
+                'appCode': app.code
+            }, _return = True)
+        })
 
 class CreateTemplateAction(BaseController):
 

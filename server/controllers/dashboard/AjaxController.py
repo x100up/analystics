@@ -5,13 +5,11 @@ from models.Task import TaskItem
 from models.Worker import Worker
 from services import ThredService
 from components.TaskFactory import createTaskFromRequestArguments
-from models.TaskTemplate import TaskTemplate
 from models.appConf.AppEvent import AppEvent
 from models.appConf.AppTag import AppTag
 from models.appConf.AppTagBunch import AppTagBunch
-import random
 from components.NameConstructor import NameConstructor
-
+import random
 
 class KeyConfigurationAction(AjaxController):
 
@@ -133,21 +131,7 @@ class getTemplateModal(AjaxController):
     def get(self, *args, **kwargs):
         self.render('dashboard/template/templatemodal.jinja2')
 
-from sqlalchemy.sql import or_, and_
 
-class getTemplateListModal(AjaxController):
-    def get(self, *args, **kwargs):
-        app = self.checkAppAccess(args)
-        dbSession = self.getDBSession()
-        userId = self.get_current_user().userId
-        templates = dbSession.query(TaskTemplate).filter(
-            and_(TaskTemplate.appId == app.appId,
-                 or_(    TaskTemplate.userId == userId,
-                         TaskTemplate.shared == TaskTemplate.SHARED_YES
-            ))
-        ).order_by(TaskTemplate.userId != userId,TaskTemplate.shared == TaskTemplate.SHARED_YES).all()
-
-        self.render('dashboard/template/templateListModal.jinja2',{'templates':templates, 'appCode':app.code})
 
 
 class DownloadCSVAction(AjaxController):

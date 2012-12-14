@@ -39,6 +39,9 @@
                 {% if value == '1' %}checked="checked" class="checked" {% endif %} onclick="resetRadio(this)">
         Нет: <input type="radio" name="tag_{{ taskItem.index }}_{{ tag.code }}" id="tag_{{ taskItem.index }}_{{ tag.code }}_0" value="0"
                 {% if value == '2' %}checked="checked" class="checked" {% endif %} onclick="resetRadio(this)">
+    {% elif tag.type == 'timestamp' %}
+        <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" class="datepicker{{ taskItem.index }} datepicker timestamp-type">
+        <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" class="datepicker{{ taskItem.index }} datepicker timestamp-type">
     {% elif tag.type == 'int' %}
        <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" value="{{ value or '' }}">
     {% else %}
@@ -60,6 +63,7 @@
     {% endif %}
     </div>
 
+    {% if not tag.type == 'timestamp' %}
     <div class="op_controll">
         {#
         <span class="sync sync_{{ tag.code }}" onclick="switchTagSync({{ taskItem.index }}, '{{ tag.code }}', this)">sync</span>
@@ -73,3 +77,4 @@
         <span class="avg{% if 'avg' in operations %} selected{% endif %}" id="avg_{{ taskItem.index }}_{{ tag.code }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'avg', this)">avg</span>
         {% endif %}
     </div>
+    {% endif %}

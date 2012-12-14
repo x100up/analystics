@@ -2,8 +2,9 @@
 monthNamesShort = [u'янв', u'фев', u'март', u'апр', u'май', u'июнь', u'июль', u'авг', u'сен', u'окт', u'ноя', u'дек']
 monthNamesB = [u'января', u'февраля', u'марта', u'апреля', u'мая', u'июня', u'июля', u'августа', u'сентября', u'октября', u'ноября', u'декабря']
 
-def repMonth(value):
-    value = value.decode('utf-8')
+def repMonth(value, decode = True):
+    if decode:
+        value = value.decode('utf-8')
     for i, m in enumerate(monthNamesShort):
         value = value.replace(m, str(i + 1))
     return value

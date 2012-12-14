@@ -7,6 +7,7 @@ var synchronizedTags = [];
 var maxIndex = 0;
 
 function initNewTask() {
+    console.log('initNewTask');
     $.datepicker.setDefaults( {'monthNames':months, 'dayNamesMin':dayNamesMin, 'firstDay':1, 'maxDate': Date.now(),
                                   dateFormat:'dd M yy', monthNamesShort:monthNamesShort} );
 
@@ -118,6 +119,7 @@ function onDateSelect(dateText, inst) {
 }
 
 function parseDate(str_val) {
+    if (typeof str_val == 'undefined') return;
     var result = null;
     for (var i in monthNamesShort) {
         var name = monthNamesShort[i];
@@ -134,6 +136,7 @@ function parseDate(str_val) {
 }
 
 function toDateString(date) {
+    if (typeof date == 'undefined') return;
     var d = date.getDate();
     var h = date.getHours();
     var m = date.getMinutes();
@@ -148,6 +151,7 @@ function toDateString(date) {
 function initLoadedKeyForm(index) {
     attachDateTimePicker($( "#start_" + index ));
     attachDateTimePicker($( "#end_" + index ));
+    attachDateTimePicker($( ".datepicker" + index ));
     if (isLockDate) {
         $("#start_" + index).val(isLockDate[0]);
         $("#end_" + index).val(isLockDate[1]);
@@ -341,13 +345,12 @@ function sendForm() {
  * Модальное окно шаблона
  */
 function saveTemplate(){
-    $.ajax({
-               url: '/ajax/getTemplateModal',
-               data: {},
-               success: function(data){
-                   findModal = $('#myModal').empty().append(data).reveal();
-               }
-           });
+    if (globalData['eventLoaded']){
+        var form = $('#new_task_form');
+        form.attr('action', form.attr('action') + '?saveAsTemplate=1').submit();
+    } else {
+        alert('Вы должны выбрать как минимум 1 ключ');
+    }
 }
 
 function selectTemplate(){
@@ -360,16 +363,6 @@ function selectTemplate(){
            });
 }
 
-/**
- * Сохранение шаблона
- */
-function doSaveTemplate(){
-    if (globalData['eventLoaded']){
-        $('#new_task_form').append($('#template_modal_form')).attr('action', '/template/create/' + app).submit();
-    } else {
-        alert('Вы должны выбрать как минимум 1 ключ');
-    }
-}
 
 /**
  * Копирует ключ
