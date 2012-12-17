@@ -2,16 +2,17 @@
 <html>
 <head>
     <title>{{ title }}</title>
-    <link rel="stylesheet" href="{{ static_url_prefix }}/css/gum.css" type="text/css" media="screen, projection" />
-    <!--[if lte IE 6]><link rel="stylesheet" href="{{ static_url_prefix }}/css/gum_ie.css" type="text/css" media="screen, projection" /><![endif]-->
-    <link href="{{ static_url_prefix }}/css/reset.css" rel="stylesheet" type="text/css">
-    <link href="{{ static_url_prefix }}/css/960.fluid.css" rel="stylesheet" type="text/css">
-    <link href="{{ static_url_prefix }}/css/button.css" rel="stylesheet" type="text/css">
-    <link href="{{ static_url_prefix }}/css/style.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="/static/css/gum.css" type="text/css" media="screen, projection" />
+    <!--[if lte IE 6]><link rel="stylesheet" href="/static/css/gum_ie.css" type="text/css" media="screen, projection" /><![endif]-->
+    {# <link href="/static/css/reset.css" rel="stylesheet" type="text/css"> #}
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/button.css" rel="stylesheet" type="text/css">
+    <link href="/static/css/style.css" rel="stylesheet" type="text/css">
     <link href="/static/css/jquery.selectbox.css" rel="stylesheet" type="text/css">
-    <link rel="icon" type="image/png" href="{{ static_url_prefix }}/img/favicon.png" />
+    <link rel="icon" type="image/png" href="/static/img/favicon.png" />
 
-    <script type="text/javascript" src="{{ static_url_prefix }}/js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="/static/js/jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="/static/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="/static/js/jquery.selectbox-0.2.min.js"></script>
     <script type="text/javascript" src="/static/js/script.js"></script>
     {% if js_vars %}
@@ -30,7 +31,7 @@
         <header id="header">
             <div>
                 <a href="/" id="logo">
-                    <img src="{{ static_url_prefix }}/img/logo.png" alt="Analytics logo">
+                    <img src="/static/img/logo.png" alt="Analytics logo">
                 </a>
 
                 {% if user_apps %}
@@ -61,11 +62,10 @@
 
         <div id="topPanel">
             <div>
+                <button id="analyticsButton" onclick="showAnalytics()"></button>
                 <button id="addTaskButton" onclick="startNewTask()"></button>
                 <button id="fromTemplateButton" onclick="showTemplates()"></button>
             </div>
-
-
         </div>
 
         <section id="middle">

@@ -1,6 +1,6 @@
 <h3 id="bunch_{{ index }}_h" onclick="showBlock('bunch_{{ index }}')">{{ bunch.code or '&nbsp' }}</h3>
 
-<div id="bunch_{{ index }}" class="grid_12" {% if bunch.code %}style="display: none"{% endif %}>
+<div id="bunch_{{ index }}" class="span12" {% if bunch.code %}style="display: none"{% endif %}>
 
 
     <input name="bunch_index" value="{{ index }}" type="hidden">

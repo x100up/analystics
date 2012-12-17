@@ -7,12 +7,13 @@ var synchronizedTags = [];
 var maxIndex = 0;
 
 function initNewTask() {
-    console.log('initNewTask');
     $.datepicker.setDefaults( {'monthNames':months, 'dayNamesMin':dayNamesMin, 'firstDay':1, 'maxDate': Date.now(),
                                   dateFormat:'dd M yy', monthNamesShort:monthNamesShort} );
 
     attachDateTimePicker($( "input.datepicker" ));
     maxIndex = globalData['eventLoaded'];
+
+
 }
 
 function attachDateTimePicker(obj){
@@ -152,6 +153,20 @@ function initLoadedKeyForm(index) {
     attachDateTimePicker($( "#start_" + index ));
     attachDateTimePicker($( "#end_" + index ));
     attachDateTimePicker($( ".datepicker" + index ));
+
+    $('.tag-type-help-' + index).popover({
+                                             trigger:'hover',
+                                             placement:'left',
+                                             html:true,
+                                             title:function () {
+                                                 return getToolTipForTagType($(this).data('type'), 'title');
+                                             },
+                                             content:function () {
+                                                 return getToolTipForTagType($(this).data('type'), 'content');
+                                             }
+
+                                         });
+
     if (isLockDate) {
         $("#start_" + index).val(isLockDate[0]);
         $("#end_" + index).val(isLockDate[1]);
@@ -410,5 +425,14 @@ function removeSelection(){
         }
     } else if (document.selection) {  // IE?
         document.selection.empty();
+    }
+}
+
+
+function getToolTipForTagType(tagType, type){
+    if (type == 'title'){
+        return $('#tag-tooltip-' + tagType + ' > .title').html();
+    } else {
+        return $('#tag-tooltip-' + tagType + ' > .content').html();
     }
 }

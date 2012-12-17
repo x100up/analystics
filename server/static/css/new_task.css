@@ -2,6 +2,11 @@ h1 > sup {
     font-size: 10pt;
 }
 
+.datepicker.start, .datepicker.end
+{
+    width: 140px;
+}
+
 div.add_key {
     border: 1px dotted #99CC00;
     height: 32px;
@@ -22,7 +27,7 @@ div.key_form_item h2 {
     text-align: center;
 }
 ul.top_key_menu {
-    height: 35px;
+    height: 45px;
 }
 
 
@@ -117,7 +122,7 @@ input.key {
 }
 
 div.tag_values_block {
-
+ margin-left: 5px;
 }
 
 div.tag_values_block.more_value {
@@ -163,7 +168,7 @@ div.key_header.key_loaded{
 }
 
 input.datepicker {
-    background: url("/static/img/sprite.png") 120px -91px no-repeat;
+    background: url("/static/img/sprite.png") no-repeat scroll 128px -87px transparent
 }
 
 div.op_controll{
@@ -268,5 +273,5 @@ div.eventSelector span:hover {
 }
 
 .timestamp-type {
-    background-position:  100px -91px !important;
+    background-position:  108px -86px !important
 }

@@ -172,6 +172,10 @@ div#series_container > .seriaGroup > .groupName {
     border: none !important;
 }
 
+.align-right {
+    text-align: right;
+}
+
 div#tableBox{
     overflow: auto;
     border: 1px solid #C8D5E8;
@@ -269,8 +273,10 @@ span.legendKey > span.name {
     letter-spacing: 1px;
 }
 
-span.legendKey.hide {
+span.legendKey.hidden {
     color: #d1cdd4 !important;
+    display: inline;
+    visibility: visible;
 }
 
 
@@ -280,7 +286,7 @@ span.legendKey > span.op {
     width: 17px;
     height: 17px;
 }
-
+/*
 span.legendKey > span.op.group.red, span.legendKey > span.op.count.red {
     background-position: -95px -101px;
 }
@@ -304,6 +310,8 @@ span.legendKey > span.op.group.red, span.legendKey > span.op.count.red {
     span.legendKey > span.op.group.violet, span.legendKey > span.op.count.violet  {
         background-position: -95px -196px;
     }
+
+
 
 span.legendKey > span.op.sum.red {
     background-position: -116px -101px;
@@ -351,7 +359,31 @@ span.legendKey > span.op.avg.red {
     span.legendKey > span.op.avg.violet {
         background-position: -137px -196px;
     }
+*/
 
+span.legendKey > span.op.red{
+    background-position: -95px -101px;
+}
+
+span.legendKey > span.op.orange{
+    background-position: -95px -120px;
+}
+
+span.legendKey > span.op.blue{
+    background-position: -95px -139px;
+}
+
+span.legendKey > span.op.green{
+    background-position: -95px -158px;
+}
+
+span.legendKey > span.op.yellow {
+    background-position: -95px -177px;
+}
+
+span.legendKey > span.op.violet{
+    background-position: -95px -196px;
+}
 
 .legend-group-head {
     font-size: 22pt;

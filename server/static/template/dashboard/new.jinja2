@@ -1,13 +1,13 @@
-    <div class="container_12">
+    <div class="row-fluid">
     {{ task }}
         <form action="/dashboard/app/{{ app.code }}/new" method="post" id="new_task_form">
-        <div class="grid_4">
+        <div class="span4">
             <h1><span id="taskNameLabel">Новая задача</span> <span class="button editTaskName" onclick="editName(this)"> </span></h1>
             <input style="display: none" name="taskName" id="taskName" value="Новая задача" onblur="saveTaskName()" onkeydown="keyDownHandlerTaskName(event)">
         </div>
-        <div class="grid_1">
+        <div class="span1">
         </div>
-            <div class="grid_7">
+            <div class="span7">
                 <input type="hidden" id="group_interval" value="{{ task.interval }}" name="group_interval">
                 <ul id="interval_selector">
                     {% for key, value in task.intervals %}
@@ -31,7 +31,7 @@
 
             <div class="clearfix"></div>
 
-            <div class="grid_12" id="formSaveBlock" {% if not task.items %} style="display: none" {% endif %}>
+            <div class="span12" id="formSaveBlock" {% if not task.items %} style="display: none" {% endif %}>
                 <input type="button" value="Отправить" class="awesome green" onclick="sendForm()">
 
                 <input type="button"  value="Сохранить как шаблон" class="awesome orange" onclick="saveTemplate()">
@@ -43,11 +43,11 @@
             <h1>Выберите событие</h1>
                 {% for eventGroup in appConfig.getEventGroups() %}
                     <div>
-                        <div class="grid_2 alpha">
+                        <div class="span2">
                         <h2>{{ eventGroup.name }}</h2>
                         </div>
 
-                        <div class="grid_10 omega eventList">
+                        <div class="span10 eventList">
                         {% for appEvent in appConfig.getEventsInGroup(eventGroup.index) %}
                             <span onclick="selectAppEvent('{{ appEvent.code }}')">{{ appEvent.getName() }}</span>
                         {% endfor %}
@@ -57,11 +57,11 @@
                     </div>
                 {% endfor %}
                     <div>
-                        <div class="grid_2 alpha">
+                        <div class="span2">
                             <h2>Без группы</h2>
                         </div>
 
-                        <div class="grid_10 omega eventList">
+                        <div class="span10 eventList">
                             {% for appEvent in appConfig.getEventsWithoutGroup() %}
                                 <span onclick="selectAppEvent('{{ appEvent.code }}')">{{ appEvent.getName() }}</span>
                             {% endfor %}
@@ -71,7 +71,7 @@
                     </div>
             </div>
             {#
-            <div class="add_key grid_12 alpha omega" onclick="addKey()"> еще ключ</div>
+            <div class="add_key span12 alpha omega" onclick="addKey()"> еще ключ</div>
             #}
         </form>
 
@@ -83,3 +83,57 @@
         </div>
     </div>
 <div class="clearfix"></div>
+
+<div class="hide" id="tag-tooltip-string">
+    <div class="title">
+        Строковый тег
+    </div>
+
+    <div class="content">
+        TODO
+    </div>
+</div>
+
+    <div class="hide" id="tag-tooltip-int">
+        <div class="title">
+            Числовой тег
+        </div>
+
+        <div class="content">
+            TODO
+        </div>
+    </div>
+
+    <div class="hide" id="tag-tooltip-bool">
+        <div class="title">
+            Булевый тег
+        </div>
+
+        <div class="content">
+            TODO
+        </div>
+    </div>
+
+    <div class="hide" id="tag-tooltip-timestamp">
+        <div class="title">
+            Тег времени
+        </div>
+
+        <div class="content">
+            Примеры:
+            <ul>
+                <li>
+                    <em>14 дек 2012 00:00</em> - точно в это время
+                </li>
+                <li>
+                    <em>14 дек 2012 5</em> - с 5 до 6 часов
+                </li>
+                <li>
+                    <em>14 дек 2012</em> - весь день 14 дек
+                </li>
+                <li>
+                    <em>дек 2012</em> - весь месяц
+                </li>
+            </ul>
+        </div>
+    </div>

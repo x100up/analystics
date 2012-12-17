@@ -1,7 +1,7 @@
 {% for worker in lastWorkers %}
-    <div class="job job_{{worker.status}}" id="worker_row_{{worker.workerId}}" data-workerid="{{worker.workerId}}">
+    <div class="job job_ALIVE a_{{worker.status}}" id="worker_row_{{worker.workerId}}" data-workerid="{{worker.workerId}}">
 
-        <div class="q {{ worker.status }}">
+        <div class="q ALIVE a_{{ worker.status }}">
             <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
         </div>
         <div class="main" title="{{worker.startDate|smartDateInterval(worker.endDate)}}" onclick="loadResult({{worker.workerId}})">
@@ -10,7 +10,7 @@
         </div>
         <div class="plus">
             <span onclick="startNewTask({{worker.workerId}})" class="plus" title="create on base"></span>
-            <span class="status"></span>
+            <span class="status"><img src="/static/img/loader.gif" alt=""></span>
         </div>
     </div>
 {% endfor %}

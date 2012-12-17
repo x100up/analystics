@@ -531,22 +531,22 @@ var ChartManager = {
             if ($.inArray(seriesId, seriesIds) != -1) {
                 var button = $('#switchSeriesButton_' + seriesId);
 
-                if (forceShow || button.hasClass('hide')) {
+                if (forceShow || button.hasClass('hidden')) {
                     if (!series.visible){
                         series.show();
                     }
 
-                    button.removeClass('hide');
+                    button.removeClass('hidden');
                 } else {
                     if (series.visible){
                         series.hide();
                     }
-                    button.addClass('hide');
+                    button.addClass('hidden');
                 }
             } else {
                 if (removeOther) {
                     series.hide();
-                    $('#switchSeriesButton_' + seriesId).addClass('hide');
+                    $('#switchSeriesButton_' + seriesId).addClass('hidden');
                 }
             }
         }

@@ -63,8 +63,10 @@
     {% endif %}
     </div>
 
-    {% if not tag.type == 'timestamp' %}
+
     <div class="op_controll">
+        <span class="tag-type-help-{{ taskItem.index }}" data-type="{{ tag.type }}">?</span>
+        {% if not tag.type == 'timestamp' %}
         {#
         <span class="sync sync_{{ tag.code }}" onclick="switchTagSync({{ taskItem.index }}, '{{ tag.code }}', this)">sync</span>
          #}
@@ -72,9 +74,12 @@
         {# operation stacks #}
         <input type="hidden" name="tag_{{ taskItem.index }}_{{ tag.code }}_ops" id="tag_{{ taskItem.index }}_{{ tag.code }}_ops" value="{{ operations|join('/') }}">
         <span class="group{% if 'group' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'group', this)">group</span>
-        {% if tag.type == 'int' %}
-        <span class="sum{% if 'sum' in operations %} selected{% endif %}" id="sum_{{ taskItem.index }}_{{ tag.code }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'sum', this)">sum</span>
-        <span class="avg{% if 'avg' in operations %} selected{% endif %}" id="avg_{{ taskItem.index }}_{{ tag.code }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'avg', this)">avg</span>
+            {% if tag.type == 'int' %}
+            <span class="sum{% if 'sum' in operations %} selected{% endif %}" id="sum_{{ taskItem.index }}_{{ tag.code }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'sum', this)">sum</span>
+            <span class="avg{% if 'avg' in operations %} selected{% endif %}" id="avg_{{ taskItem.index }}_{{ tag.code }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'avg', this)">avg</span>
+            {% endif %}
         {% endif %}
+
+
     </div>
-    {% endif %}
+

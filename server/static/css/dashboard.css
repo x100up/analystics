@@ -125,6 +125,14 @@ div.job  > div.plus > span.status {
     margin-top: 50px;
 }
 
+div.plus > span.status > img {
+    display: none;
+}
+
+div.job_SUCCESS > div.plus > span.status > img {
+    display: inline !important;
+}
+
 div.job_SUCCESS > div.plus > span.status {
     background-position: -200px -131px;
 }
@@ -208,6 +216,7 @@ ul.paging li.current span{
 This is the actual bar with stripes
 */
 .job_ALIVE {
+
 }
 
 .job_ALIVE > td.plus span {

@@ -2,7 +2,7 @@
 <h3 style="cursor: pointer" id="key_{{ index }}_h" onclick="showBlock('key_{{ index }}')">{{ event.getName() }}<sup>{{ event.code }}</sup></h3>
 
 <div id="key_{{ index }}" {% if event.code %} style="display: none" {% endif  %}>
-    <div class="grid_10 alpha">
+    <div class="span10">
         <input type="hidden" name="key_index" value="{{ index }}">
         <input type="hidden" name="key_{{ index }}_code_old" value="{{ event.code }}">
         <ul class="form">
@@ -19,7 +19,7 @@
         </ul>
     </div>
 
-    <div class="grid_2 omega">
+    <div class="span2 omega">
         <span class="awesome small red" onclick="deleteKey({{ index }})">удалить</span>
     </div>
 

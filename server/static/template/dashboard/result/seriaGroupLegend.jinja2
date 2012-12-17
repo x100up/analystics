@@ -10,7 +10,7 @@
     <tr class="groupName">
         <th>&nbsp;</th>
     {% for tagCode in seriesGroup.containsTags %}
-        <th style="width: {{ 100 / (seriesGroup.containsTags|length + 1) }}%">
+        <th class="align-right" style="width: {{ 100 / (seriesGroup.containsTags|length + 1) }}%">
             {{ seriesGroup.containsTags[tagCode] }}
         </th>
     {% endfor %}
@@ -23,16 +23,16 @@
                 >
                 <td>
                             <span id="switchSeriesButton_{{ series.id }}"
-                                  class="legendKey{% if not series.visible %} hide{% endif %} %}"
+                                  class="legendKey{% if not series.visible %} hidden{% endif %}"
                                   onclick="ChartManager.switchDisplaySeries({{ series.id }})">
-                                <span class="op {{ series.operation }} {{ series.color[1] }}" ></span>
+                                <span class="op {{ series.color[1] }}" ></span>
                                 <span class="name">{{ series.name }}</span>
                             </span>
 
                 </td>
 
             {% for tagCode in seriesGroup.containsTags %}
-                <td>
+                <td class="align-right">
                     <strong>{{ series.getTagValue(tagCode) or '' }}</strong>
                 </td>
             {% endfor %}

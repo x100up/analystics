@@ -30,8 +30,8 @@
 
     <div class="clearfix"></div>
 
-    <div id="chart_legend_container" class="container_12">
-        <div id="series_container" class="grid_8 alpha">
+    <div id="chart_legend_container" class="row-fluid">
+        <div id="series_container" class="span8">
 
             {% for seriesGroup in chartService.getSeries() %}
                 {% set groupIndex = loop.index %}
@@ -40,7 +40,7 @@
 
         </div>
 
-        <div id="tagcloud" class="grid_4 omega">
+        <div id="tagcloud" class="span4 omega">
             {% include 'dashboard/result/tagCloud.jinja2' %}
         </div>
 

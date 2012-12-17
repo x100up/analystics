@@ -4,13 +4,13 @@
  #}
 
 {% set is_loaded = (taskItem.key and appConfig.isEventExist(taskItem.key)) %}
-<div class="key_form_item grid_12 alpha omega" id="key_container_{{ taskItem.index  }}">
+<div class="key_form_item span12" id="key_container_{{ taskItem.index  }}">
 
     <input type="hidden" name="indexes" value="{{ taskItem.index }}">
     <input type="checkbox" style="display: none" name="userUnique" id="userUnique{{ taskItem.index }}" value="{{ taskItem.index }}" {% if taskItem.userUnique %}checked="checked"{% endif %}>
 
-    <div class="grid_12 alpha omega key_header {% if is_loaded %} key_loaded {% endif %}" id="key_header_{{ taskItem.index }}">
-        <div class="grid_10 alpha">
+    <div class="row-fluid key_header {% if is_loaded %} key_loaded {% endif %}" id="key_header_{{ taskItem.index }}">
+        <div class="span10">
             <ul class="top_key_menu">
                 <li>
                     <h2 title="Код: {{ taskItem.key }}">{{ taskItem.name }}</h2>
@@ -19,7 +19,6 @@
                     <input type="hidden" name="key_{{ taskItem.index }}" id="key_{{ taskItem.index }}"
                        data-index="{{ taskItem.index }}" class="key" value="{{ taskItem.key }}">
 
-                    <input type="button" class="button find findkey" onclick="findKey({{ taskItem.index }})">
                 </li>
 
                 <li>
@@ -39,10 +38,11 @@
 
 
         </div>
-        <div class="grid_2 omega">
+        <div class="span2 omega">
             <input class="button delete" onclick="deleteKey({{ taskItem.index }})">
         </div>
     </div>
+
     <div class="clearfix"></div>
 
     <div id="key_{{ taskItem.index }}_tag_container" class="tag_container">
@@ -58,12 +58,22 @@
                 {% else %}
                     {% set value = None %}
                 {% endif %}
-                <div class="grid_2 {% if loop.first or loop.index % 6 == 1 %}alpha{% endif %} {% if loop.last or loop.index % 6 == 0 %}omega{% endif %} tag_container" >
+
+                {% if loop.index % 6 == 1%}
+                    <div class="row-fluid">
+                {% endif %}
+
+                <div class="span2 tag_container" >
                     {% include 'dashboard/taskForm/tagFormItem.jinja2' %}
                 </div>
 
+                {% if loop.index % 6 == 0 or loop.last%}
+                    </div>
+                {% endif %}
+
+
                 {% if loop.index % 6 == 0 %}
-                    <div class="grid_12 alpha omega tag_group_separator"></div>
+                    <div class="tag_group_separator"></div>
                 {% endif %}
             {% endfor %}
         {% endif %}
