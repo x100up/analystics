@@ -99,7 +99,7 @@ else:
 if options['key']:
     key = options['key']
 
-hiveClient = HiveService(config.get('hive_host'), config.get('hive_port'))
+hiveClient = HiveService(config.get('hive_host'), ште(config.get('hive_port')))
 packer = Packer(appService, hiveClient)
 print 'start pack for date {}.{}.{}'.format(year, month, day)
 packer.pack(year, month, day, key = key)
