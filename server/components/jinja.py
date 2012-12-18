@@ -102,3 +102,6 @@ def smartDateInterval(date1, date2):
             result += str(delta.seconds) + ' ' + secondCountName(delta.seconds)
 
     return result
+
+def minInt(_list):
+    return min(_list)

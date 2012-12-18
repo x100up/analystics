@@ -2,7 +2,7 @@ h1 > sup {
     font-size: 10pt;
 }
 
-.datepicker.start, .datepicker.end
+.datepicker
 {
     width: 140px;
 }

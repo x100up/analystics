@@ -62,11 +62,14 @@
 
         <div id="topPanel">
             <div>
+                {% if currentAppCode %}
                 <button id="analyticsButton" onclick="showAnalytics()"></button>
                 <button id="addTaskButton" onclick="startNewTask()"></button>
                 <button id="fromTemplateButton" onclick="showTemplates()"></button>
+                {% endif %}
             </div>
         </div>
+
 
         <section id="middle">
 

@@ -156,9 +156,7 @@ $(function(){
  * @param page
  */
 function loadPage(page){
-    $('.paging > li.current').removeClass('current');
-    $('#workerPager' + page).addClass('current');
-    $('#workers').load('/ajax/dashboard/app/' + app + '/workers/' + page);
+    $('#sideLeft > div').load('/ajax/dashboard/app/' + app + '/workers/' + page);
 }
 
 

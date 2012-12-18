@@ -23,33 +23,5 @@
 {% endblock %}
 
 {% block sidebar %}
-<form action="" method="post">
-<div>
-    <h2>Список отчетов</h2>
-</div>
-<div id="workers">
-   {% include 'dashboard/workerList.jinja2' %}
-</div>
-
-<div id="workerFooter">
-    <div>
-    <input type="submit" name="action" value="Удалить выбранные отчеты" class=" awesome orange">
-
-    {% if pageCount > 1 %}
-        <ul class="paging">
-            {% for p in range(1, pageCount + 1) %}
-                {% if loop.index >= 12 and not loop.last %}
-                    {%  if loop.index == 12 %}
-                    <li>...</li>
-                    {% endif %}
-                {% else %}
-                        <li{% if currentPage == p %} class="current"{% endif %} id="workerPager{{ p }}"><span onclick="loadPage({{ p }})">{{ p }}</span></li>
-                {% endif %}
-            {% endfor %}
-        </ul>
-    {% endif %}
-    </div>
-</div>
-</form>
-
+    {% include 'dashboard/workerList.jinja2'%}
 {% endblock %}

@@ -173,10 +173,6 @@ div#workers div._selector{
 /** -------------------------- **/
 
 
-span.alive_progress {
-    font-size: 10pt
-}
-
 tr.job_SUCCESS td {
     border-bottom: solid 4px #99C700 !important;
 }
@@ -189,39 +185,25 @@ tr.job_DIED td {
     border-bottom: solid 4px #F3624C !important;
 }
 
-
-
-ul.paging{
-    margin-top: 10px;
-}
-
-ul.paging li {
-    display: inline;
-    padding-right: 4px;
-}
-
-ul.paging li span{
-    cursor: pointer;
-    color: #0ebff5;
-}
-ul.paging li.current span{
-    cursor: pointer;
-    color: #FFF;
-    font-weight: bold;
-}
-
-
-
-/*
-This is the actual bar with stripes
-*/
-.job_ALIVE {
-
+.job_ALIVE .status img {
+    display: bock;
 }
 
 .job_ALIVE > td.plus span {
     color: GREEN;
 }
+
+
+
+.pagination a {
+    color: #666;
+    cursor: pointer;
+}
+
+.pagination a.current {
+    font-weight: bold;
+}
+
 
 
 #workerFooter{
