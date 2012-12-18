@@ -109,7 +109,6 @@ class WorkerService(object):
         return self.result
 
 
-
     def getError(self):
         try:
             result = self.getResultData()

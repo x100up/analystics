@@ -36,7 +36,9 @@ class HiveWorker(threading.Thread):
         try:
             hiveClient = HiveService(self.host, self.port)
             processor = HiveResponseProcessor(task = self.task)
-            data = {'result' : processor.prepareData(hiveClient.execute(self.workerService.query))}
+            data = hiveClient.execute(self.workerService.query)
+            print data
+            data = {'result' : processor.prepareData(data)}
             self.logger.debug('worker [' + self.getName() + '] end job')
             status = Worker.STATUS_SUCCESS
         except Thrift.TException as tx:
