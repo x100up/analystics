@@ -226,7 +226,6 @@ class HiveQueryConstructor():
             else:
                 fields.append(('floor(`minute` / 10) * 10', 'minute_10'))
 
-
         elif  interval == Task.INTERVAL_HOUR:
             fields.append(('hour'))
 
@@ -234,8 +233,10 @@ class HiveQueryConstructor():
             pass
 
         elif  interval == Task.INTERVAL_WEEK:
-            fields.append(('weekofyear(`timestamp`)', 'weekofyear'))
-            pass
+            if isSubquery:
+                fields.append(('weekofyear'))
+            else:
+                fields.append(('weekofyear(`timestamp`)', 'weekofyear'))
 
         #fields.reverse()
         return fields
@@ -316,7 +317,10 @@ class HiveQueryConstructor():
             return ' year, month, day'
 
         if group_interval == Task.INTERVAL_WEEK:
-            return ' year, weekofyear(`timestamp`)'
+            if isSubquery:
+                return ' year, weekofyear'
+            else:
+                return ' year, weekofyear(`timestamp`)'
 
         raise Exception("Unknow interval")
 
