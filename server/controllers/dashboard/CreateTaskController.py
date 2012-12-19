@@ -49,10 +49,10 @@ class CreateAction(CreateTaskController, AjaxController):
             worker = dbSession.query(Worker).filter_by(workerId = baseTask).first()
             workerService = WorkerService(self.application.getResultPath(), worker)
             task = workerService.getTask()
-            for taskItem in task.getTaskItems():
-                print dir(taskItem)
+            # fix indexes
+            for index, taskItem in enumerate(task.getTaskItems()):
+                taskItem.index = index
                 if not taskItem.name:
-
                     taskItem.name = nameConstructor.getTaskItemName(taskItem)
 
         elif template:
@@ -183,4 +183,4 @@ class ShowNewTaskAction(AjaxController):
         if not 'worker-' + workerId in aliveThreadNames:
             self.renderJSON({'redirect':'status/' + workerId})
         else:
-            self.renderJSON({'html': self.render('/dashboard/create/responseOnCreate.jinja2', _return = True), 'vars':{}})
+            self.renderJSON({'html': self.render('/dashboard/result/taskAlive.jinja2', _return = True)})

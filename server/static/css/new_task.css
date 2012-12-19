@@ -43,45 +43,8 @@ ul.top_key_menu h2 {
     padding: 0px 6px;
 }
 
-ul#interval_selector {
+.interval_selector {
     float: right;
-    margin-right: 8px;
-    margin-bottom: 5px;
-}
-
-ul#interval_selector li {
-    display: inline-block;
-    background: url("/static/img/intervalMenu.png");
-    background-position: -5px 0;
-    height: 22px;
-    margin: 0 0 0 -4px;
-    padding: 4px 6px;
-    cursor: pointer;
-    line-height: 20px;
-    border-left: 1px solid #ccc;
-    width: 70px;
-    text-align: center;
-}
-
-ul#interval_selector li.first {
-    background-position: 0 0;
-    border-left:none;
-}
-
-ul#interval_selector li.last {
-    background-position: right top;
-}
-
-ul#interval_selector li.selected {
-    background-position: -5px -40px;
-}
-
-ul#interval_selector li.first.selected {
-    background-position: 0 -40px;
-}
-
-ul#interval_selector li.last.selected {
-    background-position: right -40px;
 }
 
 span.date_d {
@@ -114,12 +77,37 @@ input.key {
     margin-left: 4px;
 }
 
+.new-task-name {
+    margin: 0
+}
+
+/**
+--------- TAG CONTAINER ----------
+**/
+
 .tag_container > h3 {
     font-size: 12pt;
     font-weight: bold;
     margin-bottom: 4px;
     padding-left: 2px;
 }
+
+.tag_container label {
+    display: inline-block;
+    min-width: 100px;
+}
+
+.tag_container ul ul {
+    margin-left: 100px;
+}
+.tag_container > div {
+    display: inline-block;
+}
+
+
+/**
+--------- END TAG CONTAINER ----------
+**/
 
 div.tag_values_block {
  margin-left: 5px;
@@ -171,13 +159,22 @@ input.datepicker {
     background: url("/static/img/sprite.png") no-repeat scroll 128px -87px transparent
 }
 
-div.op_controll{
-    text-align: right;
-    height: 14px;
-    width: 120px;
+.event_tags_container {
+    padding-bottom: 10px;
 }
 
-div.op_controll span {
+.op_control{
+    text-align: right;
+    height: 14px;
+    width: 140px;
+}
+
+.op_control .label {
+    font-size: 10pt !important;
+    cursor: pointer;
+}
+
+/*div.op_controll span {
     font-size: 8pt;
     background: #f6edf8;
     padding: 0 2px 2px 2px;
@@ -216,6 +213,7 @@ div.op_controll span.sync {
 div.op_controll span.sync:hover, div.op_controll span.sync.selected{
     background-color: #defd99;
 }
+*/
 
 .button.delete {
     margin: 5px 15px 0 0;
@@ -244,7 +242,7 @@ div.eventSelector h1 {
     height: 53px;
     line-height: 53px;
     padding-left: 20px;
-    margin-left: -20px;
+    margin-left: -30px;
     margin-right: -20px;
 }
 
@@ -273,5 +271,6 @@ div.eventSelector span:hover {
 }
 
 .timestamp-type {
-    background-position:  108px -86px !important
+    background-position:  126px -86px !important;
+    width: 140px !important;
 }

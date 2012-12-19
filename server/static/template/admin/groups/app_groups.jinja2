@@ -9,7 +9,59 @@
 
     <br>
 <form action="" method="post">
+    <input id="eventGroupIterator" type="hidden" name="eventGroupIterator" value="{{ appConfig.getEventGroups()|length   }}">
     <h2>Ключи</h2>
+
+<div id="all_event_groups">
+    {% for eventGroup in appConfig.getEventGroups() %}
+        <div class="row-fluid event-group-container" data-event-group-index="{{ eventGroup.index }}">
+            <div class="oneEventGroup span2">
+                <input type="text" name="group_event_{{ eventGroup.index }}" value="{{ eventGroup.name }}">
+            </div>
+            <div class="span10" id="group-tags-container-{{ eventGroup.index }}">
+                {% for event in appConfig.getEvents() %}
+                    {% if appConfig.isEventInGroup(event.code, eventGroup.index)  %}
+                        <div class="label label-info event-label-{{ eventGroup.index }} event-code-{{ event.code }}"
+                             data-event-code="{{ event.code }}">{{ event.getName() }}</div>
+
+                        <input type="hidden" name="group_event_{{ event.code }}" value="{{ eventGroup.index }}"
+                               id="input_{{ eventGroup.index }}_{{ event.code }}">
+                    {% endif %}
+                {% endfor %}
+
+                <div class="label label-warning" onclick="editEventList(event, {{ eventGroup.index }})"><i class="icon-plus-sign"></i></div>
+            </div>
+        </div>
+    {% endfor  %}
+</div>
+
+    <span class="awesome yellow" onclick="addEventGroup()">Добавить группу</span>
+
+    <input type="submit" class="awesome green" value="Сохранить">
+</form>
+
+    <div class="modal hide fade" id="eventListModal">
+        <div class="modal-header">
+            <h3>События</h3>
+        </div>
+        <div class="modal-body">
+            <ul>
+                {% for event in appConfig.getEvents() %}
+                <li>
+                   <input type="checkbox" onclick="checkEvent(this, '{{ event.code }}')" class="modal-checkboxes" id="modal-event-{{ event.code }}"> {{ event.getName() }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn btn-warning" onclick="$('#eventListModal').modal('hide')">Отменить</a>
+            <a href="#" class="btn btn-primary" onclick="saveGroupEvents()">Сохранить</a>
+        </div>
+    </div>
+
+
+
+    {#<input type="submit" class="awesome green" value="Сохранить">
 
     <table id="eventTable">
         <thead>
@@ -32,7 +84,7 @@
         </tbody>
     {% endfor %}
     </table>
-    <input id="eventGroupIterator" type="hidden" name="eventGroupIterator" value="{{ appConfig.getEventGroups()|length }}">
+
 
 
 
@@ -60,8 +112,7 @@
         {% endfor %}
     </table>
     <input id="tagGroupIterator" type="hidden" name="tagGroupIterator" value="{{ appConfig.getTagGroups()|length }}">
+     #}
 
-    <input type="submit" name="Сохранить">
-</form>
 
 {% endblock %}

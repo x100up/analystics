@@ -105,3 +105,17 @@ def smartDateInterval(date1, date2):
 
 def minInt(_list):
     return min(_list)
+
+
+#
+# Форматирование числа
+#
+def numberFormat(value):
+    if type(value) == str:
+        value = float(value)
+
+    value =  "%0.2f" % value
+
+    if value.split('.')[1] == '00':
+        return value.split('.')[0]
+    return value

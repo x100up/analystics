@@ -63,6 +63,7 @@ class ChartConstructor():
         if self.seriesGroups:
             for seriesGroup in self.seriesGroups:
                 seriesGroup.name = self.nameService.getSeriesGroupName(seriesGroup)
+                seriesGroup.secondName = self.nameService.getSeriesGroupSecondName(seriesGroup)
 
             self.seriesGroups = sorted(self.seriesGroups, key=lambda seriesGroup: seriesGroup.maxAvg, reverse=True)
             self.seriesGroups[0].setVisible(True)
@@ -221,8 +222,8 @@ class ChartConstructor():
     def getResult(self):
         return {
             'chartconf': {
-                'subtitle' : {'text' :  'job '},
-                'title' : { 'text': 'График'},
+                'subtitle' : {'text' :  ' '},
+                'title' : { 'text': ''},
                 'yAxis': {
                     'min': 0,
                     'minTickInterval': 1,

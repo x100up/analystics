@@ -5,7 +5,7 @@
         <span class="button editTaskName" onclick="editName(this, {{ workerId }})"> </span>
     </h1>
     <input style="display: none" name="taskName" id="taskName" value="{{ name or 'Нет названия' }}"
-           onblur="saveTaskName()" onkeydown="keyDownHandlerTaskName(event)">
+           onblur="saveTaskName({{ workerId }})" onkeydown="keyDownHandlerTaskName(event, {{ workerId }})">
 
     <div class="clearfix"></div>
     <div id="chartBox">

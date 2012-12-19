@@ -4,18 +4,22 @@
     </div>
     <div id="workers">
         {% for worker in lastWorkers %}
-            <div class="job job_{{worker.status}}" id="worker_row_{{worker.workerId}}" data-workerid="{{worker.workerId}}">
+            <div class="job" id="worker_row_{{worker.workerId}}" data-workerid="{{worker.workerId}}">
 
                 <div class="q {{ worker.status }}">
                     <input type="checkbox" value="{{worker.workerId}}" name="jobId" class="jobcb">
                 </div>
-                <div class="main" title="{{worker.startDate|smartDateInterval(worker.endDate)}}" onclick="loadResult({{worker.workerId}})">
-                    <span class="a" id="link_{{worker.workerId}}">{{worker.name}}</span>
+                <div class="main" onclick="loadResult({{worker.workerId}})">
+                    <span class="worker-name-{{worker.workerId}}" id="link_{{worker.workerId}}">{{worker.name}}</span>
                     <em>Запущена: {{worker.startDate|datetofiled}}</em>
+                    {% if worker.endDate %}
+                    <br /><em>Выполнение: {{worker.startDate|smartDateInterval(worker.endDate)}}</em>
+                    {% endif %}
                 </div>
                 <div class="plus">
-                    <span onclick="startNewTask({{worker.workerId}})" class="plus" title="create on base"></span>
-            <span class="status">
+                    <span onclick="startNewTask({{worker.workerId}})" class="create-on-base">
+                </span>
+            <span class="job_status job_status_{{ worker.status }}">
                 <img src="/static/img/loader.gif" alt="">
             </span>
                 </div>
@@ -28,24 +32,13 @@
             <input type="submit" name="action" value="Удалить выбранные отчеты" class=" awesome orange">
 
                 <div class="pagination">
-
                     <ul>
-                        {% if showFirstGrinder  %}
-                            <li><a id="workerPager1" onclick="loadPage(1)">1</a></li>
-                            <li><a href="#" onclick="javascript:return false;">...</a></li>
-                        {% endif %}
-
                         {% for p in pageRange %}
                                 <li><a {% if currentPage == p %} class="current"{% endif %}
                                                                  id="workerPager{{ p }}"
                                                                  onclick="loadPage({{ p }})">{{ p }}</a>
                                 </li>
                         {% endfor %}
-
-                        {% if showLastGrinder %}
-                            <li><a href="#" onclick="javascript:return false;">...</a></li>
-                            <li><a id="workerPager{{ showLastGrinder }}" onclick="loadPage({{ showLastGrinder }})">{{ showLastGrinder }}</a></li>
-                        {% endif %}
                     </ul>
                 </div>
         </div>

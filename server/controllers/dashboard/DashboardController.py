@@ -49,28 +49,9 @@ class BaseDashboardAction(BaseController):
         return workers, pageCount
 
     def getPager(self, pageCount, page):
-        cellCount = 8
-        showFirstGrinder = False
-        showLastGrinder = False
         startPageRange = 1
-        endPageRange = min(pageCount, cellCount)
-
-        if page > 2:
-            startPageRange = page
-            showFirstGrinder = True
-
-        if cellCount < pageCount:
-            showLastGrinder = pageCount
-
-        if page > 
-
-        if showLastGrinder:
-            endPageRange = endPageRange - 2
-
-        if showFirstGrinder:
-            endPageRange = startPageRange + 2
-
-        return (startPageRange, endPageRange, showFirstGrinder, showLastGrinder)
+        endPageRange = pageCount
+        return (startPageRange, endPageRange)
 
 
 
@@ -110,16 +91,14 @@ class IndexAction(BaseDashboardAction):
         db_session = self.getDBSession()
 
         action = self.get_argument('action', False)
-        if action == u'Удалить':
+        print action
+        if action == u'Удалить выбранные отчеты':
             workerIds = self.get_arguments('jobId', False)
             if workerIds:
                 workers = db_session.query(Worker).filter(Worker.workerId.in_(workerIds)).all()
                 for worker in workers:
-                    try:
-                        WorkerService(self.application.getResultPath(), worker).delete()
-                    except OSError as oserror:
-                        pass
                     db_session.delete(worker)
+                    print worker
 
             db_session.commit()
 
@@ -127,13 +106,11 @@ class IndexAction(BaseDashboardAction):
 
         workers, pageCount = self.getWorkerList(app, page)
 
-        startPageRange, endPageRange, showFirstGrinder, showLastGrinder = self.getPager(pageCount, page)
+        startPageRange, endPageRange = self.getPager(pageCount, page)
 
 
         self.render('dashboard/dashboard.jinja2', {'lastWorkers' : workers,
                                                    'app':app,
-                                                   'showFirstGrinder': showFirstGrinder,
-                                                   'showLastGrinder': showLastGrinder,
                                                    'pageRange':  range(startPageRange, endPageRange),
                                                    'currentPage': page,
                                                    'js_vars': {'app': app.code}})
@@ -160,11 +137,9 @@ class GetWorkers(BaseDashboardAction):
 
         page = int(page)
         workers, pageCount = self.getWorkerList(app, page)
-        startPageRange, endPageRange, showFirstGrinder, showLastGrinder = self.getPager(pageCount, page)
+        startPageRange, endPageRange = self.getPager(pageCount, page)
         self.render('dashboard/workerList.jinja2', {'lastWorkers' : workers,
                                                    'app':app,
-                                                   'showFirstGrinder': showFirstGrinder,
-                                                   'showLastGrinder': showLastGrinder,
                                                    'pageRange':  range(startPageRange, endPageRange),
                                                    'currentPage': page})
 
