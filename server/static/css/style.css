@@ -189,7 +189,8 @@ p {
 }
 
 p.error {
-    color: #ff4d52;
+    background: #F2DEDE;
+    padding: 0 10px;
 }
 
 header {
@@ -311,10 +312,7 @@ div#ui-datepicker-div {
     font-size: 9pt !important;
 }
 
-div.tag_container label {
-    display: inline-block;
-    min-width: 100px;
-}
+
 
 
 
@@ -331,10 +329,6 @@ a.add_action {
     font-size: 10pt;
     border-bottom: 1px dotted #AAAAAA;
     margin: 0px 4px;
-}
-
-div.tag_container ul ul {
-    margin-left: 100px;
 }
 
 fieldset {
@@ -391,7 +385,7 @@ div#topPanel .selectedApp {
 }
 
 #addTaskButton, #fromTemplateButton, #analyticsButton {
-    width: 125px;
+    width: 128px;
     height: 100px;
     display: inline-block;
     border: none;
@@ -429,5 +423,7 @@ div#topPanel .selectedApp {
 
 
 
-
+h1.error {
+    border-bottom: 2px solid #F2DEDE;
+}
 

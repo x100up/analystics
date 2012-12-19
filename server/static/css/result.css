@@ -168,6 +168,10 @@ div#series_container > .seriaGroup > .groupName {
     font-weight: bold;
 }
 
+.seriaGroup {
+    margin-bottom: 20px;
+}
+
 .seriaGroup td, .seriaGroup th{
     border: none !important;
 }
@@ -175,6 +179,11 @@ div#series_container > .seriaGroup > .groupName {
 .align-right {
     text-align: right;
 }
+
+.align-left {
+    text-align: left;
+}
+
 
 div#tableBox{
     overflow: auto;
@@ -391,6 +400,7 @@ span.legendKey > span.op.violet{
 }
 
 .show-charts-group,
+.hide-charts-group,
 .plus-charts-group {
     background: url('/static/img/sprite.png') no-repeat;
     border: none;

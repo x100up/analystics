@@ -136,16 +136,21 @@ class NameConstructor(object):
             op = u'Сумма '
         elif seriesGroup.operation == 'avg':
             op = u'Среднее '
+        return op
 
+
+
+    def getSeriesGroupSecondName(self, seriesGroup):
         vals = []
         for s in seriesGroup.getSeries():
             vals.append(s.avg)
 
         if sum(vals) == 0:
-            return u'{}: нет данных'.format(op)
+            return u'нет данных'
         else:
             _min = min(vals)
             _max = max(vals)
             if _min == _max:
-                return op + u' в среднем {}'.format(int(_min))
-            return op + u' от {} до {}'.format(int(_min), int(_max))
+                return  u' в среднем {}'.format(int(_min))
+            return u' от {} до {}'.format(int(_min), int(_max))
+

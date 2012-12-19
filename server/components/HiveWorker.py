@@ -8,6 +8,7 @@ from models.Worker import Worker
 from components.HiveResponseProcessor import HiveResponseProcessor
 from datetime import datetime
 from services.HiveService import HiveService
+import time
 
 class HiveWorker(threading.Thread):
     '''
@@ -33,6 +34,7 @@ class HiveWorker(threading.Thread):
     def run(self):
         self.logger.debug('worker [' + self.getName() + '] run')
         hiveClient = None
+        time.sleep(600)
         try:
             hiveClient = HiveService(self.host, self.port)
             processor = HiveResponseProcessor(task = self.task)
@@ -53,10 +55,11 @@ class HiveWorker(threading.Thread):
             data = {'exception' : {'HiveServerException': tx.message }}
             status = Worker.STATUS_ERROR
             self.logger.error(tx.message)
-        #except Exception as tx:
-        #    data = {'exception' : {'Exception': tx.message }}
-        #    status = Worker.STATUS_ERROR
-        #    self.logger.error(tx.message)
+        except Exception as tx:
+            print tx
+            data = {'exception' : {'Exception': str(tx) }}
+            status = Worker.STATUS_ERROR
+            self.logger.error(tx.message)
         finally:
             if hiveClient:
                 hiveClient.close()

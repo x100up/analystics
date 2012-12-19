@@ -1,11 +1,15 @@
 {#
- taskItem
+ Часть формы новой задачи для отображения одного тега
+
+
+ taskItem - TaskItem для этого тега
 #}
 <h3 title="{{ tag.getDescription() }}" class="{{ x }}">{{ tag.getName() }}</h3>
 <input type="hidden" name="tag_{{ taskItem.index }}_name" value="{{ tag.code }}">
 
     <div class="tag_values_block {% if tag.type == 'choose' and not tag.values.items and tag.values|length > 5 %} more_value{% endif %}">
 
+    {# ---------- CHOOSE ------------  #}
     {% if tag.type == 'choose' %}
 
         {% if tag.values.items %}
@@ -33,17 +37,19 @@
                 {% endfor %}
             {% endif %}
         {% endif %}
-
+    {# ---------- BOOLEAN ------------  #}
     {% elif tag.type == 'boolean' %}
         Да: <input type="radio" name="tag_{{ taskItem.index }}_{{ tag.code }}" id="tag_{{ taskItem.index }}_{{ tag.code }}_1" value="1"
                 {% if value == '1' %}checked="checked" class="checked" {% endif %} onclick="resetRadio(this)">
         Нет: <input type="radio" name="tag_{{ taskItem.index }}_{{ tag.code }}" id="tag_{{ taskItem.index }}_{{ tag.code }}_0" value="0"
                 {% if value == '2' %}checked="checked" class="checked" {% endif %} onclick="resetRadio(this)">
+    {# ---------- TIMESTAMP ------------  #}
     {% elif tag.type == 'timestamp' %}
         <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" class="datepicker{{ taskItem.index }} datepicker timestamp-type">
         <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" class="datepicker{{ taskItem.index }} datepicker timestamp-type">
+    {# ---------- INT ------------  #}
     {% elif tag.type == 'int' %}
-       <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" value="{{ value or '' }}">
+       <input type="text" name="tag_{{ taskItem.index }}_{{ tag.code }}" value="{{ value[0] or '' }}">
     {% else %}
        {# default string type #}
         {% if value %}
@@ -64,22 +70,24 @@
     </div>
 
 
-    <div class="op_controll">
-        <span class="tag-type-help-{{ taskItem.index }}" data-type="{{ tag.type }}">?</span>
+    <div class="op_control op-control-{{ taskItem.index }}">
         {% if not tag.type == 'timestamp' %}
-        {#
-        <span class="sync sync_{{ tag.code }}" onclick="switchTagSync({{ taskItem.index }}, '{{ tag.code }}', this)">sync</span>
-         #}
-        {% set operations = taskItem.getTagOperations(name)  %}
+
+        {% set operations = taskItem.getTagOperations(tag.code)  %}
         {# operation stacks #}
         <input type="hidden" name="tag_{{ taskItem.index }}_{{ tag.code }}_ops" id="tag_{{ taskItem.index }}_{{ tag.code }}_ops" value="{{ operations|join('/') }}">
-        <span class="group{% if 'group' in operations %} selected{% endif %}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'group', this)">group</span>
+        <span class="label label-op{% if 'group' in operations %} label-warning{% endif %}"
+              onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'group', this)"
+              data-type="group">group</span>
             {% if tag.type == 'int' %}
-            <span class="sum{% if 'sum' in operations %} selected{% endif %}" id="sum_{{ taskItem.index }}_{{ tag.code }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'sum', this)">sum</span>
-            <span class="avg{% if 'avg' in operations %} selected{% endif %}" id="avg_{{ taskItem.index }}_{{ tag.code }}" onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'avg', this)">avg</span>
+            <span class="label label-op{% if 'sum' in operations %} label-warning{% endif %}" id="sum_{{ taskItem.index }}_{{ tag.code }}"
+                  onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'sum', this)"
+                  data-type="sum">sum</span>
+            <span class="label label-op{% if 'avg' in operations %} label-warning{% endif %}" id="avg_{{ taskItem.index }}_{{ tag.code }}"
+                  onclick="switchKeyOp({{ taskItem.index }}, '{{ tag.code }}', 'avg', this)"
+                  data-type="avg">avg</span>
             {% endif %}
         {% endif %}
-
-
+        <span class="tag-type-help-{{ taskItem.index }} label label-info" data-type="{{ tag.type }}">?</span>
     </div>
 

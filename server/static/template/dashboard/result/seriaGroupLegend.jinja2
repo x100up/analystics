@@ -1,20 +1,22 @@
 <div>
-    <span class="legend-group-head">{{ seriesGroup.name }}</span>
-    <button class="show-charts-group{% if not seriesGroup.visible %} hidden{% endif %}"
+    <span class="legend-group-head">{{ seriesGroup.name }} <sup>{{ seriesGroup.secondName }}</sup></span>
+    <button class="{% if seriesGroup.visible %} show-charts-group {% else %} hide-charts-group{% endif %}"
                                              onclick="ChartManager.switchVisibleChartGroup(this, {{ groupIndex }}, true)">
     </button>
     <button class="plus-charts-group" onclick="ChartManager.switchVisibleChartGroup(this, {{ groupIndex }})"></button>
 </div>
 
 <table class="seriaGroup">
+{% if seriesGroup.containsTags %}
     <tr class="groupName">
         <th>&nbsp;</th>
     {% for tagCode in seriesGroup.containsTags %}
-        <th class="align-right" style="width: {{ 100 / (seriesGroup.containsTags|length + 1) }}%">
+        <th class="align-left" style="width: {{ 100 / (seriesGroup.containsTags|length + 1) }}%">
             {{ seriesGroup.containsTags[tagCode] }}
         </th>
     {% endfor %}
     </tr>
+{% endif %}
     {% for series in seriesGroup.getSeries() %}
         <tr class="series" data-seriesId="{{ series.id }}"
                 {% for tagName, valueName, tag, value in series.conditions %}
@@ -32,7 +34,7 @@
                 </td>
 
             {% for tagCode in seriesGroup.containsTags %}
-                <td class="align-right">
+                <td class="align-left">
                     <strong>{{ series.getTagValue(tagCode) or '' }}</strong>
                 </td>
             {% endfor %}

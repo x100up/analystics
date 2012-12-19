@@ -30,15 +30,14 @@
                         {{ rowData.tagHeader }}
                         </em>
                     </th>
-                    <td class="value r col_sum">{{ rowData.sum }}</td>
-                    <td class="value r col_avg">{{ rowData.avg }}</td>
+                    <td class="value r col_sum">{{ rowData.sum|numberFormat }}</td>
+                    <td class="value r col_avg">{{ rowData.avg|numberFormat }}</td>
                     {% for value in rowData['values'] %}
-                        <td class="value col_{{ loop.index0 }}">{{ value }}</td>
+                        <td class="value col_{{ loop.index0 }}">{{ value|numberFormat }}</td>
                     {% endfor %}
                 </tr>
             {% endfor %}
         </tbody>
-
     </table>
 {% endfor %}
 

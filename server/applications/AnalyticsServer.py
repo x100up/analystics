@@ -79,6 +79,9 @@ class AnalyticsServer(tornado.web.Application):
         self.jinjaEnvironment.filters['excelTime'] = excelTime
         self.jinjaEnvironment.filters['dateFromTS'] = dateFromTS
         self.jinjaEnvironment.filters['toJsVar'] = toJsVar
+        self.jinjaEnvironment.filters['minInt'] = minInt
+        self.jinjaEnvironment.filters['numberFormat'] = numberFormat
+
 
         self.scoped_session = None
         self.loopInstance = None

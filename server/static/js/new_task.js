@@ -1,7 +1,6 @@
 var months = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь']
 var monthNamesShort = ['янв', 'фев', 'март', 'апр', 'май', 'июнь', 'июль', 'авг', 'сен', 'окт', 'ноя', 'дек'];
 var dayNamesMin = [ 'Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб']
-var findModal = false;
 var isLockDate = false;
 var synchronizedTags = [];
 var maxIndex = 0;
@@ -13,49 +12,26 @@ function initNewTask() {
     attachDateTimePicker($( "input.datepicker" ));
     maxIndex = globalData['eventLoaded'];
 
-
+    for (var i = 0; i < maxIndex; i++){
+        initLoadedKey(i);
+        console.log(i);
+    }
 }
 
 function attachDateTimePicker(obj){
     obj.datetimepicker({timeFormat: 'hh:mm', onSelect: onDateSelect});
 }
 
-function selectAppEvent(eventCode) {
-    // create event index
-    maxIndex++;
-    $('#formContainer').append('<div id="key_' + maxIndex + '_tag_container"></div>');
-
-    $('div#key_' + maxIndex + '_tag_container').load(
-        '/ajax/key_configuration',
-        {eventCode: eventCode, appCode: app, index: maxIndex},
-        function (responseText, textStatus, XMLHttpRequest) {
-            initLoadedKey(maxIndex);
-            $('#formSaveBlock').show();
-        });
-    globalData['eventLoaded']++;
-}
-
-
+/**
+ * Возвращает следующий ключ
+ * @return {*}
+ */
 function getNextKeyIndex(){
     var next_index = $('div.key_form_item').length
     do {
         next_index ++;
-    } while ($('#key_' + next_index).length)
+    } while ($('#key_' + next_index).length);
     return next_index
-}
-
-function addKey(){
-    var next_index = getNextKeyIndex();
-    $.ajax({
-        url : '/ajax/get_key_form',
-        type: 'post',
-        data: {index: next_index, appCode: app },
-        success: function(data) {
-            $('div.add_key').before(data)
-            removeSelection()
-            initLoadedKeyForm(next_index)
-        }
-    })
 }
 
 /**
@@ -104,8 +80,6 @@ function onDateSelect(dateText, inst) {
         startField.val(startVal);
     }
 
-
-
     // --- синхронизация
     if (isLockDate) {
         if (is_start || changeStart) {
@@ -119,6 +93,11 @@ function onDateSelect(dateText, inst) {
     }
 }
 
+/**
+ * Парсит дату
+ * @param str_val
+ * @return {*}
+ */
 function parseDate(str_val) {
     if (typeof str_val == 'undefined') return;
     var result = null;
@@ -145,35 +124,12 @@ function toDateString(date) {
         + (h < 10 ? '0' + h : h) + ':' + (m < 10 ? '0' + m : m);
 }
 
+
 /**
- * При загрузки формы выбора ключа
+ * Включает уникальность
  * @param index
+ * @param button
  */
-function initLoadedKeyForm(index) {
-    attachDateTimePicker($( "#start_" + index ));
-    attachDateTimePicker($( "#end_" + index ));
-    attachDateTimePicker($( ".datepicker" + index ));
-
-    $('.tag-type-help-' + index).popover({
-                                             trigger:'hover',
-                                             placement:'left',
-                                             html:true,
-                                             title:function () {
-                                                 return getToolTipForTagType($(this).data('type'), 'title');
-                                             },
-                                             content:function () {
-                                                 return getToolTipForTagType($(this).data('type'), 'content');
-                                             }
-
-                                         });
-
-    if (isLockDate) {
-        $("#start_" + index).val(isLockDate[0]);
-        $("#end_" + index).val(isLockDate[1]);
-        $('.button.lock').removeClass('unlock');
-    }
-}
-
 function switchUserUnique(index, button) {
     var input = $('#userUnique' + index);
     var isChecked = input.attr('checked') != undefined;
@@ -211,7 +167,41 @@ function lockDate(index) {
  * @param index
  */
 function initLoadedKey(index) {
-    initLoadedKeyForm(index);
+    attachDateTimePicker($( "#start_" + index ));
+    attachDateTimePicker($( "#end_" + index ));
+    attachDateTimePicker($( ".datepicker" + index ));
+
+    $('.tag-type-help-' + index).popover({
+                                             trigger:'hover',
+                                             placement:'left',
+                                             html:true,
+                                             title:function () {
+                                                 return getToolTipForTagType($(this).data('type'), 'title');
+                                             },
+                                             content:function () {
+                                                 return getToolTipForTagType($(this).data('type'), 'content');
+                                             }
+
+                                         });
+
+    $('.op-control-' + index + ' > span.label-op').popover({
+                                             trigger:'hover',
+                                             placement:'left',
+                                             html:true,
+                                             title:function () {
+                                                 return getToolTipForTagOperation($(this).data('type'), 'title');
+                                             },
+                                             content:function () {
+                                                 return getToolTipForTagOperation($(this).data('type'), 'content');
+                                             }
+
+                                         });
+
+    if (isLockDate) {
+        $("#start_" + index).val(isLockDate[0]);
+        $("#end_" + index).val(isLockDate[1]);
+        $('.button.lock').removeClass('unlock');
+    }
     $('#key_header_' + index).addClass('key_loaded');
 
     // синхронизация значени тегов
@@ -223,26 +213,24 @@ function initLoadedKey(index) {
 
 /**
  * Удаляет ключ
- * @param key
+ * @param eventIndex
  */
-function deleteKey(key) {
-    $('#key_' + key + '_tag_container').remove();
+function deleteEvent(eventIndex) {
+    $('#key_container_'+eventIndex).remove();
     globalData['eventLoaded']--;
     if (globalData['eventLoaded'] < 1) {
         $('#formSaveBlock').hide();
     }
 }
 
-
-
-
 /**
  * Переключалка интервалов
- * @param li_object
+ * @param button
  */
-function switchInterval(li_object){
-    $(li_object).parent().children().removeClass('selected');
-    $('input#group_interval').val($(li_object).addClass('selected').data('value'));
+function switchInterval(button){
+    $(button).parent().children().removeClass('btn-info');
+    $('#group_interval').val($(button).addClass('btn-info').data('value'));
+    return false;
 }
 
 
@@ -251,7 +239,6 @@ function switchInterval(li_object){
  * @param index - key index
  * @param tag - tag name
  * @param operation - operation (sum, group, avg)
- * ! пока нельзя выбрать сумму и среднее одновременно
  */
 function switchKeyOp(index, tag, operation, html_node) {
     var input = $('#tag_' + index + '_' + tag + '_ops');
@@ -264,19 +251,11 @@ function switchKeyOp(index, tag, operation, html_node) {
     if (op_index != -1) {
         // уже есть
         operations.splice(op_index, 1);
-        $(html_node).removeClass('selected');
+        $(html_node).removeClass('label-warning');
     } else {
         // убираем
-        /*
-        if (operation == 'sum' || operation == 'avg') {
-            var remove = operation == 'sum' ? 'avg' : 'sum';
-            var op_index_r = jQuery.inArray(remove, operations);
-            if (op_index_r != -1) { operations.splice(op_index_r, 1); }
-            $('#' + remove + '_' + index + '_' + tag).removeClass('selected');
-        }*/
-        // ----------------
         operations.push(operation);
-        $(html_node).addClass('selected');
+        $(html_node).addClass('label-warning');
     }
 
     input.val(operations.join('/'))
@@ -305,7 +284,8 @@ function switchTagSync(index, tag_name, tag) {
 
 /**
  * Добавляет дополительное текстовое поле
- * @param input
+ * @param index
+ * @param tag_name
  */
 function addTextField(index, tag_name) {
 
@@ -347,6 +327,9 @@ function tagValueChange(type, input, tag_name, index) {
 
 }
 
+/**
+ * Отправляет форму
+ */
 function sendForm() {
     if (globalData['eventLoaded']){
         $('#new_task_form').submit()
@@ -357,7 +340,7 @@ function sendForm() {
 }
 
 /**
- * Модальное окно шаблона
+ * Сохраняет шаблон
  */
 function saveTemplate(){
     if (globalData['eventLoaded']){
@@ -380,17 +363,49 @@ function selectTemplate(){
 
 
 /**
+ * Выбор события
+ * @param eventCode
+ */
+function selectAppEvent(eventCode) {
+    // create event index
+    var newEventIndex = getNextKeyIndex();
+    var container = getNewContainerForEvent(newEventIndex);
+
+    container.load(
+        '/ajax/key_configuration',
+        {eventCode: eventCode, appCode: app, index: maxIndex},
+        function (responseText, textStatus, XMLHttpRequest) {
+            initLoadedKey(maxIndex);
+            $('#formSaveBlock').show();
+        });
+    globalData['eventLoaded']++;
+}
+
+/**
  * Копирует ключ
  * @param index - индекс копируемого ключа
  */
 function copyKey(index){
-    var new_index = getNextKeyIndex();
-    $.post('/ajax/copyTaskKey', 'copy_key_index=' + index + '&' + 'new_index=' + new_index + '&'
+    var newEventIndex = getNextKeyIndex();
+    var container = getNewContainerForEvent(newEventIndex);
+
+    $.post('/ajax/copyTaskKey', 'copy_key_index=' + index + '&' + 'new_index=' + newEventIndex + '&'
         + $('#new_task_form').serialize(),
             function(data, textStatus, jqXHR){
-                $('#key_container_' + index).parent().children(':last').after(data);
-                initLoadedKey(new_index);
+                container.append(data);
+                initLoadedKey(newEventIndex);
+                globalData['eventLoaded']++;
     });
+}
+
+/**
+ * Создает и возвращает контейнер для загрузки формы событий
+ * @param index
+ * @return {*}
+ */
+function getNewContainerForEvent(index){
+    $('#formContainer').append('<div id="key_' + index + '_tag_container"></div>');
+    return $('div#key_' + index + '_tag_container')
 }
 
 function resetRadio(radio) {
@@ -434,5 +449,19 @@ function getToolTipForTagType(tagType, type){
         return $('#tag-tooltip-' + tagType + ' > .title').html();
     } else {
         return $('#tag-tooltip-' + tagType + ' > .content').html();
+    }
+}
+
+/**
+ *
+ * @param opType
+ * @param type
+ * @return {*}
+ */
+function getToolTipForTagOperation(opType, type){
+    if (type == 'title'){
+        return $('#tag-op-tooltip-' + opType + ' > .title').html();
+    } else {
+        return $('#tag-op-tooltip-' + opType + ' > .content').html();
     }
 }

@@ -30,6 +30,7 @@ function getProgress() {
 var currentWorkerId = null;
 
 function editName(button, workerId) {
+    console.log('editName', workerId);
     currentWorkerId = workerId;
     $(button).parent().hide();
     $('#taskName').show().focus();
@@ -50,21 +51,25 @@ function editName(button, workerId) {
             type: 'POST',
             data: {'name':editor.val(), 'workerId':workerId},
             success: function(data, textStatus, jqXHR){
-                editor.after(a.text(editor.val())).remove()
+                editor.after(a.text(editor.val())).remove();
+                console.log('ajax', workerId);
+                if (typeof workerId != 'undefined') {
+                    $('.worker-name-' + workerId).html(name);
+                }
             }
         });
     };
 
 }
 
-function keyDownHandlerTaskName(event){
+function keyDownHandlerTaskName(event, workerId){
     if (event.keyCode == 13) {
         event.stopPropagation();
-        saveTaskName();
+        saveTaskName(workerId);
     }
 }
 
-function saveTaskName() {
+function saveTaskName(workerId) {
     var editor = $('#taskName');
     var name = editor.val();
     editor.hide();
@@ -74,10 +79,14 @@ function saveTaskName() {
             type: 'POST',
             data: {'name':name, 'workerId':currentWorkerId},
             success: function(data, textStatus, jqXHR){
-
+                if (typeof workerId != 'undefined') {
+                    $('.worker-name-' + workerId).html(name);
+                }
             }
         });
     }
+
+
 }
 
 function loadResult(workerId) {
@@ -96,6 +105,13 @@ function startNewTask(x){
 
 function showTemplates(){
     loadDashboardContent('templates');
+}
+
+/**
+ * Нажатие кнопки аналитика
+ */
+function showAnalytics(){
+    //pass
 }
 
 function loadDashboardContent(page) {
@@ -148,7 +164,16 @@ $(function(){
 
     contentContainer = $('#dashboard_container');
     loadDashboardContent(location.hash.substr(1));
+
+    initTaskList();
 });
+
+function initTaskList(){
+    $('.create-on-base').tooltip({
+        title: 'Копировать задачу',
+        placement: 'right'
+                                 });
+}
 
 
 /**
@@ -156,9 +181,7 @@ $(function(){
  * @param page
  */
 function loadPage(page){
-    $('.paging > li.current').removeClass('current');
-    $('#workerPager' + page).addClass('current');
-    $('#workers').load('/ajax/dashboard/app/' + app + '/workers/' + page);
+    $('#sideLeft > div').load('/ajax/dashboard/app/' + app + '/workers/' + page, initTaskList);
 }
 
 

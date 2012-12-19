@@ -1,7 +1,7 @@
 {#
  need taskItem
  appConfig
- #}
+#}
 
 {% set is_loaded = (taskItem.key and appConfig.isEventExist(taskItem.key)) %}
 <div class="key_form_item span12" id="key_container_{{ taskItem.index  }}">
@@ -39,13 +39,13 @@
 
         </div>
         <div class="span2 omega">
-            <input class="button delete" onclick="deleteKey({{ taskItem.index }})">
+            <input class="button delete" onclick="deleteEvent({{ taskItem.index }})">
         </div>
     </div>
 
     <div class="clearfix"></div>
 
-    <div id="key_{{ taskItem.index }}_tag_container" class="tag_container">
+    <div id="key_{{ taskItem.index }}_tag_container" class="event_tags_container">
         {% if is_loaded %}
            {% set tags = appConfig.getEventTags(taskItem.key) %}
            {% set index = taskItem.index %}
@@ -78,8 +78,5 @@
             {% endfor %}
         {% endif %}
     </div>
-
- {#   <span class="awesome orange small" onclick="deleteKey({{ taskItem.index  }})">удалить</span>
-#}
 
 </div>

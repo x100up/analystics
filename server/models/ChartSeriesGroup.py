@@ -21,6 +21,7 @@ class ChartSeriesGroup():
         self.maxAvg = None
         self.process()
         self.name = u'неизвестная серия'
+        self.secondName = u''
 
 
     def process(self):

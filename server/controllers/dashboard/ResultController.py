@@ -94,7 +94,7 @@ class ShowTaskStatus(BaseResultAction):
         worker = self.getWorker(workerId)
 
         if (worker.status == Worker.STATUS_ALIVE):
-            self.renderJSON({'redirect': 1})
+            self.renderJSON({'html': self.render('dashboard/result/taskAlive.jinja2', _return=True) })
         elif (worker.status == Worker.STATUS_ERROR) or (worker.status == Worker.STATUS_DIED):
             service = WorkerService(self.application.getResultPath(), worker)
             self.renderJSON({'html': self.render('dashboard/result/taskFailed.jinja2', {'errors': [service.getError()]}, _return=True) })

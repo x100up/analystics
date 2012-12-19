@@ -108,6 +108,9 @@ class TaskItem(object):
     def setTagOperations(self, tagName, operations):
         self.operations[tagName] = operations
 
+    ##
+    # Возвращает список операции для тега в этом таске
+    ##
     def getTagOperations(self, tagName):
         if self.operations.has_key(tagName):
             return self.operations[tagName]
