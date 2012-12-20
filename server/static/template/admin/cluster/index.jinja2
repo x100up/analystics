@@ -1,0 +1,17 @@
+{% extends 'admin/adminLayout.jinja2' %}
+
+{% block head %}
+    <script type="text/javascript" src="/static/libs/highcharts/highcharts.js" ></script>
+    <script type="text/javascript" src="/static/js/admin.cluster.js"></script>
+{% endblock %}
+
+{% block content %}
+    <h1>Кластер</h1>
+
+    <div id="clusterState">
+
+    </div>
+
+    <div id="chart">
+    </div>
+{% endblock %}

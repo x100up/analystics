@@ -10,7 +10,7 @@ from components.jinja import *
 from models.Config import Config
 from controllers import  IndexController, UserController
 from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController
-from controllers.admin import AdminSettingsController, AdminAppConfigController, AdminAppSpellController, AdminAppGroupsController
+from controllers.admin import AdminSettingsController, AdminAppConfigController, AdminAppSpellController, AdminAppGroupsController, AdminClusterController
 
 from controllers.api import APIController
 from controllers.dashboard import ResultController, AjaxController, DashboardController, CreateTaskController, TemplateController
@@ -73,6 +73,7 @@ class AnalyticsServer(tornado.web.Application):
         self.determineIsInstall()
         self.jinjaEnvironment = Environment(loader = PackageLoader('static', 'template'))
         self.jinjaEnvironment.filters['datetofiled'] = datetofiled
+        self.jinjaEnvironment.filters['smartDate'] = smartDate
         self.jinjaEnvironment.filters['smartDatePeriod'] = smartDatePeriod
         self.jinjaEnvironment.filters['smartDateInterval'] = smartDateInterval
         self.jinjaEnvironment.filters['excelDate'] = excelDate
@@ -184,6 +185,8 @@ class AnalyticsServer(tornado.web.Application):
             (r"/admin/rules/?", AdminRulesController.IndexAction),
             (r"/admin/rules/switch?", AdminRulesController.SwitchAjaxAction),
             (r'/admin/settings/?', AdminSettingsController.IndexAction),
+            (r'/admin/cluster?', AdminClusterController.IndexAction),
+
 
 
             (r'/admin/app/([^/]+)/settings/?', AdminAppConfigController.IndexAction),
@@ -208,6 +211,8 @@ class AnalyticsServer(tornado.web.Application):
 
             (r"/ajax/getTagUniqueValues/?", HiveAJAXController.getTagUniqueValues),
             (r"/ajax/downloadCSV/?", AjaxController.DownloadCSVAction),
+
+            (r"/ajax/admin/getClusterState/?", AdminClusterController.ClusterStateAction),
 
             # ----------- TEMPLATE ---------------
             #(r"/template/create/([^/]+)/?", TemplateController.CreateTemplateAction),

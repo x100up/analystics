@@ -1,0 +1,38 @@
+{% for rack in state %}
+    <h2>Стойка: {{ rack }}</h2>
+    <div class="row-fluid">
+        {% for node in state[rack] %}
+            <div class="span2">
+            <h2>{{ node.id }}</h2>
+                <ul>
+                    <li>
+                        Состояние: {{ node.state }}
+                    </li>
+                    <li>
+                        Доступно памяти: {{ node.availMemoryMB }} MB
+                    </li>
+                    <li>
+                        Использовано памяти: {{ node.usedMemoryMB }} MB
+                    </li>
+                    <li>
+                        Контенеров: {{ node.numContainers }}
+                    </li>
+                    <li>
+                        Здоровье: {{ node.healthStatus }} <sup>{{ node.lastHealthUpdate|smartDate }}</sup>
+                    </li>
+
+                    {% if node.healthReport %}
+
+                    <li>
+                        О здоровье: {{ node.healthReport }}
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        {% endfor %}
+    </div>
+    <script type="text/javascript">
+        addPoint({{ currentTs }}, {{ totalUsed }});
+
+    </script>
+{% endfor %}

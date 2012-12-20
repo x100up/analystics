@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from controllers.BaseController import BaseController
+from controllers.BaseController import BaseController, AjaxController
 from models.User import User
 import tornado.web
 
@@ -12,6 +12,11 @@ class AdminAction(BaseController):
         user = self.get_current_user()
         if user.role != User.ROLE_ADMIN:
             self.redirect('/dashboard');
+
+
+class AdminAjaxAction(AjaxController):
+    pass
+
 
 class IndexAction(AdminAction):
 
