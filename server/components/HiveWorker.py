@@ -34,7 +34,6 @@ class HiveWorker(threading.Thread):
     def run(self):
         self.logger.debug('worker [' + self.getName() + '] run')
         hiveClient = None
-        time.sleep(600)
         try:
             hiveClient = HiveService(self.host, self.port)
             processor = HiveResponseProcessor(task = self.task)
