@@ -187,8 +187,7 @@ class AnalyticsServer(tornado.web.Application):
             (r'/admin/settings/?', AdminSettingsController.IndexAction),
             (r'/admin/cluster?', AdminClusterController.IndexAction),
             (r'/admin/historyServer/?', AdminHistoryServerProxy.IndexAction),
-            (r'/admin/historyServer/proxy/?', AdminHistoryServerProxy.HistoryServerAction),
-            (r'/admin/historyServer/proxy/(.+)?', AdminHistoryServerProxy.HistoryServerAction),
+            (r'/admin/historyServer/proxy(.+)?', AdminHistoryServerProxy.HistoryServerAction),
 
 
 
