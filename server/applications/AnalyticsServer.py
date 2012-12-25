@@ -191,7 +191,7 @@ class AnalyticsServer(tornado.web.Application):
 
             (r'/admin/resourceManager/?', AdminProxy.ResourceManagerView),
 
-            (r'/admin/proxy/([^/]+)/([^/]+)/(.+)/?', AdminProxy.CoreProxy),
+            (r'/admin/proxy/([^/]+)/([^/]+)/(.+)?', AdminProxy.CoreProxy),
 
 
 
