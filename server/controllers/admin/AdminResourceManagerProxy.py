@@ -17,16 +17,13 @@ class HistoryServerAction(AdminAction):
                 url = args[0]
 
         src = re.compile('src=\"([^\"]+)\"')
-        href = re.compile('href=\"/([^\"]+)\"')
+        href = re.compile('href=\"([^\"]+)\"')
 
         root = 'http://resource.hadoop.pretender.local:8088'
         print 'open {}', format(root + url)
         f = urllib2.urlopen(root + url)
         data = f.read()
         data = src.sub('src="/admin/resourceManager/proxy\\1' + '"', data)
-        data = href.sub('href="/admin/resourceManager/proxy/\\1' + '"', data)
-
-        uni = re.compile('href=\"http://([^:]+):(\d+)([^\"]+)\"')
-        data = uni.sub('href="/admin/proxy/\\1' + '"', data)
+        data = href.sub('href="/admin/resourceManager/proxy\\1' + '"', data)
 
         self.write(data)
