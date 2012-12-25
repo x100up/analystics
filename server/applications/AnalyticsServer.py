@@ -11,7 +11,7 @@ from models.Config import Config
 from controllers import  IndexController, UserController
 from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController, AdminHistoryServerProxy, AdminResourceManagerProxy
 from controllers.admin import AdminSettingsController, AdminAppConfigController, AdminAppSpellController, AdminAppGroupsController, AdminClusterController
-
+from controllers.admin import AdminProxy
 from controllers.api import APIController
 from controllers.dashboard import ResultController, AjaxController, DashboardController, CreateTaskController, TemplateController
 from controllers.cluster import NameNodeController
@@ -191,6 +191,10 @@ class AnalyticsServer(tornado.web.Application):
 
             (r'/admin/resourceManager/?', AdminResourceManagerProxy.IndexAction),
             (r'/admin/resourceManager/proxy(.+)?', AdminResourceManagerProxy.HistoryServerAction),
+
+            (r'/admin/proxy?', AdminProxy.IndexAction),
+            (r'/admin/proxy/(.+)?', AdminProxy.ProxyAction),
+
 
 
 

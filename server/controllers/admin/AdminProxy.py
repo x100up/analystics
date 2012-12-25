@@ -9,7 +9,7 @@ class IndexAction(AdminAction):
     def get(self, *args, **kwargs):
         self.render('admin/proxy/resourceManager.jinja2')
 
-class HistoryServerAction(AdminAction):
+class ProxyAction(AdminAction):
     def get(self, *args, **kwargs):
         url = '/'
         if len(args):
@@ -19,9 +19,8 @@ class HistoryServerAction(AdminAction):
         src = re.compile('src=\"([^\"]+)\"')
         href = re.compile('href=\"([^\"]+)\"')
 
-        root = 'http://resource.hadoop.pretender.local:8088'
-        print 'open {}', format(root + url)
-        f = urllib2.urlopen(root + url)
+        print 'admin proxy open {}'.format(url)
+        f = urllib2.urlopen(url)
         data = f.read()
         data = src.sub('src="/admin/resourceManager/proxy\\1' + '"', data)
         data = href.sub('href="/admin/resourceManager/proxy\\1' + '"', data)
