@@ -14,7 +14,7 @@ class CoreProxy(AdminAction):
     def get(self, host, port, url = '/'):
         src = re.compile('src=\"([^\"]+)\"')
         href = re.compile('href=\"/([^\"]+)\"')
-        abshref = re.compile('href=\"http://([^:]+):(\d+)([^\"]+)\"')
+        abshref = re.compile('href=\"http://([^\:]+)\:(\d+)([^\"]+)\"')
 
         if url == None:
             url = '/'
