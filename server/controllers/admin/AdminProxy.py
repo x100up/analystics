@@ -11,7 +11,7 @@ class ResourceManagerView(AdminAction):
 
 class HistoryServerView(AdminAction):
     def get(self, *args, **kwargs):
-        self.render('admin/proxy/resourceManager.jinja2')
+        self.render('admin/proxy/historyServer.jinja2')
 
 class CoreProxy(AdminAction):
 
