@@ -19,8 +19,8 @@ class HistoryServerAction(AdminAction):
         src = re.compile('src=\"([^\"]+)\"')
         href = re.compile('href=\"([^\"]+)\"')
 
-        root = 'http://historyserver.hadoop.pretender.local:19888/'
-
+        root = 'http://historyserver.hadoop.pretender.local:19888'
+        print 'open {}', format(root + url)
         f = urllib2.urlopen(root + url)
         data = f.read()
         data = src.sub('src="/admin/historyServer/proxy\\1' + '"', data)
