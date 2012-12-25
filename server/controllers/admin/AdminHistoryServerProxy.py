@@ -19,5 +19,5 @@ class HistoryServerAction(AdminAction):
 
         f = urllib2.urlopen(root)
         data = f.read()
-        src.sub(root + '\1')
+        src.sub('src="' + root + '\1' + '"', data)
         self.write(data)
