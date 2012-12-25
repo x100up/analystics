@@ -11,14 +11,17 @@ class IndexAction(AdminAction):
 
 class HistoryServerAction(AdminAction):
     def get(self, *args, **kwargs):
-        print args
+        url = '/'
+        if len(args):
+            if args[0]:
+                url = args[0]
 
         src = re.compile('src=\"([^\"]+)\"')
         href = re.compile('href=\"([^\"]+)\"')
 
         root = 'http://historyserver.hadoop.pretender.local:19888/'
 
-        f = urllib2.urlopen(root)
+        f = urllib2.urlopen(root + url)
         data = f.read()
         data = src.sub('src="/admin/historyServer/proxy/\\1' + '"', data)
         data = href.sub('href="/admin/historyServer/proxy/\\1' + '"', data)
