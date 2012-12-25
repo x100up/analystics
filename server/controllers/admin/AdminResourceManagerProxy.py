@@ -25,4 +25,8 @@ class HistoryServerAction(AdminAction):
         data = f.read()
         data = src.sub('src="/admin/resourceManager/proxy\\1' + '"', data)
         data = href.sub('href="/admin/resourceManager/proxy\\1' + '"', data)
+
+        uni = re.compile('href=\"http://([^:]+):(\d+)([^\"]+)\"')
+        data = uni.sub('href="/admin/proxy\\1/\\2/\\3' + '"', data)
+
         self.write(data)
