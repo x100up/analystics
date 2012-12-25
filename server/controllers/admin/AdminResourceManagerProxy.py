@@ -27,3 +27,26 @@ class HistoryServerAction(AdminAction):
         data = href.sub('href="/admin/resourceManager/proxy\\1' + '"', data)
 
         self.write(data)
+
+class CoreProxy(AdminAction):
+
+    root = 'http://web345:8042'
+    host = 'web345'
+    port = '8042'
+
+    def get(self, *args, **kwargs):
+        url = '/'
+        if len(args):
+            if args[0]:
+                url = args[0]
+
+        src = re.compile('src=\"([^\"]+)\"')
+        href = re.compile('href=\"([^\"]+)\"')
+
+        f = urllib2.urlopen(self.root + url)
+        data = f.read()
+        data = src.sub('src="/admin/proxy/' + self.host + '/' + self.port + '/\\1' + '"', data)
+        data = href.sub('href="/admin/proxy/' + self.host + '/' + self.port + '/\\1' + '"', data)
+
+        self.write(data)
+

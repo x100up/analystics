@@ -26,7 +26,4 @@ class HistoryServerAction(AdminAction):
         data = src.sub('src="/admin/historyServer/proxy\\1' + '"', data)
         data = href.sub('href="/admin/historyServer/proxy\\1' + '"', data)
 
-
-
-
         self.write(data)

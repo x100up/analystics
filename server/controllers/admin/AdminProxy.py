@@ -5,11 +5,16 @@ from controllers.admin.AdminIndexController import AdminAction
 import urllib2, re
 
 
-class IndexAction(AdminAction):
+class ResourceManagerView(AdminAction):
     def get(self, *args, **kwargs):
         self.render('admin/proxy/resourceManager.jinja2')
 
-class ProxyAction(AdminAction):
+class CoreProxy(AdminAction):
+
+    root = 'http://web345:8042'
+    host = 'web345'
+    port = '8042'
+
     def get(self, *args, **kwargs):
         url = '/'
         if len(args):
@@ -19,13 +24,14 @@ class ProxyAction(AdminAction):
         src = re.compile('src=\"([^\"]+)\"')
         href = re.compile('href=\"([^\"]+)\"')
 
-        print 'admin proxy open {}'.format(url)
-        f = urllib2.urlopen(url)
+        f = urllib2.urlopen(self.root + url)
         data = f.read()
-        data = src.sub('src="/admin/resourceManager/proxy\\1' + '"', data)
-        data = href.sub('href="/admin/resourceManager/proxy\\1' + '"', data)
-
-        uni = re.compile('href=\"http://([^:]+):(\d+)([^\"]+)\"')
-        data = uni.sub('href="/admin/proxy/\\1' + '"', data)
+        data = src.sub('src="/admin/proxy/' + self.host + '/' + self.port + '/\\1' + '"', data)
+        data = href.sub('href="/admin/proxy/' + self.host + '/' + self.port + '/\\1' + '"', data)
 
         self.write(data)
+
+class ResourceManagerProxy(CoreProxy):
+    root = 'http://resource.hadoop.pretender.local:8088'
+    host = 'resource.hadoop.pretender.local'
+    port = '8088'
