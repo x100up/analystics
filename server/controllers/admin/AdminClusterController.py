@@ -25,3 +25,6 @@ class ClusterStateAction(AdminAjaxAction):
                 totalUsed += int(node['usedMemoryMB'])
 
         self.render('admin/cluster/state.jinja2', {'state':state, 'currentTs':currentTs, 'totalUsed':int(totalUsed)})
+
+    def post(self, *args, **kwargs):
+        self.get()
