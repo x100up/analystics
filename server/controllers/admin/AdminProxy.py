@@ -9,6 +9,10 @@ class ResourceManagerView(AdminAction):
     def get(self, *args, **kwargs):
         self.render('admin/proxy/resourceManager.jinja2')
 
+class HistoryServerView(AdminAction):
+    def get(self, *args, **kwargs):
+        self.render('admin/proxy/resourceManager.jinja2')
+
 class CoreProxy(AdminAction):
 
     def get(self, host, port, url = '/'):
