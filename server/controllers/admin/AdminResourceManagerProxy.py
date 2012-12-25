@@ -17,7 +17,7 @@ class HistoryServerAction(AdminAction):
                 url = args[0]
 
         src = re.compile('src=\"([^\"]+)\"')
-        href = re.compile('href=\"([^\"]+)\"')
+        href = re.compile('href=\"/([^\"]+)\"')
 
         root = 'http://resource.hadoop.pretender.local:8088'
         print 'open {}', format(root + url)
