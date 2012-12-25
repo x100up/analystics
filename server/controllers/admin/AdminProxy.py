@@ -14,6 +14,8 @@ class CoreProxy(AdminAction):
     def get(self, host, port, url = '/'):
         src = re.compile('src=\"([^\"]+)\"')
         href = re.compile('href=\"([^\"]+)\"')
+        if url == None:
+            url = '/'
 
         f = urllib2.urlopen('http://{}:{}{}'.format(host, port, url))
         data = f.read()
