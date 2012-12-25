@@ -9,7 +9,7 @@ import logging
 from components.jinja import *
 from models.Config import Config
 from controllers import  IndexController, UserController
-from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController
+from controllers.admin import AdminUserController, AdminIndexController, AdminAppController, AdminRulesController, AdminHistoryServerProxy
 from controllers.admin import AdminSettingsController, AdminAppConfigController, AdminAppSpellController, AdminAppGroupsController, AdminClusterController
 
 from controllers.api import APIController
@@ -186,6 +186,8 @@ class AnalyticsServer(tornado.web.Application):
             (r"/admin/rules/switch?", AdminRulesController.SwitchAjaxAction),
             (r'/admin/settings/?', AdminSettingsController.IndexAction),
             (r'/admin/cluster?', AdminClusterController.IndexAction),
+            (r'/admin/historyServer/?', AdminHistoryServerProxy.IndexAction),
+            (r'/admin/historyServer/proxy/(.+)?', AdminHistoryServerProxy.HistoryServerAction),
 
 
 

@@ -6,13 +6,14 @@ $(function () {
 });
 
 function collectData() {
-    clusterState.load('/ajax/admin/getClusterState');
-    window.setTimeout(collectData, 1000);
+    clusterState.load('/ajax/admin/getClusterState', {success:function(){
+        window.setTimeout(collectData, 1000);
+    }});
 }
 
 function addPoint(currentTs, totalUsed){
     var series = clusterChart.series[0];
-    var shift = series.data.length > 3000000;
+    var shift = series.data.length > 50;
     series.addPoint([ currentTs , totalUsed], true, shift);
 }
 
