@@ -10,13 +10,15 @@ class IndexAction(AdminAction):
         self.render('admin/proxy/historyServer.jinja2')
 
 class HistoryServerAction(AdminAction):
-    def get(self, url = ''):
+    def get(self, *args, **kwargs):
+        print args
+
         src = re.compile('src=\"([^\"]+)\"')
         href = re.compile('href=\"([^\"]+)\"')
 
         root = 'http://historyserver.hadoop.pretender.local:19888/'
 
-        f = urllib2.urlopen(root + url)
+        f = urllib2.urlopen(root)
         data = f.read()
         data = src.sub('src="/admin/historyServer/proxy/\\1' + '"', data)
         data = href.sub('href="/admin/historyServer/proxy/\\1' + '"', data)
