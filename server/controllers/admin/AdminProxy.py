@@ -11,27 +11,13 @@ class ResourceManagerView(AdminAction):
 
 class CoreProxy(AdminAction):
 
-    root = 'http://web345:8042'
-    host = 'web345'
-    port = '8042'
-
-    def get(self, *args, **kwargs):
-        url = '/'
-        if len(args):
-            if args[0]:
-                url = args[0]
-
+    def get(self, host, port, url = '/'):
         src = re.compile('src=\"([^\"]+)\"')
         href = re.compile('href=\"([^\"]+)\"')
 
-        f = urllib2.urlopen(self.root + url)
+        f = urllib2.urlopen('http://{}:{}{}'.format(host, port, url))
         data = f.read()
-        data = src.sub('src="/admin/proxy/' + self.host + '/' + self.port + '/\\1' + '"', data)
-        data = href.sub('href="/admin/proxy/' + self.host + '/' + self.port + '/\\1' + '"', data)
+        data = src.sub('src="/admin/proxy/' + host + '/' + port + '/\\1' + '"', data)
+        data = href.sub('href="/admin/proxy/' + host + '/' + port + '/\\1' + '"', data)
 
         self.write(data)
-
-class ResourceManagerProxy(CoreProxy):
-    root = 'http://resource.hadoop.pretender.local:8088'
-    host = 'resource.hadoop.pretender.local'
-    port = '8088'
