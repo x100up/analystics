@@ -20,7 +20,7 @@ class CoreProxy(AdminAction):
         f = urllib2.urlopen('http://{}:{}{}'.format(host, port, url))
         data = f.read()
         data = src.sub('src="/admin/proxy/' + host + '/' + port + '/\\1' + '"', data)
-        data = href.sub('href="/admin/proxy/' + host + '/' + port + '/\\1' + '"', data)
+        data = href.sub('href="/admin/proxy/' + host + '/' + port + '//\\1' + '"', data)
 
         #/admin/proxy/resource.hadoop.pretender.local/8088/http://web345:8042/node/containerlogs/container_1356430503316_0001_01_000001/hive
 
