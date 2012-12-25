@@ -2,7 +2,7 @@
 __author__ = 'pavlenko.roman.spb@gmail.com'
 
 from controllers.admin.AdminIndexController import AdminAction
-import urllib2
+import urllib2, re
 
 
 class IndexAction(AdminAction):
@@ -12,8 +12,12 @@ class IndexAction(AdminAction):
 class HistoryServerAction(AdminAction):
     def get(self, *args, **kwargs):
         print args
+
+        src = re.compile('src="([^"]+)"')
+
         root = 'http://historyserver.hadoop.pretender.local:19888'
 
         f = urllib2.urlopen(root)
         data = f.read()
+        src.sub(root + '\1')
         self.write(data)
