@@ -11,8 +11,6 @@ class IndexAction(AdminAction):
 
 class HistoryServerAction(AdminAction):
     def get(self, url = ''):
-        print args
-
         src = re.compile('src=\"([^\"]+)\"')
         href = re.compile('href=\"([^\"]+)\"')
 
