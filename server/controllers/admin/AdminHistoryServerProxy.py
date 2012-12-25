@@ -19,7 +19,7 @@ class HistoryServerAction(AdminAction):
         src = re.compile('src=\"([^\"]+)\"')
         href = re.compile('href=\"([^\"]+)\"')
 
-        root = 'http://historyserver.hadoop.pretender.local:19888/'
+        root = 'http://historyserver.hadoop.pretender.local:19888'
 
         f = urllib2.urlopen(root + url)
         data = f.read()
