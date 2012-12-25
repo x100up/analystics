@@ -20,6 +20,6 @@ class HistoryServerAction(AdminAction):
 
         f = urllib2.urlopen(root)
         data = f.read()
-        data = src.sub('src="' + root + '\1' + '"', data)
-        data = href.sub('href="' + root + '\1' + '"', data)
+        data = src.sub('src="/admin/historyServer/proxy/\\1' + '"', data)
+        data = href.sub('href="/admin/historyServer/proxy/\\1' + '"', data)
         self.write(data)
