@@ -13,7 +13,7 @@ class HistoryServerAction(AdminAction):
     def get(self, *args, **kwargs):
         print args
 
-        src = re.compile('src="([^"]+)"')
+        src = re.compile('src=\"([^\"]+)\"')
 
         root = 'http://historyserver.hadoop.pretender.local:19888'
 
