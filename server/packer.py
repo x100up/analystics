@@ -51,11 +51,13 @@ class Packer():
     def __init__(self, appService, hiveClient):
         self.appService = appService
         self.hiveClient = hiveClient
-        self.hiveClient.execute('SET hive.exec.compress.output=true')
-        self.hiveClient.execute('SET mapred.job.priority=VERY_LOW')
-        self.hiveClient.execute('SET mapred.output.compression.codec=org.apache.hadoop.io.compress.SnappyCodec')
-        self.hiveClient.execute('SET mapred.output.compression.type=BLOCK')
-        self.hiveClient.execute('SET hive.merge.mapfiles=true')
+        self.hiveClient.execute('set hive.merge.smallfiles.avgsize = 128000000')
+        self.hiveClient.execute('set hive.exec.compress.output=true')
+        self.hiveClient.execute('set mapred.output.compression.codec=org.apache.hadoop.io.compress.SnappyCodec')
+        self.hiveClient.execute('set hive.merge.mapfiles=true')
+        self.hiveClient.execute('set mapred.output.compression.type=BLOCK')
+        self.hiveClient.execute('hive.merge.mapredfiles=true')
+        self.hiveClient.execute('hive.mergejob.maponly=true')
 
     def getApplications(self):
         return ['topface']
