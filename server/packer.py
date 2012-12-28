@@ -56,8 +56,8 @@ class Packer():
         self.hiveClient.execute('set mapred.output.compression.codec=org.apache.hadoop.io.compress.SnappyCodec')
         self.hiveClient.execute('set hive.merge.mapfiles=true')
         self.hiveClient.execute('set mapred.output.compression.type=BLOCK')
-        self.hiveClient.execute('hive.merge.mapredfiles=true')
-        self.hiveClient.execute('hive.mergejob.maponly=true')
+        self.hiveClient.execute('set hive.merge.mapredfiles=true')
+        self.hiveClient.execute('set hive.mergejob.maponly=true')
 
     def getApplications(self):
         return ['topface']
