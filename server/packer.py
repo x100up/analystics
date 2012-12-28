@@ -81,7 +81,7 @@ class Packer():
                     self.hiveClient.execute(query)
                     end = datetime.now()
                     print 'Query time: {}'.format(end - start)
-                    time.sleep(90)
+                    time.sleep(20)
                 except Exception as ex:
                     print ex.message
 
