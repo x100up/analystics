@@ -63,6 +63,7 @@ class PackerScript(BaseAnalyticsScript):
                         hiveTable.eventCode = key
                         dbSession.add(hiveTable)
                         dbSession.commit()
+                        print 'create new hiveTable'
 
                     hiveTablePartition = dbSession.query(HiveTablePartition).filter_by(hiveTableId = hiveTable.hiveTableId,
                         partitionDate = date(self.year, self.month, self.year)).first()
@@ -72,8 +73,11 @@ class PackerScript(BaseAnalyticsScript):
                         hiveTablePartition.hiveTableId = hiveTable.hiveTableId
                         hiveTablePartition.partitionDate = date(self.year, self.month, self.year)
                         hiveTablePartition.isCompact = True
+                        print 'create new hiveTablePartition'
                     else:
                         hiveTablePartition.isCompact = True
+
+                    print 'Set compact label to in partiton meta'
 
                     dbSession.add(hiveTablePartition)
                     dbSession.commit()
