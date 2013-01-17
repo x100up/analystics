@@ -4,7 +4,7 @@ __author__ = 'x100up'
 from scripts.baseScript import BaseAnalyticsScript
 from models.Hive import HiveTable, HiveTablePartition
 from components.webhdfs import WebHDFSException
-from datetime import date
+from datetime import date, datetime
 
 class InitHiveMetaDataScript(BaseAnalyticsScript):
 
@@ -58,7 +58,7 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
 
             if partitionsDates:
                 minDate = min(partitionsDates)
-                hiveTable.startFrom =  date(minDate.year, minDate.month, minDate.day)
+                hiveTable.startFrom = datetime(minDate.year, minDate.month, minDate.day)
                 print dbSession.add(hiveTable)
                 dbSession.commit()
                 print 'Set start from {} {} {}'.format(appCode, eventCode, minDate)
