@@ -69,6 +69,7 @@ class PackerScript(BaseAnalyticsScript):
                     print 'Partition find in DB'
 
                 if not hiveTablePartition.isCompact:
+                    print 'Start pack table {}.{}'.format(appCode, key)
                     try:
                         start = datetime.now()
                         query = PACK_TABLE_QUERY.format(key, self.year, self.month, self.day)
