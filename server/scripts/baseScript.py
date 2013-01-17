@@ -1,12 +1,11 @@
 __author__ = 'x100up'
 
 import logging
-import re, os, inspect, json
+import os, inspect
 from models.Config import Config
-from optparse import OptionParser
 from services.HiveService import HiveService
 from services.AppService import AppService
-from sqlalchemy import create_engine
+from sqlalchemy.engine import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 from models.App import App
 from components.webhdfs import WebHDFS, WebHDFSException, AnalyticsWebHDFS
