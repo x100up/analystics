@@ -33,6 +33,8 @@ class PackerScript(BaseAnalyticsScript):
         if self.options['day']:
             self.day = int(self.options['day'])
 
+        self.date = date(self.year, self.month, self.day)
+
         for appCode in self.getAppCodes():
             self.processApp(appCode)
 
@@ -41,13 +43,13 @@ class PackerScript(BaseAnalyticsScript):
         keys = [appEvent.code for appEvent in appConfig.getEvents()]
         dbSession = self.getDBSession()
         for key in keys:
-            print 'start pack key {}.{}'.format(appCode, key)
+            print "\n",'start pack key {}.{} for date {}'.format(appCode, key, self.date)
             app = self.getApp(appCode)
             if app:
 
                 hiveTable = dbSession.query(HiveTable).filter_by(appId = app.appId, eventCode = key).first()
                 hiveTablePartition = dbSession.query(HiveTablePartition).filter_by(hiveTableId = hiveTable.hiveTableId,
-                    partitionDate = date(self.year, self.month, self.day)).first()
+                    partitionDate = self.date).first()
 
                 if not hiveTable:
                     hiveTable = HiveTable()
@@ -60,7 +62,7 @@ class PackerScript(BaseAnalyticsScript):
                 if not hiveTablePartition:
                     hiveTablePartition = HiveTablePartition()
                     hiveTablePartition.hiveTableId = hiveTable.hiveTableId
-                    hiveTablePartition.partitionDate = date(self.year, self.month, self.day)
+                    hiveTablePartition.partitionDate = self.date
                     hiveTablePartition.isCompact = False
                     print 'create new hiveTablePartition'
                     dbSession.add(hiveTablePartition)
