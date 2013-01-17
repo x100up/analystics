@@ -51,13 +51,13 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
                     hivePartition.hiveTableId = hiveTable.hiveTableId
                     hivePartition.partitionDate = partitionDate
                     hivePartition.isCompact = False
-                    dbSession.add(hivePartition)
+                    print dbSession.add(hivePartition)
                     dbSession.commit()
                     print('Add hive partition {} for date {}'.format(eventCode, partitionDate))
 
             if partitionsDates:
                 minDate = min(partitionsDates)
                 hiveTable.startFrom = minDate
-                dbSession.add(hiveTable)
+                print dbSession.add(hiveTable)
                 dbSession.commit()
                 print 'Set start from {} {} {}'.format(appCode, eventCode, minDate)
