@@ -1,0 +1,28 @@
+CREATE TABLE hiveTable(
+  hiveTableId INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
+  appId INT(11) NOT NULL,
+  keyCode VARCHAR(255) NOT NULL,
+  startFrom DATE NOT NULL,
+  PRIMARY KEY (hiveTableId),
+  UNIQUE INDEX UK_hiveTable (keyCode, appId),
+  CONSTRAINT FK_hiveTable_app_appId FOREIGN KEY (appId)
+  REFERENCES app (appId) ON DELETE RESTRICT ON UPDATE RESTRICT
+)
+ENGINE = INNODB
+AUTO_INCREMENT = 1
+CHARACTER SET utf8
+COLLATE utf8_general_ci;
+
+CREATE TABLE hiveTablePartition(
+  hiveTablePartitionId INT(11) NOT NULL AUTO_INCREMENT,
+  hiveTableId INT(11) UNSIGNED NOT NULL,
+  partitionDate DATE NOT NULL,
+  isCompact TINYINT(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (hiveTablePartitionId),
+  CONSTRAINT FK_hiveTablePartition_hiveTable_hiveTableId FOREIGN KEY (hiveTableId)
+  REFERENCES hiveTable (hiveTableId) ON DELETE RESTRICT ON UPDATE RESTRICT
+)
+ENGINE = INNODB
+AUTO_INCREMENT = 1
+CHARACTER SET utf8
+COLLATE utf8_general_ci;

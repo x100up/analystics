@@ -31,7 +31,7 @@ def scanDir(dir, eventcode, skip):
 
                 files = webHDFS.listdir(dir + '/' + year + '/' + month + '/' + day)
                 for filename in files:
-                    if not filename.endswith('.snappy1'):
+                    if not filename.endswith('.snappy'):
                         print './packer.py -k{} -y{} -m{} -d{}'.format(eventcode, year, month, day)
                         break
 
