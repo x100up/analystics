@@ -60,3 +60,4 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
                 hiveTable.startFrom = minDate
                 dbSession.add(hiveTable)
                 dbSession.commit()
+                print 'Set start from {} {} {}'.format(appCode, eventCode, minDate)
