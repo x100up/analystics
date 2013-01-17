@@ -1,5 +1,6 @@
 from Base import Base
-from sqlalchemy import Integer, String, Date, DateTime, Boolean, Column, ForeignKey
+from sqlalchemy.types import Integer, String, Date, Boolean
+from sqlalchemy.schema import Column, ForeignKey
 
 class HiveTable(Base):
     __tablename__ = "hiveTable"

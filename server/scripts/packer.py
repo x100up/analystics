@@ -65,6 +65,8 @@ class PackerScript(BaseAnalyticsScript):
                     print 'create new hiveTablePartition'
                     dbSession.add(hiveTablePartition)
                     dbSession.commit()
+                else:
+                    print 'Partition find in DB'
 
                 if not hiveTablePartition.isCompact:
                     try:
