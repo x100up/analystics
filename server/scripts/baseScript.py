@@ -22,20 +22,27 @@ class BaseAnalyticsScript():
         rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
 
         self.config = Config()
-        self.config.readConfigFile(os.path.abspath(os.path.abspath(rootPath + '/../server.cfg')))
+        self.config.readConfigFile(os.path.abspath(os.path.abspath(rootPath + '/../../server.cfg')))
 
         self.options = options
-        self.appService = AppService(rootPath + '/../app_configs/')
-        self.availableApps = appService.getAppConfigList()
+        self.appService = AppService(rootPath + '/../../app_configs/')
+        self.availableApps = self.appService.getAppConfigList()
 
         if options['appname'] is None and options['all_apps'] is None:
             print 'App name or --all is not set'
             print 'Availale app names: ' + str(self.availableApps)
             self.terminate()
 
+        self.appCodes = []
+        if options['appname']:
+            self.appCodes.append(options['appname'])
+        else:
+            self.appCodes = self.availableApps
+
+
 
     def getAppCodes(self):
-        return []
+        return self.appCodes
 
     def getAppConfig(self, appCode):
         '''

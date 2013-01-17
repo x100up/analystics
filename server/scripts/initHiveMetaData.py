@@ -7,7 +7,9 @@ from models.Hive import HiveTable, HiveTablePartition
 class InitHiveMetaDataScript(BaseAnalyticsScript):
 
     def run(self):
+        print 'run InitHiveMetaDataScript'
         appCodes = self.getAppCodes()
+        print(appCodes)
         for appCode in appCodes:
             appConfig = self.getAppConfig(appCode)
             self.processApp(appConfig)
