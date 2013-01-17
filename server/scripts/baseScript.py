@@ -83,7 +83,7 @@ class BaseAnalyticsScript():
                 pool_recycle = 3600)
             engine.execute('SET NAMES utf8')
             self.scoped_session = scoped_session(sessionmaker(bind = engine, autoflush = False))
-        return self.scoped_session
+        return self.scoped_session()
 
     def terminate(self):
         exit()
