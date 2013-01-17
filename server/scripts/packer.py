@@ -63,6 +63,8 @@ class PackerScript(BaseAnalyticsScript):
                     hiveTablePartition.partitionDate = date(self.year, self.month, self.day)
                     hiveTablePartition.isCompact = False
                     print 'create new hiveTablePartition'
+                    dbSession.add(hiveTablePartition)
+                    dbSession.commit()
 
                 if not hiveTablePartition.isCompact:
                     try:
@@ -74,7 +76,7 @@ class PackerScript(BaseAnalyticsScript):
                         print 'Pack complete. Query time: {}'.format(end - start)
                         time.sleep(20)
                     except Exception as ex:
-                        print 'Pack end with exception '.format(ex.message)
+                        print 'Pack end with exception {}'.format(ex.message)
                     else:
                         hiveTablePartition.isCompact = True
                         print 'Set compact label to in partiton meta'
