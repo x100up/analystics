@@ -48,8 +48,10 @@ class PackerScript(BaseAnalyticsScript):
             if app:
 
                 hiveTable = dbSession.query(HiveTable).filter_by(appId = app.appId, eventCode = key).first()
-                hiveTablePartition = dbSession.query(HiveTablePartition).filter_by(hiveTableId = hiveTable.hiveTableId,
-                    partitionDate = self.date).first()
+                q = dbSession.query(HiveTablePartition).filter_by(hiveTableId = hiveTable.hiveTableId,
+                    partitionDate = self.date)
+                print q
+                hiveTablePartition = q.first()
 
                 if not hiveTable:
                     hiveTable = HiveTable()
@@ -75,6 +77,7 @@ class PackerScript(BaseAnalyticsScript):
                     try:
                         start = datetime.now()
                         query = PACK_TABLE_QUERY.format(key, self.year, self.month, self.day)
+                        print query
                         self.hiveClient.execute('USE {}'.format(appCode))
                         self.hiveClient.execute(query)
                         end = datetime.now()
