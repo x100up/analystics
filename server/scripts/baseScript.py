@@ -14,7 +14,7 @@ from components.webhdfs import WebHDFS, WebHDFSException, AnalyticsWebHDFS
 class BaseAnalyticsScript():
 
     def __init__(self, options):
-        self.scoped_session = self.analyticsWebHDFS = None
+        self.scoped_session = self.analyticsWebHDFS = self.hiveService = None
         # set logger
         logging.basicConfig(level = logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -61,6 +61,11 @@ class BaseAnalyticsScript():
             statRoot = self.config.get(Config.HDFS_STAT_ROOT)
             self.analyticsWebHDFS = AnalyticsWebHDFS(host, port, username, statRoot)
         return self.analyticsWebHDFS
+
+    def getHiveClient(self):
+        if not self.hiveService:
+            self.hiveService = HiveService(self.config.get(Config.HIVE_HOST), int(self.config.get(Config.HIVE_PORT)))
+        return self.hiveService
 
     def getDBSession(self):
         if not self.scoped_session:

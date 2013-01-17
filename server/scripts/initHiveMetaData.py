@@ -59,6 +59,6 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
             if partitionsDates:
                 minDate = min(partitionsDates)
                 hiveTable.startFrom = minDate
-                print dbSession.add(hiveTable)
+                dbSession.add(hiveTable)
                 dbSession.commit()
                 print 'Set start from {} {} {}'.format(appCode, eventCode, minDate)
