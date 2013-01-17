@@ -1,1 +1,1 @@
-ALTER TABLE hiveTable CHANGE startFrom DATE DEFAULT NULL;
+ALTER TABLE hiveTable MODIFY startFrom DATE;
