@@ -39,50 +39,52 @@ class PackerScript(BaseAnalyticsScript):
     def processApp(self, appCode):
         appConfig = self.getAppConfig(appCode)
         keys = [appEvent.code for appEvent in appConfig.getEvents()]
-
+        dbSession = self.getDBSession()
         for key in keys:
             print 'start pack key {}.{}'.format(appCode, key)
-            try:
-                start = datetime.now()
-                query = PACK_TABLE_QUERY.format(key, self.year, self.month, self.day)
-                self.hiveClient.execute('USE {}'.format(appCode))
-                self.hiveClient.execute(query)
-                end = datetime.now()
-                print 'Pack complete. Query time: {}'.format(end - start)
-                time.sleep(20)
-            except Exception as ex:
-                print ex.message
-            else:
-                app = self.getApp(appCode)
-                if app:
-                    dbSession = self.getDBSession()
-                    hiveTable = dbSession.query(HiveTable).filter_by(appId = app.appId, eventCode = key).first()
-                    if not hiveTable:
-                        hiveTable = HiveTable()
-                        hiveTable.appId = app.appId
-                        hiveTable.eventCode = key
-                        dbSession.add(hiveTable)
-                        dbSession.commit()
-                        print 'create new hiveTable'
+            app = self.getApp(appCode)
+            if app:
 
-                    hiveTablePartition = dbSession.query(HiveTablePartition).filter_by(hiveTableId = hiveTable.hiveTableId,
-                        partitionDate = date(self.year, self.month, self.day)).first()
+                hiveTable = dbSession.query(HiveTable).filter_by(appId = app.appId, eventCode = key).first()
+                hiveTablePartition = dbSession.query(HiveTablePartition).filter_by(hiveTableId = hiveTable.hiveTableId,
+                    partitionDate = date(self.year, self.month, self.day)).first()
 
-                    if not hiveTablePartition:
-                        hiveTablePartition = HiveTablePartition
-                        hiveTablePartition.hiveTableId = hiveTable.hiveTableId
-                        hiveTablePartition.partitionDate = date(self.year, self.month, self.day)
-                        hiveTablePartition.isCompact = True
-                        print 'create new hiveTablePartition'
+                if not hiveTable:
+                    hiveTable = HiveTable()
+                    hiveTable.appId = app.appId
+                    hiveTable.eventCode = key
+                    dbSession.add(hiveTable)
+                    dbSession.commit()
+                    print 'create new hiveTable'
+
+                if not hiveTablePartition:
+                    hiveTablePartition = HiveTablePartition
+                    hiveTablePartition.hiveTableId = hiveTable.hiveTableId
+                    hiveTablePartition.partitionDate = date(self.year, self.month, self.day)
+                    hiveTablePartition.isCompact = False
+                    print 'create new hiveTablePartition'
+
+                if not hiveTablePartition.isCompact:
+                    try:
+                        start = datetime.now()
+                        query = PACK_TABLE_QUERY.format(key, self.year, self.month, self.day)
+                        self.hiveClient.execute('USE {}'.format(appCode))
+                        self.hiveClient.execute(query)
+                        end = datetime.now()
+                        print 'Pack complete. Query time: {}'.format(end - start)
+                        time.sleep(20)
+                    except Exception as ex:
+                        print 'Pack end with exception '.format(ex.message)
                     else:
                         hiveTablePartition.isCompact = True
+                        print 'Set compact label to in partiton meta'
 
-                    print 'Set compact label to in partiton meta'
-
-                    dbSession.add(hiveTablePartition)
-                    dbSession.commit()
+                        dbSession.add(hiveTablePartition)
+                        dbSession.commit()
                 else:
-                    print  'cant find app {} in database'.format(appCode)
+                    print 'table {}.{} already packed'.format(appCode, key)
+            else:
+                print  'cant find app {} in database'.format(appCode)
 
 
 
