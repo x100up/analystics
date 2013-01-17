@@ -51,7 +51,8 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
                     hivePartition.hiveTableId = hiveTable.hiveTableId
                     hivePartition.partitionDate = partitionDate
                     hivePartition.isCompact = False
-                    print dbSession.add(hivePartition)
+                    dbSession.add(hivePartition)
+                    print hivePartition.partitionDate
                     dbSession.commit()
                     print('Add hive partition {} for date {}'.format(eventCode, partitionDate))
 
