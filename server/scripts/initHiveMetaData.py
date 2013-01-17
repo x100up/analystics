@@ -4,6 +4,7 @@ __author__ = 'x100up'
 from scripts.baseScript import BaseAnalyticsScript
 from models.Hive import HiveTable, HiveTablePartition
 from components.webhdfs import WebHDFSException
+from datetime import date
 
 class InitHiveMetaDataScript(BaseAnalyticsScript):
 
@@ -49,16 +50,15 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
                 if not hivePartition:
                     hivePartition = HiveTablePartition()
                     hivePartition.hiveTableId = hiveTable.hiveTableId
-                    hivePartition.partitionDate = partitionDate
+                    hivePartition.partitionDate = date(partitionDate.year, partitionDate.month, partitionDate.day)
                     hivePartition.isCompact = False
                     dbSession.add(hivePartition)
-                    print type(partitionDate)
                     dbSession.commit()
                     print('Add hive partition {} for date {}'.format(eventCode, partitionDate))
 
             if partitionsDates:
                 minDate = min(partitionsDates)
-                hiveTable.startFrom = minDate
+                hiveTable.startFrom =  date(minDate.year, minDate.month, minDate.day)
                 print dbSession.add(hiveTable)
                 dbSession.commit()
                 print 'Set start from {} {} {}'.format(appCode, eventCode, minDate)
