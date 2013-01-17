@@ -13,7 +13,7 @@ from components.webhdfs import WebHDFS, WebHDFSException, AnalyticsWebHDFS
 
 class BaseAnalyticsScript():
 
-    def __init__(self):
+    def __init__(self, options):
         self.scoped_session = self.analyticsWebHDFS = None
         # set logger
         logging.basicConfig(level = logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -24,12 +24,7 @@ class BaseAnalyticsScript():
         self.config = Config()
         self.config.readConfigFile(os.path.abspath(os.path.abspath(rootPath + '/../server.cfg')))
 
-        optParser = OptionParser()
-        optParser.add_option("-a", "--app", dest="appname", help="application name")
-        optParser.add_option("-x", "--all", dest="all_apps", help="all applications", action="store_true")
-
-        (options, args) = optParser.parse_args()
-        self.options = options.__dict__
+        self.options = options
         self.appService = AppService(rootPath + '/../app_configs/')
         self.availableApps = appService.getAppConfigList()
 

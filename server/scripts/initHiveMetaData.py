@@ -52,7 +52,3 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
             hiveTable.startFrom = minDate
             dbSession.add(hiveTable)
             dbSession.commit()
-
-
-script = InitHiveMetaDataScript()
-script.run()
