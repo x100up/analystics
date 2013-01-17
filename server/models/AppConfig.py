@@ -218,6 +218,9 @@ class AppConfig():
             'tags': [appTag.toObject() for appTag in self.tags.values()],
         }
 
+    def getAppCode(self):
+        return self.data['appname']
+
 
     def mergeAppEvent(self, newEvent, oldEventCode):
         if oldEventCode in self.events.keys():

@@ -183,3 +183,27 @@ class WebHDFSException(BaseException):
         super(WebHDFSException, self).__init__()
         self.message = message
         self.name = name
+
+from datetime import date
+
+class AnalyticsWebHDFS():
+
+    def __init__(self, namenode_host, namenode_port, hdfs_username, stat_root):
+        self.webHDFSClient = WebHDFS(namenode_host, namenode_port, hdfs_username)
+        self.stat_root = stat_root
+
+    def getEventCodes(self, appCode):
+        return self.webHDFSClient.listdir(self.stat_root + appCode)
+
+    def getPartitions(self, appCode, eventCode):
+        partitions = []
+        folder = self.stat_root + appCode + '/' + eventCode
+        years = self.webHDFSClient.listdir(folder)
+        for year in years:
+            months = self.webHDFSClient.listdir(folder + '/' + year)
+            for month in months:
+                days = self.webHDFSClient.listdir(folder + '/' + year + '/' + month)
+                for day in days:
+                    partitions.append(date(int(year), int(month), int(day)))
+
+        return partitions
