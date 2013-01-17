@@ -50,7 +50,7 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
                 if not hivePartition:
                     hivePartition = HiveTablePartition()
                     hivePartition.hiveTableId = hiveTable.hiveTableId
-                    hivePartition.partitionDate = date(partitionDate.year, partitionDate.month, partitionDate.day)
+                    hivePartition.partitionDate = datetime(partitionDate.year, partitionDate.month, partitionDate.day)
                     hivePartition.isCompact = False
                     dbSession.add(hivePartition)
                     dbSession.commit()

@@ -1,6 +1,6 @@
 from Base import Base
 from sqlalchemy.schema import Column, ForeignKey
-from sqlalchemy.types import Integer, String, Date, DateTime, Boolean
+from sqlalchemy import Integer, String, Date, DateTime, Boolean
 
 class HiveTable(Base):
     __tablename__ = "hiveTable"
@@ -13,5 +13,5 @@ class HiveTablePartition(Base):
     __tablename__ = "hiveTablePartition"
     hiveTablePartitionId = Column(Integer, primary_key=True)
     hiveTableId = Column(Integer, ForeignKey('hiveTable.hiveTableId'),  nullable=False, primary_key=True, autoincrement=False)
-    partitionDate = Column(Date, nullable=False),
+    partitionDate = Column(DateTime, nullable=False),
     isCompact = Boolean()
