@@ -66,12 +66,12 @@ class PackerScript(BaseAnalyticsScript):
                         print 'create new hiveTable'
 
                     hiveTablePartition = dbSession.query(HiveTablePartition).filter_by(hiveTableId = hiveTable.hiveTableId,
-                        partitionDate = date(self.year, self.month, self.year)).first()
+                        partitionDate = date(self.year, self.month, self.day)).first()
 
                     if not hiveTablePartition:
                         hiveTablePartition = HiveTablePartition
                         hiveTablePartition.hiveTableId = hiveTable.hiveTableId
-                        hiveTablePartition.partitionDate = date(self.year, self.month, self.year)
+                        hiveTablePartition.partitionDate = date(self.year, self.month, self.day)
                         hiveTablePartition.isCompact = True
                         print 'create new hiveTablePartition'
                     else:
