@@ -210,9 +210,9 @@ class AnalyticsWebHDFS():
 
     def isPartitionExist(self, appCode, eventCode, date):
         folder = '{}{}/{}/{}/{}/{}/'.format(self.stat_root, appCode, eventCode, date.year, date.month, date.day)
-        print folder
         try:
             data = self.webHDFSClient.listdir(folder)
         except:
             return False
+        print bool(data), data
         return bool(data)
