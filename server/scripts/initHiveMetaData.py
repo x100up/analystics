@@ -1,17 +1,17 @@
-#!/usr/bin/python
 # coding=utf-8
 __author__ = 'x100up'
 from scripts.baseScript import BaseAnalyticsScript
-from models.Hive import HiveTable, HiveTablePartition
 from components.webhdfs import WebHDFSException
-from datetime import date, datetime
+from services.HiveMetaService import HiveMetaService
 
 class InitHiveMetaDataScript(BaseAnalyticsScript):
 
     def run(self):
         print 'run InitHiveMetaDataScript'
         appCodes = self.getAppCodes()
-        print(appCodes)
+        self.hiveMetaService = HiveMetaService(self.getDBSession())
+
+
         for appCode in appCodes:
             appConfig = self.getAppConfig(appCode)
             self.processApp(appConfig)
@@ -26,14 +26,10 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
         print 'Process app {}'.format(appCode)
 
         for appEvent in appConfig.getEvents():
-            hiveTable = dbSession.query(HiveTable).filter_by(appId = app.appId, eventCode = appEvent.code).first()
+            hiveTable = self.hiveMetaService.getOrCreateHiveTable(app.appId, appEvent.code)
             if not hiveTable:
-                hiveTable = HiveTable()
-                hiveTable.appId = app.appId
-                hiveTable.eventCode = appEvent.code
-                dbSession.add(hiveTable)
-                dbSession.commit()
-
+                print 'Cant get or create HiveTable for {}, {}'.format(appCode, appEvent.code)
+                continue
             self.processHiveTable(hiveTable, appCode, appEvent.code)
 
     def processHiveTable(self, hiveTable, appCode, eventCode):
@@ -46,15 +42,10 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
             print 'Exception on getPartitions: {}'.format(e.message)
         else:
             for partitionDate in partitionsDates:
-                hivePartition = dbSession.query(HiveTablePartition).filter_by(hiveTableId = hiveTable.hiveTableId, partitionDate = partitionDate).first()
+                hivePartition = self.hiveMetaService.getOrCreateHiveTablePartition(hiveTable.hiveTableId, partitionDate)
                 if not hivePartition:
-                    hivePartition = HiveTablePartition()
-                    hivePartition.hiveTableId = hiveTable.hiveTableId
-                    hivePartition.partitionDate = partitionDate
-                    hivePartition.isCompact = False
-                    dbSession.add(hivePartition)
-                    dbSession.commit()
-                    print('Add hive partition {} for date {}'.format(eventCode, hivePartition.partitionDate))
+                    print('Cant get or create partition for {} date {}'.format(eventCode, hivePartition.partitionDate))
+                    continue
 
             if partitionsDates:
                 minDate = min(partitionsDates)

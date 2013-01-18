@@ -5,8 +5,8 @@ import time
 from models.Hive import HiveTable, HiveTablePartition
 from services.HiveMetaService import HiveMetaService
 
-PACK_TABLE_QUERY = """insert overwrite table stat_{0} PARTITION (year={1},month={2},day={3}) select params, userId, `timestamp`, `hour`, minute, second \
-from stat_{0} WHERE year={1} AND month={2} AND day={3}"""
+PACK_TABLE_QUERY = """INSERT OVERWRITE TABLE stat_{0} PARTITION (year={1},month={2},day={3}) SELECT params, userId, `timestamp`, `hour`, minute, second \
+FROM stat_{0} WHERE year={1} AND month={2} AND day={3}"""
 
 class PackerScript(BaseAnalyticsScript):
 
@@ -82,7 +82,7 @@ class PackerScript(BaseAnalyticsScript):
                         print 'Pack end with exception {}'.format(ex.message)
                     else:
                         hiveTablePartition.isCompact = True
-                        print 'Set compact label to in partiton meta'
+                        print 'Set compact label to in partition meta'
 
                         dbSession.add(hiveTablePartition)
                         dbSession.commit()

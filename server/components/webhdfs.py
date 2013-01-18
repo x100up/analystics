@@ -215,4 +215,3 @@ class AnalyticsWebHDFS():
         except:
             return False
         print bool(data), data
-        return bool(data)
