@@ -1,5 +1,6 @@
 from Base import Base
-from sqlalchemy import Column, Integer, String, Enum
+from sqlalchemy.types import Integer, String, Enum
+from sqlalchemy.schema import Column
 
 class App(Base):
     STATUS_ACTIVE = 'active'

@@ -4,8 +4,10 @@ from components.listutils import listDiff
 from models.Config import Config
 import re
 from datetime import date
+from models.App import App
+from services.HiveMetaService import HiveMetaService
 
-CREATE_TABLE_QUERY = """CREATE TABLE %(table_name)s (params MAP<STRING, STRING>, `userId` INT, `timestamp` TIMESTAMP, hour INT, minute INT, second INT)
+CREATE_TABLE_QUERY = """CREATE EXTERNAL TABLE %(table_name)s (params MAP<STRING, STRING>, `userId` INT, `timestamp` TIMESTAMP, hour INT, minute INT, second INT)
 PARTITIONED BY (year INT, month INT, day INT)
 ROW FORMAT DELIMITED
   FIELDS TERMINATED BY ','
@@ -31,6 +33,15 @@ class MonitorScript(BaseAnalyticsScript):
         appConfig = self.getAppConfig(appCode)
 
         webHDFSClient = self.getWebHDFSClient()
+        dbSession = self.getDBSession()
+
+        app = dbSession.query(App).filter(App.code == appCode).first()
+        if not app:
+            print 'App {} not present in database. Process app terminated'.format(appCode)
+            return
+
+        hiveMetaService = HiveMetaService(dbSession)
+
         # получаем список директорий -ключей
         hdfsEvents = webHDFSClient.getEventCodes(appCode)
         realKeys = [appEvent.code for appEvent in appConfig.getEvents()]
@@ -39,25 +50,44 @@ class MonitorScript(BaseAnalyticsScript):
         non_existing_folders = listDiff(realKeys, hdfsEvents)
 
         # check table existing
-        self.hiveclient.execute('CREATE DATABASE IF NOT EXISTS {}'.format(appCode))
+        try:
+            self.hiveclient.execute('CREATE DATABASE IF NOT EXISTS {}'.format(appCode))
+        except:
+            print 'Exception on create database {}'.format(appCode)
+            return
+
+
         self.hiveclient.execute('USE {}'.format(appCode))
         tables = self.hiveclient.execute('SHOW TABLES')
         tables = [item[0] for item in tables]
         print 'tables for app {}: {} '.format(appCode, str(tables))
 
-        for key in realKeys:
+        for eventCode in realKeys:
 
-            if key in non_existing_folders:
+            if eventCode in non_existing_folders:
                 continue
 
-            table_name = self.getTableName(key)
+            hiveTable = None
+
+            table_name = self.getTableName(eventCode)
             if not table_name in tables:
                 print 'table {} not exist'.format(table_name)
                 # create table
                 q = CREATE_TABLE_QUERY % {'table_name':table_name}
-                self.hiveclient.execute(q)
+                try:
+                    self.hiveclient.execute(q)
+                except:
+                    print 'Exception on create Table {}'.format(table_name)
+                    return
+                else:
+                    hiveTable = hiveMetaService.getOrCreateHiveTable(app.appId, eventCode)
 
-            # process partitions
+            if not hiveTable:
+                print 'Cannot get or create HiveTable for {} {}'.format(appCode, eventCode)
+                continue
+
+
+            # получаем партиции в Hive
             partitions = self.hiveclient.execute('SHOW PARTITIONS {}'.format(table_name))
             partitions = [item[0] for item in partitions]
 
@@ -65,9 +95,12 @@ class MonitorScript(BaseAnalyticsScript):
             for partName in partitions:
                 r = self.partNameR.search(partName).group
                 existingPartitionsDates.append(date(int(r(1)), int(r(2)), int(r(3))))
-            part_folders = webHDFSClient.getPartitions(appCode, key)
 
-            for partitionDate in part_folders:
+            # полчаем партиции в HDFS
+            hdfsPartitions = webHDFSClient.getPartitions(appCode, eventCode)
+
+            for partitionDate in hdfsPartitions:
+                # если дата партиции есть на диске но ее нет в Hive
                 if not partitionDate in existingPartitionsDates:
                     year, month, day = (partitionDate.year, partitionDate.month, partitionDate.day)
                     query =  CREATE_PARTITION_QUERY%{
@@ -75,15 +108,16 @@ class MonitorScript(BaseAnalyticsScript):
                         'year': year,
                         'month': month,
                         'day': day,
-                        'path': '{}/{}/{}/{}/{}/'.format(self.getTablePath(appCode), key, year, month, day)
+                        'path': '{}/{}/{}/{}/{}/'.format(self.getTablePath(appCode), eventCode, year, month, day)
                     }
                     print 'Create partition {} for {}'.format(str(partitionDate), table_name)
                     try:
                         self.hiveclient.execute(query)
                     except:
-                        print 'Exception on create partition'
+                        print '- Exception on create partition'
                     else:
-                        print 'Partition successfuly created'
+                        print '+ Partition created'
+                        hiveMetaService.getOrCreateHiveTablePartition(hiveTable.hiveTableId, partitionDate)
 
 
 
