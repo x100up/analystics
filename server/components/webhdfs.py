@@ -207,3 +207,9 @@ class AnalyticsWebHDFS():
                     partitions.append(date(int(year), int(month), int(day)))
 
         return partitions
+
+    def isPartitionExist(self, appCode, eventCode, date):
+        folder = '{}{}/{}/{}/{}/{}'.format(self.stat_root, appCode, eventCode, date.year, date.month, date.day)
+        data = self.webHDFSClient.listdir(folder)
+        print data
+        return False

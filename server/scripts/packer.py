@@ -37,25 +37,32 @@ class PackerScript(BaseAnalyticsScript):
         for appCode in self.getAppCodes():
             self.processApp(appCode)
 
+        self.HDFSClient = self.getWebHDFSClient()
+
     def processApp(self, appCode):
         appConfig = self.getAppConfig(appCode)
-        keys = [appEvent.code for appEvent in appConfig.getEvents()]
+        eventCodes = [appEvent.code for appEvent in appConfig.getEvents()]
         dbSession = self.getDBSession()
-        for key in keys:
-            print "\n",'start pack key {}.{} for date {}'.format(appCode, key, self.date)
+        for eventCode in eventCodes:
+            print "\n",'start pack key {}.{} for date {}'.format(appCode, eventCode, self.date)
             app = self.getApp(appCode)
             if app:
 
-                hiveTable = dbSession.query(HiveTable).filter_by(appId = app.appId, eventCode = key).first()
+                hiveTable = dbSession.query(HiveTable).filter_by(appId = app.appId, eventCode = eventCode).first()
                 q = dbSession.query(HiveTablePartition).filter_by(hiveTableId = hiveTable.hiveTableId,
                     partitionDate = self.date)
                 print q
                 hiveTablePartition = q.first()
 
+                if self.HDFSClient.isPartitionExist(appCode, eventCode, self.date):
+                    print 'folder for partition not exist. Next event'
+                    continue
+
+
                 if not hiveTable:
                     hiveTable = HiveTable()
                     hiveTable.appId = app.appId
-                    hiveTable.eventCode = key
+                    hiveTable.eventCode = eventCode
                     dbSession.add(hiveTable)
                     dbSession.commit()
                     print 'create new hiveTable'
@@ -72,10 +79,10 @@ class PackerScript(BaseAnalyticsScript):
                     print 'Partition find in DB: {} {}'.format(hiveTablePartition.isCompact, hiveTablePartition.partitionDate, hiveTablePartition.hiveTableId)
 
                 if not hiveTablePartition.isCompact:
-                    print 'Start pack table {}.{}'.format(appCode, key)
+                    print 'Start pack table {}.{}'.format(appCode, eventCode)
                     try:
                         start = datetime.now()
-                        query = PACK_TABLE_QUERY.format(key, self.year, self.month, self.day)
+                        query = PACK_TABLE_QUERY.format(eventCode, self.year, self.month, self.day)
                         print query
                         self.hiveClient.execute('USE {}'.format(appCode))
                         self.hiveClient.execute(query)
@@ -91,7 +98,7 @@ class PackerScript(BaseAnalyticsScript):
                         dbSession.add(hiveTablePartition)
                         dbSession.commit()
                 else:
-                    print 'table {}.{} already packed'.format(appCode, key)
+                    print 'table {}.{} already packed'.format(appCode, eventCode)
             else:
                 print  'cant find app {} in database'.format(appCode)
 
