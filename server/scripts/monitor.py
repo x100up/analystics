@@ -67,8 +67,6 @@ class MonitorScript(BaseAnalyticsScript):
             if eventCode in non_existing_folders:
                 continue
 
-            hiveTable = None
-
             table_name = self.getTableName(eventCode)
             if not table_name in tables:
                 print 'table {} not exist'.format(table_name)
@@ -79,8 +77,8 @@ class MonitorScript(BaseAnalyticsScript):
                 except:
                     print 'Exception on create Table {}'.format(table_name)
                     return
-                else:
-                    hiveTable = hiveMetaService.getOrCreateHiveTable(app.appId, eventCode)
+
+            hiveTable = hiveMetaService.getOrCreateHiveTable(app.appId, eventCode)
 
             if not hiveTable:
                 print 'Cannot get or create HiveTable for {} {}'.format(appCode, eventCode)
