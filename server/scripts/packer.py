@@ -57,7 +57,7 @@ class PackerScript(BaseAnalyticsScript):
                     return
 
                 # существует ли партиция физически
-                if self.HDFSClient.isPartitionExist(appCode, eventCode, self.date):
+                if not self.HDFSClient.isPartitionExist(appCode, eventCode, self.date):
                     print 'folder for partition not exist. Next event'
                     continue
 
