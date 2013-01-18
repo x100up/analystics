@@ -10,7 +10,14 @@ optParser.add_option("-y", "--year", dest="year", help="year")
 optParser.add_option("-m", "--month", dest="month", help="month")
 optParser.add_option("-d", "--day", dest="day", help="day")
 
+scripts = ['initHiveMeta', 'packer', 'monitor']
+
 (options, args) = optParser.parse_args()
+if not len(args) == 1 or not args[0]  in scripts:
+    print 'You must specified script {}'.format(str(scripts))
+    exit()
+
+
 scriptName = args[0]
 options = options.__dict__
 
