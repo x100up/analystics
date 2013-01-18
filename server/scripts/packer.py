@@ -34,10 +34,12 @@ class PackerScript(BaseAnalyticsScript):
 
         self.date = date(self.year, self.month, self.day)
 
+        self.HDFSClient = self.getWebHDFSClient()
+
         for appCode in self.getAppCodes():
             self.processApp(appCode)
 
-        self.HDFSClient = self.getWebHDFSClient()
+
 
     def processApp(self, appCode):
         appConfig = self.getAppConfig(appCode)
