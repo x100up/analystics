@@ -1,5 +1,5 @@
 # coding=utf-8
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from scripts.baseScript import BaseAnalyticsScript
 import time
 from models.Hive import HiveTable, HiveTablePartition
@@ -20,7 +20,7 @@ class PackerScript(BaseAnalyticsScript):
         self.hiveClient.execute('set hive.merge.mapredfiles=true')
         self.hiveClient.execute('set hive.mergejob.maponly=true')
 
-        now = datetime.now()
+        now = datetime.now() - timedelta(day = 1)
         self.year, self.month, self.day = (now.year, now.month, now.day)
 
         if self.options['year']:
