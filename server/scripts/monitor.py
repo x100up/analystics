@@ -3,6 +3,7 @@ from scripts.baseScript import BaseAnalyticsScript
 from components.listutils import listDiff
 from models.Config import Config
 import re
+from datetime import date
 
 CREATE_TABLE_QUERY = """CREATE TABLE %(table_name)s (params MAP<STRING, STRING>, `userId` INT, `timestamp` TIMESTAMP, hour INT, minute INT, second INT)
 PARTITIONED BY (year INT, month INT, day INT)
@@ -60,15 +61,15 @@ class MonitorScript(BaseAnalyticsScript):
             partitions = self.hiveclient.execute('SHOW PARTITIONS {}'.format(table_name))
             partitions = [item[0] for item in partitions]
 
-            existing_parts = []
+            existingPartitionsDates = []
             for partName in partitions:
                 r = self.partNameR.search(partName).group
-                existing_parts.append((int(r(1)), int(r(2)), int(r(3))))
+                existingPartitionsDates.append(date(int(r(1)), int(r(2)), int(r(3))))
             part_folders = webHDFSClient.getPartitions(appCode, key)
 
-            for part_folder in part_folders:
-                if not part_folder in existing_parts:
-                    year, month, day = part_folder
+            for partitionDate in part_folders:
+                if not partitionDate in existingPartitionsDates:
+                    year, month, day = (partitionDate.year, partitionDate.month, partitionDate.day)
                     query =  CREATE_PARTITION_QUERY%{
                         'table_name': table_name,
                         'year': year,
@@ -76,7 +77,7 @@ class MonitorScript(BaseAnalyticsScript):
                         'day': day,
                         'path': '{}/{}/{}/{}/{}/'.format(self.getTablePath(appCode), key, year, month, day)
                     }
-                    print 'Create partition {} for {}'.format(str(part_folder), table_name)
+                    print 'Create partition {} for {}'.format(str(partitionDate), table_name)
                     try:
                         self.hiveclient.execute(query)
                     except:

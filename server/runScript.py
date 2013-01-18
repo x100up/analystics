@@ -1,3 +1,4 @@
+#!/usr/bin/python
 __author__ = 'x100up'
 
 from optparse import OptionParser
