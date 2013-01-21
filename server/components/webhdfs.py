@@ -214,4 +214,4 @@ class AnalyticsWebHDFS():
             data = self.webHDFSClient.listdir(folder)
         except:
             return False
-        print bool(data), data
+        return bool(data)
