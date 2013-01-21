@@ -81,7 +81,7 @@ class PackerScript(BaseAnalyticsScript):
                     except Exception as ex:
                         print 'Pack end with exception {}'.format(ex.message)
                     else:
-                        hiveTablePartition.isCompact = True
+                        hiveTablePartition.isCompact = 1
                         print 'Set compact label to in partition meta'
 
                         dbSession.add(hiveTablePartition)

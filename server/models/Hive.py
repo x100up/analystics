@@ -16,4 +16,4 @@ class HiveTablePartition(Base):
     hiveTablePartitionId = Column(Integer, primary_key=True)
     hiveTableId = Column(Integer, ForeignKey('hiveTable.hiveTableId'),  nullable=False, primary_key=True, autoincrement=False)
     partitionDate = Column(Date, nullable=False)
-    isCompact = Boolean()
+    isCompact = Column(Integer, default=0)

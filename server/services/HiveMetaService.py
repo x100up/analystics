@@ -24,7 +24,7 @@ class HiveMetaService():
             hiveTablePartition = HiveTablePartition()
             hiveTablePartition.hiveTableId = hiveTableId
             hiveTablePartition.partitionDate = partitionDate
-            hiveTablePartition.isCompact = False
+            hiveTablePartition.isCompact = 0
             self.dbSession.add(hiveTablePartition)
             self.dbSession.commit()
 
