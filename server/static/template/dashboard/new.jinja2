@@ -4,8 +4,9 @@
         <div class="span4">
             <input type="hidden" name="appname" value="{{ app.code }}">
 
-            <h1 class="new-task-name"><span id="taskNameLabel">Новая задача</span> <span class="button editTaskName"
-                                                                                         onclick="editName(this)"> </span>
+            <h1 class="new-task-name">
+                <span id="taskNameLabel">Новая задача</span>
+                <span class="button editTaskName" onclick="editName(this)"> </span>
             </h1>
             <input style="display: none" name="taskName" id="taskName" value="Новая задача" onblur="saveTaskName()"
                    onkeydown="keyDownHandlerTaskName(event)">

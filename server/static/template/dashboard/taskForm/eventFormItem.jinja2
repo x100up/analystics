@@ -21,12 +21,19 @@
 
                 </li>
 
-                <li>
-                    <input type="text" class="datepicker start" name="start_{{ taskItem.index }}" id="start_{{ taskItem.index }}"
+                <li class="top-key-menu-date"  id="top-key-menu-date-{{ taskItem.index }}">
+                    <input type="hidden" class="datepicker start" name="start_{{ taskItem.index }}" id="start_{{ taskItem.index }}"
                            data-index="{{ taskItem.index }}" value="{{ taskItem.start|datetofiled }}">
-                    <span class="date_d"></span>
-                    <input type="text" class="datepicker end" name="end_{{ taskItem.index }}" id="end_{{ taskItem.index }}"
+                    <input type="hidden" class="datepicker end" name="end_{{ taskItem.index }}" id="end_{{ taskItem.index }}"
                            data-index="{{ taskItem.index }}" value="{{ taskItem.end|datetofiled }}">
+
+                    <div id="dateSelector{{ taskItem.index }}" class="dateSelector">
+                        {{ taskItem.start|datetofiled }} - {{ taskItem.end|datetofiled }}
+                    </div>
+
+
+
+
                     <input class="button lock unlock" type="button" onclick="lockDate({{ taskItem.index }})">
 
                     <input class="button userUnique {% if taskItem.userUnique %}checked{% endif %}" type="button" onclick="switchUserUnique({{ taskItem.index }}, this)">

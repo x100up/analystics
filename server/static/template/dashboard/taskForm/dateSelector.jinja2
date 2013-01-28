@@ -1,0 +1,87 @@
+<div class="container-fluid">
+    <div class="span6">
+        <span class="calendar-left" onclick="getDateSelector({{ index }}, '{{ prevMonth.date() }}')"></span>
+    </div>
+
+    <div class="span6">
+        <span class="calendar-right"  onclick="getDateSelector({{ index }}, '{{ nextMonth.date() }}')"></span>
+    </div>
+</div>
+
+
+
+<div class="container-fluid">
+{% set monthStarted = False %}
+{% for date in dates %}
+
+    {% if date.day == 1 %}
+        {% if monthStarted %}
+            </tbody>
+            </table>
+            </div>
+            {% set monthStarted = False %}
+        {% endif %}
+        {# начинаем месяц #}
+        <div class="span6">
+        <table class="calendar-table" style="margin-top:-35px">
+            <caption>{{ date|showMonth }} {{ date.year }}</caption>
+            <thead>
+                <tr>
+                    <th>П</th> <th>В</th> <th>С</th><th>Ч</th><th>П</th><th>С</th><th>В</th>
+                </tr>
+            </thead>
+        <tbody>
+
+        {% set monthStarted = True %}
+    {% endif %}
+
+    {% if date.isoweekday() == 1 or date.day == 1 %}
+        {# начинаем неделю #}
+        <tr>
+            {% if date.day == 1 %}
+                {% for i in range(1, date.isoweekday()) %}
+                    <td class="empty"></td>
+                {% endfor %}
+            {% endif %}
+    {% endif %}
+    <td onclick="setCalendarDate({{ date.day }}, {{ date.month }}, {{ date.year }})" class="c-{{ date.day }}-{{ date.month }}-{{ date.year }}
+    {% if start.date() == date.date() %} start{% endif %}
+
+    {% if end.date() == date.date() and end.hour + end.minute %}
+            selected
+    {% endif %}
+
+    {% if date.date() > start.date() and date.date() < end.date() %}
+        selected
+    {% endif %}
+
+    {% if date.isoweekday() > 5 %} weekend{% endif %}">{{ date.day }}</td>
+    {% if date.isoweekday() == 7 %}
+        {# заканчиваем неделю #}
+        </tr>
+    {% endif %}
+{% endfor %}
+
+</tbody>
+</table>
+</div>
+
+</div>
+
+<div class="container-fluid">
+    <div class="span6">
+        <span class="timepicker start hour">{{ start.hour }}</span>
+        <span class="timepicker start">{{ start.minute }}</span>
+    </div>
+
+    <div class="span6">
+        <span class="timepicker hour">{{ end.hour }}</span>
+        <span class="timepicker">{{ end.minute }}</span>
+    </div>
+
+    <div class="span12">
+        <div id="dateSelector-result">{{ start|datetofiled }} - {{ end|datetofiled }}</div>
+        <div class="btn btn-primary" onclick="setDateInDateSelector({{ index }})">Выбрать</div>
+    </div>
+
+ </div>

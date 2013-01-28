@@ -14,12 +14,11 @@ function initNewTask() {
 
     for (var i = 0; i < maxIndex; i++){
         initLoadedKey(i);
-        console.log(i);
     }
 }
 
 function attachDateTimePicker(obj){
-    obj.datetimepicker({timeFormat: 'hh:mm', onSelect: onDateSelect});
+    obj.datetimepicker({timeFormat: 'hh:mm' /*, onSelect: onDateSelect*/});
 }
 
 /**
@@ -57,7 +56,6 @@ function onDateSelect(dateText, inst) {
     var endDate = parseDate(endField.val());
     var changeEnd =false;
     var changeStart =false;
-
 
     if (startDate >= endDate) {
         // если начало больше конца
@@ -147,19 +145,161 @@ function switchUserUnique(index, button) {
  * Выставляетя дату на новых и существующих ключах как на залоченом
  * @param index
  */
-function lockDate(index) {
-    var buttons = $('.button.lock')
-    if (buttons.hasClass('unlock')) {
-        // lock
-        isLockDate = [$('input#start_' + index).val(), $('input#end_' + index).val()];
-        $('input.start').val(isLockDate[0]);
-        $('input.end').val(isLockDate[1]);
-        buttons.removeClass('unlock')
+//function lockDate(index) {
+//    var buttons = $('.button.lock')
+//    if (buttons.hasClass('unlock')) {
+//        // lock
+//        isLockDate = [$('input#start_' + index).val(), $('input#end_' + index).val()];
+//        $('input.start').val(isLockDate[0]);
+//        $('input.end').val(isLockDate[1]);
+//        buttons.removeClass('unlock')
+//    } else {
+//        // unlock
+//        isLockDate = false;
+//        buttons.addClass('unlock')
+//    }
+//}
+
+var currentCalendarSelector = {};
+
+function dateToSend(date){
+    return date.getFullYear() + '-' + (date.getMonth() + 1) + '-' + date.getDate() + '-' + date.getHours() + '-' + date.getMinutes();
+}
+
+function getDateSelector(index, startWith){
+    var data = {
+        app: app,
+        start:(parseDate($('#start_' + index).val())),
+        end: (parseDate($('#end_' + index).val())),
+        eventName: $('#key_' + index).val(),
+        index: index,
+        startWith: startWith
+    };
+
+    if (typeof startWith == 'undefined') {
+
+        currentCalendarSelector = {
+            start: data.start,
+            end: data.end,
+            oneDay: true
+        };
     } else {
-        // unlock
-        isLockDate = false;
-        buttons.addClass('unlock')
+        data.start = currentCalendarSelector.start;
+        data.end = currentCalendarSelector.end;
     }
+
+    data.start = dateToSend(data.start);
+    data.end = dateToSend(data.end);
+
+    console.log(currentCalendarSelector);
+
+    $.ajax({
+        url: '/ajax/getDateSelector/',
+        data: data,
+        success: function(data){
+            while (true) {
+                var container = $('#top-key-menu-date-' + index + ' div.popover-content');
+                if (container.length) {
+                    container.html(data);
+
+                    // setup graphic EQ
+                    $( '#top-key-menu-date-' + index + ' span.timepicker' ).each(function() {
+                        var sp = $(this);
+                        var max = 59;
+                        var isHour = sp.hasClass('hour');
+                        var isStart = sp.hasClass('start');
+                        if (isHour){ max = 23; }
+                        var value = parseInt(sp.text(), 10);
+                        console.log(value);
+                        $( this ).empty().slider({
+                            value: value,
+                            min: 0,
+                            max: max,
+                            range: "min",
+                            animate: true,
+                            orientation: "horizontal",
+                            slide: function( event, ui ) {
+                                var d;
+                                var value = parseInt(ui.value);
+                                if (isStart) {
+                                    d = currentCalendarSelector.start;
+                                } else {
+                                    d = currentCalendarSelector.end;
+                                }
+
+                                if (isHour) {
+                                    d.setHours(value);
+                                } else {
+                                    d.setMinutes(value);
+                                }
+
+                                if (!isStart && value < 2){
+                                    updateCalendarSelection();
+                                }
+
+                                $('#dateSelector-result').html(toDateString(currentCalendarSelector.start) + ' - ' + toDateString(currentCalendarSelector.end));
+                            }
+                        });
+                    });
+                    return;
+                }
+            }
+        }
+    });
+    return 'Загрузка'
+}
+
+function setCalendarDate(day, month, year){
+    var newDate = new Date();
+    newDate.setHours(0, 0, 0, 0);
+    newDate.setFullYear(year, month - 1, day);
+
+    var td_end = $('table.calendar-table td.start');
+    var td_start = $('table.calendar-table td.end');
+    if (currentCalendarSelector.oneDay) {
+        var currentTd = $('td.c-' + day + '-' + month + '-' + year);
+        if (newDate < currentCalendarSelector.start) {
+            console.log('set start');
+            currentCalendarSelector.start = newDate;
+            td_end.removeClass('start');
+            currentTd.addClass('start');
+        } else {
+            console.log('set end');
+            currentCalendarSelector.end = new Date(newDate.getTime() + 24 * 60 * 60 * 1000);
+            td_start.removeClass('end');
+            currentTd.addClass('end');
+        }
+        currentCalendarSelector.oneDay = false;
+    } else {
+        currentCalendarSelector.oneDay = true;
+        currentCalendarSelector.start = newDate;
+        currentCalendarSelector.end = new Date(newDate.getTime() + 24 * 60 * 60 * 1000);
+        td_end.removeClass('start');
+        td_start.removeClass('end');
+        $('td.c-' + newDate.getDate() + '-' + (newDate.getMonth() + 1) + '-' + newDate.getFullYear()).addClass('start').addClass('end');
+    }
+
+    updateCalendarSelection();
+    $('#dateSelector-result').html(toDateString(currentCalendarSelector.start) + ' - ' + toDateString(currentCalendarSelector.end));
+}
+
+function updateCalendarSelection(){
+    var start = currentCalendarSelector.start.getTime() / 1000;
+    var end = currentCalendarSelector.end.getTime() / 1000;
+    $('table.calendar-table td.selected').removeClass('selected');
+    while (start < end){
+        var d = new Date(start * 1000);
+        $('td.c-' + d.getDate() + '-' + (d.getMonth() + 1) + '-' + d.getFullYear()).addClass('selected');
+        start += 24 * 60 * 60;
+    }
+}
+
+function setDateInDateSelector(index){
+    $('#start_' + index).val(toDateString(currentCalendarSelector.start));
+    $('#end_' + index).val(toDateString(currentCalendarSelector.end));
+    $('#dateSelector' + index)
+        .html(toDateString(currentCalendarSelector.start) + ' - ' + toDateString(currentCalendarSelector.end))
+        .popover('hide');
 }
 
 /**
@@ -167,8 +307,15 @@ function lockDate(index) {
  * @param index
  */
 function initLoadedKey(index) {
-    attachDateTimePicker($( "#start_" + index ));
-    attachDateTimePicker($( "#end_" + index ));
+    $('#dateSelector' + index).popover(
+        {
+            placement:'bottom',
+            content: function(){return getDateSelector(index)},
+            title: 'Выберите период',
+            html: true
+        }
+    );
+
     attachDateTimePicker($( ".datepicker" + index ));
 
     $('.tag-type-help-' + index).popover({
@@ -197,11 +344,11 @@ function initLoadedKey(index) {
 
                                          });
 
-    if (isLockDate) {
-        $("#start_" + index).val(isLockDate[0]);
-        $("#end_" + index).val(isLockDate[1]);
-        $('.button.lock').removeClass('unlock');
-    }
+//    if (isLockDate) {
+//        $("#start_" + index).val(isLockDate[0]);
+//        $("#end_" + index).val(isLockDate[1]);
+//        $('.button.lock').removeClass('unlock');
+//    }
     $('#key_header_' + index).addClass('key_loaded');
 
     // синхронизация значени тегов
@@ -377,6 +524,7 @@ function selectAppEvent(eventCode) {
         function (responseText, textStatus, XMLHttpRequest) {
             initLoadedKey(maxIndex);
             $('#formSaveBlock').show();
+            maxIndex = maxIndex + 1;
         });
     globalData['eventLoaded']++;
 }

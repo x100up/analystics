@@ -82,7 +82,7 @@ class AnalyticsServer(tornado.web.Application):
         self.jinjaEnvironment.filters['toJsVar'] = toJsVar
         self.jinjaEnvironment.filters['minInt'] = minInt
         self.jinjaEnvironment.filters['numberFormat'] = numberFormat
-
+        self.jinjaEnvironment.filters['showMonth'] = showMonth
 
         self.scoped_session = None
         self.loopInstance = None
@@ -214,6 +214,8 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/add_new_key?", AjaxController.AddNewKey),
             (r"/ajax/add_new_tag?", AjaxController.AddNewTag),
             (r"/ajax/add_new_bunch?", AjaxController.AddNewBunch),
+            (r"/ajax/getDateSelector/?", AjaxController.GetDateSelector),
+
 
             (r"/ajax/getTagUniqueValues/?", HiveAJAXController.getTagUniqueValues),
             (r"/ajax/downloadCSV/?", AjaxController.DownloadCSVAction),

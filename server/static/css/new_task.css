@@ -274,3 +274,79 @@ div.eventSelector span:hover {
     background-position:  126px -86px !important;
     width: 140px !important;
 }
+
+
+.top-key-menu-date > .popover {
+    width: 600px !important;
+}
+
+.calendar-table td, .calendar-table th {
+    border: none;
+    font-weight: bold;
+}
+
+.calendar-table caption{
+    margin: 0 30px 0 30px;
+}
+
+.calendar-table td{
+    padding: 0;
+    text-align: center;
+}
+
+.calendar-table td.start, .calendar-table td.end , .calendar-table td.selected {
+    background: #4CB1CF;
+    border: 1px #ccc solid;
+}
+
+.calendar-table td:hover {
+    background: #459ADF;
+    cursor: pointer;
+}
+.calendar-table td.empty:hover{
+    cursor: auto !important;
+    background: none !important;
+}
+
+.calendar-table td.weekend{
+    color: #ff4500 !important;
+}
+
+.calendar-table td.weekend.selected{
+    color: #FFFFFF !important;
+}
+
+
+span.calendar-left, span.calendar-right{
+    display: block;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    z-index: 15;
+}
+
+span.calendar-left{
+    background: url('/static/img/sprite.png') no-repeat -25px -303px;
+}
+
+span.calendar-right{
+    background: url('/static/img/sprite.png') no-repeat -27px -258px;
+    float: right;
+}
+
+div#dateSelector-result{
+    text-align: center;
+}
+
+div.dateSelector{
+    display: inline;
+    margin-right: 10px;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+span.timepicker {
+    width: 250px;
+    display: block;
+    margin-bottom: 5px;
+}

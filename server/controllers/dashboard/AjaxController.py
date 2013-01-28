@@ -159,3 +159,77 @@ class DownloadCSVAction(AjaxController):
 
         self.write(self.application.getData(index))
         self.application.deleteData(index)
+
+from datetime import datetime, timedelta
+
+def toDate(strDate):
+    year, month, date, hour, minutes = strDate.split('-')
+    return datetime(int(year), int(month), int(date), int(hour), int(minutes))
+
+
+class GetDateSelector(AjaxController):
+
+    def get(self, *args, **kwargs):
+
+
+        index = self.get_argument('index')
+
+        showDelta = timedelta(days = 60)
+
+        now = datetime.now()
+        start = toDate(self.get_argument('start'))
+        end = toDate(self.get_argument('end'))
+
+        startWith = self.get_argument('startWith', None)
+        if startWith:
+            year, month, day = startWith.split('-')
+            startWith = datetime(int(year), int(month), int(day))
+        else:
+            startWith = now
+            if end - start < showDelta:
+                if end + timedelta(days = 30) > now:
+                    startWith = (end - timedelta(days = end.day + 1)).replace(day = 1, hour=0, minute=0, second=0, microsecond=0)
+                    print startWith
+            else:
+                pass
+
+
+        endWith = startWith
+        for i in range(0, 2):
+            if endWith.month == 12:
+                endWith = endWith.replace(year = endWith.year + 1, month = 1)
+            else:
+                endWith = endWith.replace(month = endWith.month + 1)
+
+
+        dates = []
+        _startWith = startWith
+        while _startWith < endWith:
+            dates.append(_startWith)
+            _startWith = _startWith + timedelta(days = 1)
+
+        if startWith.month == 1:
+            prevMonth = startWith.replace(year = startWith.year - 1, month=12)
+        else:
+            prevMonth = startWith.replace(month = startWith.month - 1)
+            print
+
+        if startWith.month == 12:
+            nextMonth = startWith.replace(year = startWith.year + 1, month=1)
+        else:
+            nextMonth = startWith.replace(month = startWith.month + 1)
+
+        print start, '-', end
+
+        self.render('dashboard/taskForm/dateSelector.jinja2',
+            {
+                'start': start,
+                'end': end,
+                'dates': dates,
+                'prevMonth': prevMonth,
+                'nextMonth': nextMonth,
+                'index': index,
+                'isOneDay': start.date() == (end - timedelta(days = 1)).date()
+            })
+
+

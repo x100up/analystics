@@ -8,6 +8,7 @@ from models.UserAppRule import RuleCollection
 import tornado.web, json
 
 
+
 class BaseController(tornado.web.RequestHandler):
     dbSession = False
 

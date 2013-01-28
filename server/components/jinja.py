@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-from components.dateutil import monthNamesShort, monthNamesB, dayCountName, hourCountName, minuteCountName, secondCountName
+from components.dateutil import monthNamesShort, monthNamesB, dayCountName, hourCountName, minuteCountName, secondCountName, monthNamesF
 from datetime import datetime, timedelta
 import time
 from models.Task import Task
+
+def showMonth(date):
+    return monthNamesF[date.month - 1]
 
 def datetofiled(value, format = '%d {0} %Y %H:%M'):
     return unicode(value.strftime(format)).format(monthNamesShort[value.date().month - 1],
