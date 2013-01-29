@@ -9,6 +9,7 @@ optParser.add_option("-x", "--all", dest="all_apps", help="all applications", ac
 optParser.add_option("-y", "--year", dest="year", help="year")
 optParser.add_option("-m", "--month", dest="month", help="month")
 optParser.add_option("-d", "--day", dest="day", help="day")
+optParser.add_option("-e", "--event", dest="event", help="event")
 scripts = ['initHiveMeta', 'packer', 'monitor']
 
 (options, args) = optParser.parse_args()
