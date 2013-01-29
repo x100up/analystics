@@ -19,6 +19,7 @@ class PackerScript(BaseAnalyticsScript):
         self.hiveClient.execute('set mapred.output.compression.type=BLOCK')
         self.hiveClient.execute('set hive.merge.mapredfiles=true')
         self.hiveClient.execute('set hive.mergejob.maponly=true')
+        self.event = False
 
         now = datetime.now() - timedelta(days = 1)
         self.year, self.month, self.day = (now.year, now.month, now.day)
@@ -32,6 +33,9 @@ class PackerScript(BaseAnalyticsScript):
         if self.options['day']:
             self.day = int(self.options['day'])
 
+        if self.options['event']:
+            self.event = self.options['event']
+
         self.date = date(self.year, self.month, self.day)
 
         self.HDFSClient = self.getWebHDFSClient()
@@ -43,7 +47,10 @@ class PackerScript(BaseAnalyticsScript):
 
     def processApp(self, appCode):
         appConfig = self.getAppConfig(appCode)
-        eventCodes = [appEvent.code for appEvent in appConfig.getEvents()]
+        if self.event:
+            eventCodes = [self.event]
+        else:
+            eventCodes = [appEvent.code for appEvent in appConfig.getEvents()]
         dbSession = self.getDBSession()
         hiveMetaService = HiveMetaService(dbSession)
         for eventCode in eventCodes:
