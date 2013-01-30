@@ -228,7 +228,7 @@ class GetDateSelector(AjaxController):
         prevMonth = addMonths(startWith, -1)
 
         # если начало календаря меньше чем мин. дата данных, то и мотать назад нечего
-        if startWith < minDate:
+        if startWith.date() < minDate:
             prevMonth = False
 
         # вычисляем следующий месяц
