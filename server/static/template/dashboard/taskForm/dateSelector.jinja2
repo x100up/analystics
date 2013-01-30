@@ -1,10 +1,14 @@
 <div class="container-fluid">
     <div class="span6">
+        {% if prevMonth %}
         <span class="calendar-left" onclick="getDateSelector({{ index }}, '{{ prevMonth.date() }}')"></span>
+        {% endif %}
     </div>
 
     <div class="span6">
+        {% if nextMonth %}
         <span class="calendar-right"  onclick="getDateSelector({{ index }}, '{{ nextMonth.date() }}')"></span>
+        {% endif %}
     </div>
 </div>
 
@@ -44,15 +48,26 @@
                 {% endfor %}
             {% endif %}
     {% endif %}
-    <td onclick="setCalendarDate({{ date.day }}, {{ date.month }}, {{ date.year }})" class="c-{{ date.day }}-{{ date.month }}-{{ date.year }}
-    {% if start.date() == date.date() %} start{% endif %}
 
-    {% if end.date() == date.date() and end.hour + end.minute %}
-            selected
-    {% endif %}
+    {% set isDiabled = date > maxEnd or date < maxStart %}
 
-    {% if date.date() > start.date() and date.date() < end.date() %}
-        selected
+    <td
+        {% if not isDiabled %}
+        onclick="setCalendarDate({{ date.day }}, {{ date.month }}, {{ date.year }})"
+        {% endif %}
+        class="c-{{ date.day }}-{{ date.month }}-{{ date.year }}
+    {% if start.date() == date %} start{% endif %}
+
+    {% if isDiabled %}
+        disabled
+    {% else %}
+        {% if end.date() == date and end.hour + end.minute %}
+                selected
+        {% else %}
+            {% if date > start.date() and date < end.date() %}
+                selected
+            {% endif %}
+        {% endif %}
     {% endif %}
 
     {% if date.isoweekday() > 5 %} weekend{% endif %}">{{ date.day }}</td>

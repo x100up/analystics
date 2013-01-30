@@ -303,6 +303,16 @@ div.eventSelector span:hover {
     background: #459ADF;
     cursor: pointer;
 }
+
+.calendar-table td.disabled{
+    color: #CCC;
+}
+
+.calendar-table td.disabled:hover {
+    background: #FFF !important;
+    cursor: auto !important;
+}
+
 .calendar-table td.empty:hover{
     cursor: auto !important;
     background: none !important;

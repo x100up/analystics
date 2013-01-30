@@ -29,3 +29,10 @@ class HiveMetaService():
             self.dbSession.commit()
 
         return hiveTablePartition
+
+    def getMinDateForEvent(self, appId, eventCode):
+        hiveTable = self.dbSession.query(HiveTable).filter_by(appId = appId, eventCode = eventCode).first()
+        if hiveTable:
+            return hiveTable.startFrom
+        else:
+            return None

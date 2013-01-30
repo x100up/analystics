@@ -167,19 +167,32 @@ def toDate(strDate):
     return datetime(int(year), int(month), int(date), int(hour), int(minutes))
 
 
+from services.HiveMetaService import HiveMetaService
+
 class GetDateSelector(AjaxController):
-
+    '''
+    Возвращает календарь
+    '''
     def get(self, *args, **kwargs):
-
 
         index = self.get_argument('index')
 
         showDelta = timedelta(days = 60)
 
         now = datetime.now()
+
+        # макс время начала календаря - начало сбора данных ключа
+        eventCode = self.get_argument('eventName')
+        app = self.checkAppAccess(self.get_argument('app'))
+
+        hiveMetaService = HiveMetaService(self.getDBSession())
+        minDate = hiveMetaService.getMinDateForEvent(app.appId, eventCode)
+
+        # что выделенно
         start = toDate(self.get_argument('start'))
         end = toDate(self.get_argument('end'))
 
+        # начало календаря
         startWith = self.get_argument('startWith', None)
         if startWith:
             year, month, day = startWith.split('-')
@@ -189,11 +202,14 @@ class GetDateSelector(AjaxController):
             if end - start < showDelta:
                 if end + timedelta(days = 30) > now:
                     startWith = (end - timedelta(days = end.day + 1)).replace(day = 1, hour=0, minute=0, second=0, microsecond=0)
-                    print startWith
             else:
                 pass
 
+        # если факап с минимальной датой, то пусть она будет с начала календаря
+        if not minDate:
+            minDate = startWith
 
+        # конец календаря
         endWith = startWith
         for i in range(0, 2):
             if endWith.month == 12:
@@ -201,35 +217,49 @@ class GetDateSelector(AjaxController):
             else:
                 endWith = endWith.replace(month = endWith.month + 1)
 
-
+        # собираем массив дат для отображеня
         dates = []
         _startWith = startWith
         while _startWith < endWith:
-            dates.append(_startWith)
+            dates.append(_startWith.date())
             _startWith = _startWith + timedelta(days = 1)
 
-        if startWith.month == 1:
-            prevMonth = startWith.replace(year = startWith.year - 1, month=12)
-        else:
-            prevMonth = startWith.replace(month = startWith.month - 1)
-            print
+        # вычисляем предыдущий месяц
+        prevMonth = addMonths(startWith, -1)
 
-        if startWith.month == 12:
-            nextMonth = startWith.replace(year = startWith.year + 1, month=1)
-        else:
-            nextMonth = startWith.replace(month = startWith.month + 1)
+        # если начало календаря меньше чем мин. дата данных, то и мотать назад нечего
+        if startWith < minDate:
+            prevMonth = False
 
-        print start, '-', end
+        # вычисляем следующий месяц
+        nextMonth = addMonths(startWith, 1)
+        if addMonths(nextMonth, 1) > now:
+            nextMonth = False
 
         self.render('dashboard/taskForm/dateSelector.jinja2',
             {
                 'start': start,
                 'end': end,
                 'dates': dates,
+                'maxEnd': now.date(),
+                'maxStart': minDate.date(),
                 'prevMonth': prevMonth,
                 'nextMonth': nextMonth,
                 'index': index,
                 'isOneDay': start.date() == (end - timedelta(days = 1)).date()
             })
+
+def addMonths(date, count):
+    if count > 0:
+        if date.month + count > 12:
+            return date.replace(year = date.year + 1, month = date.month + count - 12)
+        else:
+            return date.replace(month = date.month + count)
+    else:
+        if date.month + count <= 0:
+            return date.replace(year = date.year - 1, month = date.month + count + 12)
+        else:
+            return date.replace(month = date.month + count)
+
 
 
