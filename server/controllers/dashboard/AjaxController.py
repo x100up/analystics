@@ -207,7 +207,7 @@ class GetDateSelector(AjaxController):
 
         # если факап с минимальной датой, то пусть она будет с начала календаря
         if not minDate:
-            minDate = startWith
+            minDate = startWith.date()
 
         # конец календаря
         endWith = startWith
@@ -242,7 +242,7 @@ class GetDateSelector(AjaxController):
                 'end': end,
                 'dates': dates,
                 'maxEnd': now.date(),
-                'maxStart': minDate.date(),
+                'maxStart': minDate,
                 'prevMonth': prevMonth,
                 'nextMonth': nextMonth,
                 'index': index,
