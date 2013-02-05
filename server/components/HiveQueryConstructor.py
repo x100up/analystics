@@ -113,8 +113,8 @@ class HiveQueryConstructor():
         if conditions:
             where = []
             for eventCode, tagCode, tagValue in conditions:
+                print 'Get tag for {}:{}'.format(eventCode, tagCode)
                 tagType = self.appConfig.getTag(eventCode, tagCode).type
-
                 if tagValue:
                     if tagType == 'int':
                         where.append(self.parseIntValue(tagCode, tagValue[0]))
