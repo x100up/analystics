@@ -21,6 +21,7 @@ class PackerScript(BaseAnalyticsScript):
         self.hiveClient.execute('set hive.mergejob.maponly=true')
         self.event = False
         self.skipCheckInDB = bool(self.options['skipCheckInDB'])
+        print self.skipCheckInDB
 
         now = datetime.now() - timedelta(days = 1)
         self.year, self.month, self.day = (now.year, now.month, now.day)
