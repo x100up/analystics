@@ -20,6 +20,7 @@ class PackerScript(BaseAnalyticsScript):
         self.hiveClient.execute('set hive.merge.mapredfiles=true')
         self.hiveClient.execute('set hive.mergejob.maponly=true')
         self.event = False
+        self.skipCheckInDB = bool(self.options['skipCheckInDB'])
 
         now = datetime.now() - timedelta(days = 1)
         self.year, self.month, self.day = (now.year, now.month, now.day)
@@ -75,7 +76,7 @@ class PackerScript(BaseAnalyticsScript):
                     continue
 
                 # если не сжата
-                if not hiveTablePartition.isCompact:
+                if not hiveTablePartition.isCompact and not self.skipCheckInDB:
                     print 'Start pack table {}.{}'.format(appCode, eventCode)
                     try:
                         start = datetime.now()
