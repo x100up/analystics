@@ -97,15 +97,13 @@ class AppConfig():
 
 
     def getTag(self, eventCode, tagCode):
-        #TODO неправильно
-
         if self.isEventExist(eventCode):
             event = self.events[eventCode]
             if event.tags.has_key(tagCode):
                 if event.tags[tagCode]:
-                    return self.tags[tagCode]
-                else:
                     return AppTag(event.tags[tagCode])
+                else:
+                    return self.tags[tagCode]
 
     def getGeneralTag(self, tagCode):
         if self.tags.has_key(tagCode):
