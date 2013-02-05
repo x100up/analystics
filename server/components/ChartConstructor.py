@@ -36,14 +36,14 @@ class ChartConstructor():
                 series.name = self.nameService.getKeyNameByIndex(taskItemIndex)
                 if params.has_key('conditions'):
                     series.conditions = self.nameService.prepareConditions(params['conditions'])
-                    for eventCode, tag, value in params['conditions']:
-                        key = (tag, value)
-                        if not tagCloud.has_key(tag):
-                            tagCloud[tag] = {}
-                        if not tagCloud[tag].has_key(value):
-                            tagCloud[tag][value] = 0
+                    for eventCode, cloudKey, value in params['conditions']:
+                        key = (eventCode, cloudKey)
+                        if not tagCloud.has_key(key):
+                            tagCloud[key] = {}
+                        if not tagCloud[key].has_key(value):
+                            tagCloud[key][value] = 0
 
-                        tagCloud[tag][value] = tagCloud[tag][value] + series.sum
+                        tagCloud[key][value] = tagCloud[key][value] + series.sum
 
                 series.operation = seriesData['params']['op']
                 series.operationName = self.nameService.getOperationName(seriesData['params']['op'])
@@ -72,26 +72,27 @@ class ChartConstructor():
         self.tagCloud = {}
 
         if tagCloud:
-            for tag in tagCloud:
-                tagValueMaxWeight = max([weight for value, weight in tagCloud[tag].items()])
+            for cloudKey in tagCloud:
+                tagValueMaxWeight = max([weight for value, weight in tagCloud[cloudKey].items()])
                 tagCloudGroup = []
-                for value in tagCloud[tag]:
-                    name = self.nameService.getTagValueName(tag, value)
-                    if tagCloud[tag][value] == 0:
+                for value in tagCloud[cloudKey]:
+                    eventCode, tagCode = cloudKey
+                    name = self.nameService.getTagValueName(eventCode, tagCode, value)
+                    if tagCloud[cloudKey][value] == 0:
                         weight = 0
                     else:
-                        weight = float(tagCloud[tag][value]) / tagValueMaxWeight
+                        weight = float(tagCloud[cloudKey][value]) / tagValueMaxWeight
 
                     tagCloudGroup.append({
                         'text': name,
                         'weight': weight,
-                        'tag': tag,
+                        'tag': cloudKey,
                         'value': value,
                         })
 
 
                 tagCloudGroup = sorted(tagCloudGroup, key=lambda item: item['weight'], reverse=True)
-                self.tagCloud[self.nameService.getTagName(tag)] = tagCloudGroup
+                self.tagCloud[self.nameService.getTagName(cloudKey)] = tagCloudGroup
 
 
 
