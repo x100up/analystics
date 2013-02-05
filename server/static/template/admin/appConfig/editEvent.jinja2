@@ -1,0 +1,85 @@
+{% extends 'admin/adminLayout.jinja2' %}
+
+{% block content %}
+
+    {% include 'blocks/error.jinja2' %}
+
+    {% include 'admin/appConfig/menu.jinja2' %}
+    <form action="" method="post">
+    <div class="row-fluid">
+        <div class="span6">
+
+                <input type="hidden" name="appCode" value="{{ appCode }}">
+                <input type="hidden" name="key_code_old" value="{{ event.code }}">
+                <ul class="form">
+                    <li>
+                        <label for="key_code">Код:</label>
+                        <input type="text" value="{{ event.code }}" name="key_code" id="key_code">
+                    </li>
+                    <li>
+                        <label for="key_name">Название:</label>
+                        <input type="text" value="{{ event.getName() }}" name="key_name" id="key_name">
+                    </li>
+                </ul>
+
+
+            <h3>Теги события</h3>
+            {% if eventCode %}
+            <span class="btn" onclick="editTag('', '{{ event.code }}')"><i class="icon-edit"></i>Добавить</span>
+            <table class="table">
+            {% for tag in personalTags %}
+                    <tr>
+                        <td><span class="btn" onclick="editTag('{{ tag.code }}', '{{ event.code }}')"><i class="icon-edit"></i></span></td>
+                        <td>{{ tag.getName() }}</td>
+                        <td>{{ tag.code }}</td>
+                    </tr>
+            {% endfor %}
+            </table>
+            {% endif %}
+
+            <input type="submit" value="Сохранить" class="btn btn-primary">
+        </div>
+        <div class="span6">
+            <h2>Группы тегов</h2>
+            <table class="table">
+                {% for bunch in bunches %}
+                    <tr>
+                        <td><input type="checkbox" value="{{ bunch.code }}" name="eventBunches"
+                                   {% if bunch.code in eventBunches %}checked="checked" {% endif %}></td>
+                        <td>{{ bunch.getName() }}</td>
+                        <td>{{ bunch.code }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+
+            <h2>Общие теги</h2>
+            <table class="table">
+                {% for tag in generalTags %}
+                    <tr>
+                        <td><input type="checkbox" value="{{ tag.code }}" name="generalTags"
+                                   {% if tag.code in eventGeneralTags %}checked="checked" {% endif %}></td>
+                        <td>{{ tag.getName() }}</td>
+                        <td>{{ tag.code }}</td>
+                    </tr>
+                {% endfor %}
+            </table>
+        </div>
+
+    </div>
+
+    </form>
+    <div class="modal hide fade editTagModal" id="myModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Редактирование тега</h3>
+        </div>
+        <div class="modal-body" id="modalBody">
+
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+
+
+{% endblock %}

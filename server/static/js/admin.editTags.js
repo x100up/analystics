@@ -1,28 +1,98 @@
-function onChangeType(select, index) {
+
+function editTag(tagCode, eventCode){
+    var b = $('#modalBody');
+    b.html('<p>Загрузка</p>');
+    $('#myModal').modal();
+    $.ajax('/ajax/editTag/', {
+        type: 'GET',
+        data: {
+            tagCode: tagCode,
+            eventCode: eventCode,
+            appCode: appCode
+        },
+        success: function(data){
+            b.html(data);
+        }
+    });
+}
+
+function onChangeType(select) {
+    var tagChooser = $('#tag_choose');
     if ($(select).val() == 'choose') {
-        $('#tag_choose_' + index).show()
+        tagChooser.show()
     } else {
-        $('#tag_choose_' + index).hide()
+        tagChooser.hide()
     }
 }
 
-/**
- *
- * @param tag_index
- */
-function setNew(tag_index, value){
+
+function sendEditTagForm(){
+    $.ajax('/ajax/editTag/', {
+        data: $('#theForm').serializeArray(),
+        type: 'POST',
+        success:function(data){
+            $('#myModal').modal('hide');
+        }});
+    return false;
+}
+
+
+function editBunch(bunchCode){
+    var b = $('#modalBody');
+    b.html('<p>Загрузка</p>');
+    $('#myModal').modal();
+    $.ajax('/ajax/editBunch/', {
+        type: 'GET',
+        data: {
+            bunchCode: bunchCode,
+            appCode: appCode
+        },
+        success: function(data){
+            b.html(data);
+        }
+    });
+}
+
+
+function sendEditBunchForm(){
+    $.ajax('/ajax/editBunch/', {
+        data: $('#theForm').serializeArray(),
+        type: 'POST',
+        success:function(data){
+            $('#myModal').modal('hide');
+        }});
+    return false;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function setNew(value){
     if (typeof value =='undefined') value = '';
-    var countTag = $('#tag_' + tag_index + '_values_count');
+    var countTag = $('#tag_values_count');
     var count = parseInt(countTag.val());
     $('input.new_tag_value_' + tag_index + '.key').val(value).addClass('tag_' + tag_index + '_values_key').removeClass('key');
     $('input.new_tag_value_' + tag_index).removeAttr('onkeypress').removeClass('new_tag_value_' + tag_index).parent().parent().removeClass('new');
 
     count = count + 1;
     $('#tag_choose_' + tag_index + ' tbody').append('<tr class="new">'
-                                                        + '<td><input type="text" onkeypress="setNew(' + tag_index + ')" '
-                                                        + 'name="tag_' + tag_index + '_values_key_' + count + '" class="new_tag_value_' + tag_index + ' key"></td>'
-                                                        + '<td><input type="text" onkeypress="setNew(' + tag_index + ')" '
-                                                        + 'name="tag_' + tag_index + '_values_value_' + count + '" class="new_tag_value_' + tag_index + '"></td>'+
+                                                        + '<td><input type="text" onkeypress="setNew()" '
+                                                        + 'name="tag_values_key_' + count + '" class="new_tag_value_' + tag_index + ' key"></td>'
+                                                        + '<td><input type="text" onkeypress="setNew()" '
+                                                        + 'name="tag_values_value_' + count + '" class="new_tag_value_' + tag_index + '"></td>'+
                                                         '</tr>');
 
     countTag.val(count);

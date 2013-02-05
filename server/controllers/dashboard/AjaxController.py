@@ -1,11 +1,10 @@
 # -*- coding: utf-8 -*-
 from controllers.BaseController import AjaxController
 from services.AppService import AppService
-from models.Task import TaskItem
+from models.TaskItem import TaskItem
 from models.Worker import Worker
 from services import ThredService
 from components.TaskFactory import createTaskFromRequestArguments
-from models.appConf.AppEvent import AppEvent
 from models.appConf.AppTag import AppTag
 from models.appConf.AppTagBunch import AppTagBunch
 from components.NameConstructor import NameConstructor
@@ -50,13 +49,6 @@ class SaveWorkerName(AjaxController):
         session.commit()
         self.renderJSON({'status':'ok'})
 
-class AddNewKey(AjaxController):
-    def post(self):
-        data = {
-            'index': self.get_argument('index'),
-            'event': AppEvent(),
-        }
-        self.render('admin/appConfig/editOneEvent.jinja2', data)
 
 class AddNewTag(AjaxController):
     def post(self):
@@ -74,7 +66,7 @@ class AddNewBunch(AjaxController):
         data = {
             'index': self.get_argument('index'),
             'bunch': AppTagBunch(),
-            'tags': appConfig.getTags()
+            'tags': appConfig.getGeneralTags()
         }
         self.render('admin/appConfig/editOneBunch.jinja2', data)
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from models.Task import Task, TaskItem
+from models.Task import Task
+from models.TaskItem import TaskItem
 from components.dateutil import repMonth
 from datetime import datetime
 
@@ -16,14 +17,14 @@ def createTaskFromRequestArguments(arguments):
         if not arguments.has_key('key_' + index):
             continue
 
-        key, = arguments['key_' + index]
-        if not key:
+        eventCode, = arguments['key_' + index]
+        if not eventCode:
             continue
 
         start = datetime.strptime(repMonth(arguments['start_'+ index][0]), "%d %m %Y %H:%M")
         end = datetime.strptime(repMonth(arguments['end_'+ index][0]), "%d %m %Y %H:%M")
 
-        taskItem = TaskItem(key = key, start = start, end = end, index = index)
+        taskItem = TaskItem(key = eventCode, start = start, end = end, index = index)
         if index in userUniques:
             taskItem.userUnique = True
         # разбираем тег для ключа
@@ -41,7 +42,7 @@ def createTaskFromRequestArguments(arguments):
                 values = [val.decode('utf-8') for val in arguments[val_index]]
 
             if not values is None:
-                taskItem.addCondition(tagName, values)
+                taskItem.addCondition(eventCode, tagName, values)
             # операции с тегом
             op_index = 'tag_' + index + '_' + tagName + '_ops'
             if arguments.has_key(op_index):

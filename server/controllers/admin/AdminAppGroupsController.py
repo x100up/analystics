@@ -51,31 +51,7 @@ class IndexAction(AdminAction):
                 for eventCode in eventGroups[index]:
                     self.appConfig.setEventGroup(i, eventCode)
 
-        # tags
-#        tagGroupIterator = self.get_argument('tagGroupIterator', default=None)
-#        groups = {}
-#        if tagGroupIterator:
-#            for index in range(0, int(tagGroupIterator) + 1):
-#                groupName = self.get_argument('group_tag_' + str(index), default=None)
-#                if groupName:
-#                    groups[index] = groupName
-#
-#        tagGroups = {}
-#        for tag in self.appConfig.getTags():
-#            groupIds = self.get_arguments('group_tag_' + tag.code)
-#            if groupIds:
-#                for groupId in groupIds:
-#                    groupId = int(groupId)
-#                    if not tagGroups.has_key(groupId):
-#                        tagGroups[groupId] = []
-#                    tagGroups[groupId].append(tag.code)
-#
-#        self.appConfig.clearTagGroups()
-#        for index in groups:
-#            i = self.appConfig.addTagGroup(groups[index])
-#            if tagGroups.has_key(index):
-#                for tagCode in tagGroups[index]:
-#                    self.appConfig.setTagGroup(i, tagCode)
+
 
         self.appService.newSaveConfig(self.appConfig)
 

@@ -10,7 +10,7 @@ optParser.add_option("-y", "--year", dest="year", help="year")
 optParser.add_option("-m", "--month", dest="month", help="month")
 optParser.add_option("-d", "--day", dest="day", help="day")
 optParser.add_option("-e", "--event", dest="event", help="event")
-scripts = ['initHiveMeta', 'packer', 'monitor']
+scripts = ['initHiveMeta', 'packer', 'monitor', 'convertConfig']
 
 (options, args) = optParser.parse_args()
 if not len(args) == 1 or not args[0]  in scripts:
@@ -40,4 +40,9 @@ if scriptName == 'monitor':
 if scriptName == 'updateDB':
     from scripts.updateDB import UpdateDbScript
     script = UpdateDbScript(options)
+    script.run()
+
+if scriptName == 'convertConfig':
+    from scripts.convertConfig import ConvertConfig
+    script = ConvertConfig(options)
     script.run()

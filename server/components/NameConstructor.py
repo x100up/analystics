@@ -45,9 +45,8 @@ class NameConstructor(object):
 
                 if params.has_key('conditions'):
                     for condition in params['conditions']:
-                        tag_key = condition[0]
-                        value = condition[1]
-                        appTag = self.appConfig.getTag(tag_key)
+                        eventCode, tagCode, value = condition
+                        appTag = self.appConfig.getTag(eventCode, tagCode)
                         if appTag:
                             operation += '[' + appTag.getName() + '=' + str(value) + ']'
 
@@ -67,12 +66,12 @@ class NameConstructor(object):
 
         return 'not name for task item: ' + str(index)
 
-    def getTagValueName(self, tagCode, value):
+    def getTagValueName(self, eventCode, tagCode, value):
         '''
             Возвращает значение тега
         '''
         tag_value = value
-        tag = self.appConfig.getTag(tagCode)
+        tag = self.appConfig.getTag(eventCode, tagCode)
         if tag:
                 if tag.type == 'choose':
                     if tag.values.has_key(value):
@@ -91,11 +90,11 @@ class NameConstructor(object):
 
         return tag_value
 
-    def getTagName(self, tagCode):
+    def getTagName(self, eventCode, tagCode):
         '''
             Возвращает имя тега по коду
         '''
-        tag = self.appConfig.getTag(tagCode)
+        tag = self.appConfig.getTag(eventCode, tagCode)
         if tag:
             return tag.getName()
         return u'Нет тега'
@@ -105,8 +104,8 @@ class NameConstructor(object):
             Подготавливает список условий для отображения
         """
         result = []
-        for tag, value in conditions:
-            result.append((self.getTagName(tag), self.getTagValueName(tag, value), tag, value))
+        for eventCode, tag, value in conditions:
+            result.append((self.getTagName(eventCode, tag), self.getTagValueName(eventCode, tag, value), tag, value))
 
         return result
 

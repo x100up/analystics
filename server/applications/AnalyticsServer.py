@@ -117,8 +117,9 @@ class AnalyticsServer(tornado.web.Application):
         address = self.config.get('app_host', "")
         self.listen(port = port, address = address )
         self.loopInstance = tornado.ioloop.IOLoop.instance()
+        self.logger.info('application run {}:{}'.format(address, port))
         self.loopInstance.start()
-        print 'application runing'
+
 
 
     def loadConfiguration(self):
@@ -196,10 +197,17 @@ class AnalyticsServer(tornado.web.Application):
 
 
             (r'/admin/app/([^/]+)/settings/?', AdminAppConfigController.IndexAction),
-            (r'/admin/app/([^/]+)/editEvent/?', AdminAppConfigController.EventEditAction),
-            (r'/admin/app/([^/]+)/editTags/?', AdminAppConfigController.EditTagAction),
-            (r'/admin/app/([^/]+)/editBunches/?', AdminAppConfigController.EditBunchAction),
-            (r'/admin/app/([^/]+)/editReferences/?', AdminAppConfigController.EditReferencesAction),
+            (r'/admin/app/([^/]+)/eventsList/?', AdminAppConfigController.EventListAction),
+            (r"/admin/app/([^/]+)/editEvent/?", AdminAppConfigController.EditEvent),
+
+            (r'/admin/app/([^/]+)/editTags/?', AdminAppConfigController.TagListAction),
+            (r"/ajax/editTag/?", AdminAppConfigController.EditTag),
+
+
+            (r'/admin/app/([^/]+)/editBunches/?', AdminAppConfigController.BunchListAction),
+            (r'/ajax/editBunch/?', AdminAppConfigController.EditBunchAction),
+
+
             (r'/admin/app/([^/]+)/spell/?', AdminAppSpellController.IndexAction),
             (r'/admin/app/([^/]+)/groups/?', AdminAppGroupsController.IndexAction),
             # --------- CLUSTER -----------
@@ -211,7 +219,9 @@ class AnalyticsServer(tornado.web.Application):
             (r"/ajax/getTasksProgress/?", AjaxController.GatTasksProgress),
             (r"/ajax/copyTaskKey/?", AjaxController.CopyTaskKey),
             (r"/ajax/saveWorkerName?", AjaxController.SaveWorkerName),
-            (r"/ajax/add_new_key?", AjaxController.AddNewKey),
+
+
+            #(r"/ajax/add_new_key?", AjaxController.AddNewKey),
             (r"/ajax/add_new_tag?", AjaxController.AddNewTag),
             (r"/ajax/add_new_bunch?", AjaxController.AddNewBunch),
             (r"/ajax/getDateSelector/?", AjaxController.GetDateSelector),

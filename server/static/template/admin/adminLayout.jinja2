@@ -14,8 +14,16 @@
     <link href="{{ static_url_prefix }}/css/admin.editTags.css" rel="stylesheet" type="text/css">
     <link href="{{ static_url_prefix }}/css/settings.css" rel="stylesheet" type="text/css">
     <link href="/static/css/app.css" rel="stylesheet" type="text/css">
-    <script type="text/javascript" src="{{ static_url_prefix }}/js/admin.editTags.js"></script>
+    <script type="text/javascript" src="/static/js/admin.editTags.js"></script>
     {% block head %}{% endblock %}
+
+    {% if js_vars %}
+        <script type="text/javascript">
+            {% for key in js_vars %}
+                var {{ key }} = {{ js_vars[key]|toJsVar }};
+            {% endfor %}
+        </script>
+    {% endif %}
 </head>
 <body>
 

@@ -112,12 +112,12 @@ class HiveQueryConstructor():
         '''
         if conditions:
             where = []
-            for tagName, tagValue in conditions.items():
-                tagType = self.appConfig.getTag(tagName).type
+            for eventCode, tagCode, tagValue in conditions.items():
+                tagType = self.appConfig.getTag(eventCode, tagCode).type
 
                 if tagValue:
                     if tagType == 'int':
-                        where.append(self.parseIntValue(tagName, tagValue[0]))
+                        where.append(self.parseIntValue(tagCode, tagValue[0]))
                     elif tagType == 'timestamp':
                         start, end = self.getTSValues(tagValue[0])
                         print start, end
@@ -134,17 +134,17 @@ class HiveQueryConstructor():
                         if end:
                             startTs = int(time.mktime(start.timetuple()))
                             endTs = int(time.mktime(end.timetuple()))
-                            where.append("(params['%(tagName)s'] >= %(tagValue1)s AND params['%(tagName)s'] <= %(tagValue2)s)"%{'tagName':tagName, 'tagValue1':startTs, 'tagValue2':endTs})
+                            where.append("(params['%(tagName)s'] >= %(tagValue1)s AND params['%(tagName)s'] <= %(tagValue2)s)"%{'tagName':tagCode, 'tagValue1':startTs, 'tagValue2':endTs})
                         else:
                             ts = int(time.mktime(start.timetuple()))
-                            where.append("params['%(tagName)s'] = %(tagValue)s"%{'tagName':tagName, 'tagValue':ts})
+                            where.append("params['%(tagName)s'] = %(tagValue)s"%{'tagName':tagCode, 'tagValue':ts})
                     else:
                         if len(tagValue) == 1:
-                            where.append("params['%(tagName)s'] = '%(tagValue)s'"%{'tagName':tagName, 'tagValue':tagValue[0]})
+                            where.append("params['%(tagName)s'] = '%(tagValue)s'"%{'tagName':tagCode, 'tagValue':tagValue[0]})
                         else:
                             items = []
                             for val in tagValue:
-                                items.append("params['%(tagName)s'] = '%(tagValue)s'"%{'tagName':tagName, 'tagValue':val})
+                                items.append("params['%(tagName)s'] = '%(tagValue)s'"%{'tagName':tagCode, 'tagValue':val})
 
                             where.append('(' + ' OR '.join(items) + ')')
             if len(where):

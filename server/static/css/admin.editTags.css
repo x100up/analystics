@@ -1,3 +1,11 @@
+.editTagModal .modal-body{
+    height: 600px;
+}
+
+.editTagModal {
+    width: 800px;;
+}
+
 div.choose  input {
     width: 195px;
 }

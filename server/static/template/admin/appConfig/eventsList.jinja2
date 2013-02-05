@@ -1,0 +1,37 @@
+{% extends 'admin/adminLayout.jinja2' %}
+
+{% block content %}
+    <h2>Редактирование событий</h2>
+
+    {% include 'blocks/error.jinja2' %}
+
+    {% include 'admin/appConfig/menu.jinja2' %}
+
+    <a href="/admin/app/{{ appCode }}/editEvent/" class="btn"><i class="icon-edit"></i>Добавить событие</a>
+
+    <table class="table table-striped">
+        {% for event in events %}
+            <tr>
+                <td><a href="/admin/app/{{ appCode }}/editEvent/?eventCode={{ event.code }}" class="btn"><i class="icon-edit"></i></a></td>
+                <td>{{ event.getName() }}</td>
+                <td id="eventCode_{{ loop.index }}">{{ event.code }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+
+    <div class="modal hide fade" id="myModal">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h3>Редактирование события</h3>
+        </div>
+        <div class="modal-body" id="modalBody">
+
+        </div>
+        <div class="modal-footer">
+
+        </div>
+    </div>
+
+
+{% endblock %}

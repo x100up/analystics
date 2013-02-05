@@ -1,0 +1,89 @@
+{#
+ index
+ tag_name
+ tag.values
+#}
+<div>
+    <form action="" method="post" onsubmit="return false;" id="theForm">
+        <div class="span6">
+            <input type="hidden" name="appCode" value="{{ appCode }}">
+
+            {% if tag.code %}
+                <input type="hidden" name="tag_old_code" value="{{ tag.code }}">
+            {% endif %}
+
+            {% if eventCode %}
+                <input type="hidden" name="eventCode" value="{{ eventCode }}">
+            {% endif %}
+
+            <ul>
+                <li>
+                    <label for="tag_code">Код</label>
+                    <input type="text" name="tag_code" id="tag_code" value="{{ tag.code }}">
+                </li>
+                <li>
+                    <label for="tag_name">Название:</label>
+                    <input type="text" name="tag_name" id="tag_name" value="{{ tag.name or "" }}">
+                </li>
+                <li>
+                    <label for="tag_type">Тип: </label>
+                    <select name="tag_type" id="tag_type" onchange="onChangeType(this)">
+                        <option value="string" {% if tag.type == 'string' %}selected="selected"{% endif %}>Строка
+                        </option>
+                        <option value="int" {% if tag.type == 'int' %}selected="selected"{% endif %}>Целое (int)
+                        </option>
+                        <option value="choose" {% if tag.type == 'choose' %}selected="selected"{% endif %}>Выбор
+                        </option>
+                        <option value="boolean" {% if tag.type == 'boolean' %}selected="selected"{% endif %}>Логический
+                            (bool)
+                        </option>
+                        <option value="timestamp" {% if tag.type == 'timestamp' %}selected="selected"{% endif %}>
+                            Таймстамп
+                        </option>
+                    </select>
+                </li>
+            </ul>
+
+            <div class="span6 choose" id="tag_choose" {% if tag.type != 'choose' %} style="display: none" {% endif %}>
+                {% set tag_values = tag.values %}
+
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Варианты</th>
+                        <th>Описание</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% set new_index = 0 %}
+                    {% if tag.type == 'choose' %}
+                        {% set isDict = False %}
+                        {% if tag_values.items %}
+                            {% set isDict = True %}
+                        {% endif %}
+                        {% set new_index = tag_values|length %}
+                        {% for key in tag_values %}
+                            <tr>
+                                <td><input type="text" name="tag_values_key_{{ loop.index0 }}" value="{{ key }}"
+                                           class="tag_values_key"></td>
+                                <td><input type="text" name="tag_values_value_{{ loop.index0 }}"
+                                           value="{% if isDict %}{{ tag_values[key] or '' }} {% endif %}"></td>
+                            </tr>
+
+                        {% endfor %}
+                    {% endif %}
+                    <tr class="new">
+                        <td><input type="text" onkeypress="setNew()" name="tag_values_key_{{ new_index }}"
+                                   class="new_tag_value key"></td>
+                        <td><input type="text" onkeypress="setNew()" name="tag_values_value_{{ new_index }}"
+                                   class="new_tag_value"></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <input type="hidden" name="tag_values_count" id="tag_values_count" value="{{ new_index }}">
+            </div>
+        </div>
+        <input type="button" value="Сохранить" class="btn btn-primary" onclick="sendEditTagForm();">
+    </form>
+</div>

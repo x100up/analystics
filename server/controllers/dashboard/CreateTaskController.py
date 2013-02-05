@@ -4,7 +4,7 @@ from components import HiveWorker
 from components.HiveQueryConstructor import  HiveQueryConstructor
 from controllers.BaseController import BaseController, AjaxController
 from models.Worker import Worker
-from models.Task import Task, TaskItem
+from models.Task import Task
 from datetime import datetime
 from services.WorkerService import WorkerService
 from services.AppService import AppService
@@ -16,7 +16,7 @@ import tornado.web
 from services import ThredService
 
 
-class CreateTaskController():
+class CreateTaskController(BaseController):
 
     def createHiveWorker(self, workerService):
         workerThread = HiveWorker.HiveWorker(workerService)
@@ -148,7 +148,7 @@ class CreateAction(CreateTaskController, AjaxController):
 
         self.redirect('/dashboard/app/' + app.code + '/#new_task/' + str(worker.workerId))
 
-class RecalculateAction(CreateTaskController, BaseController):
+class RecalculateAction(CreateTaskController):
 
     def get(self, *args, **kwargs):
         app = self.checkAppAccess(args)

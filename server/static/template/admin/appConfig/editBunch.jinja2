@@ -1,0 +1,39 @@
+<div id="bunch">
+    <form action="" method="post" onsubmit="return false" id="theForm">
+        <input id="bunch_old_code" type="hidden" name="bunch_old_code" value="{{ bunch.code }}">
+        <input type="hidden" name="appCode" value="{{ appCode }}">
+        <ul>
+            <li>
+                <label for="bunch_code">Код:</label>
+                <input id="bunch_code" name="bunch_code" value="{{ bunch.code }}">
+            </li>
+            <li>
+                <label for="bunch_name">Имя:</label>
+                <input id="bunch_name" name="bunch_name" value="{{ bunch.name }}">
+            </li>
+            <li>
+                <table>
+                    {% for tag in tags %}
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="bunch_tag" value="{{ tag.code }}" id="tag{{ loop.index }}"
+                                        {% if tag.code in bunch.tags %}
+                                       checked="checked"
+                                        {% endif %}>
+                            </td>
+                            <td>
+                                <label for="tag{{ loop.index }}">{{ tag.getName() }}</label>
+                            </td>
+                            <td>
+                                {{ tag.code }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </li>
+            <li>
+                <input type="button" value="Сохранить" class="btn btn-primary" onclick="sendEditBunchForm();">
+            </li>
+        </ul>
+    </form>
+</div>

@@ -57,14 +57,9 @@
            {% set tags = appConfig.getEventTags(taskItem.key) %}
            {% set index = taskItem.index %}
            {% set key = taskItem.key %}
-           {% set values = taskItem.conditions %}
 
             {% for tag in tags %}
-                {% if values.has_key(tag.code) %}
-                    {% set value = values[tag.code] %}
-                {% else %}
-                    {% set value = None %}
-                {% endif %}
+                {% set value = taskItem.getConditionValue(key, tag.code) %}
 
                 {% if loop.index % 6 == 1%}
                     <div class="row-fluid">

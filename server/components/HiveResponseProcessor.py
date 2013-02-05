@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from models.Task import Task, TaskItem
+from models.Task import Task
+from models.TaskItem import TaskItem
 from datetime import datetime, timedelta, time
 import copy
 class HiveResponseProcessor():
@@ -106,7 +107,7 @@ class HiveResponseProcessor():
                             del values['count']
                             values['group'] = [count, {'op' : 'group', 'extra':_count_extra}]
 
-                        conditions.append((tag, value))
+                        conditions.append((taskItem.key, tag, value))
                     else:
                         # для каждого тега свое значение операции
                         if value == 'NULL':
@@ -125,7 +126,7 @@ class HiveResponseProcessor():
                 seria_id = str(taskItemIndex) + '_' + index
                 opts = value[1]
                 if opts.has_key('conditions'):
-                    for tag, tag_value in opts['conditions']:
+                    for eventCode, tag, tag_value in opts['conditions']:
                         seria_id += '_' + tag + '=' + tag_value
 
                 if not result.has_key(taskItemIndex):

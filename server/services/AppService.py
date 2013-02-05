@@ -22,14 +22,17 @@ class AppService():
                 list.append(match.group(1))
         return list
 
+    def getRawAppConfig(self, appCode):
+        f = open(self._getFilePath(appCode), 'r')
+        return json.load(f)
+
     def getAppConfig(self, appCode):
         '''
         return app config dict
         '''
         if not self.appConfCache.has_key(appCode):
             try:
-                f = open(self._getFilePath(appCode), 'r')
-                self.appConfCache[appCode] = AppConfig(json.load(f))
+                self.appConfCache[appCode] = AppConfig(self.getRawAppConfig(appCode))
             except ValueError as valueError:
                 raise AnalyticsException(u'Ошибка при чтении конфигурации приложения {}'.format(self.folder + '/' + appCode + '.json'), valueError)
         return self.appConfCache[appCode]

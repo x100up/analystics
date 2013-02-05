@@ -81,6 +81,7 @@ class ChartConstructor():
                         weight = 0
                     else:
                         weight = float(tagCloud[tag][value]) / tagValueMaxWeight
+
                     tagCloudGroup.append({
                         'text': name,
                         'weight': weight,
