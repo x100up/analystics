@@ -112,7 +112,7 @@ class HiveQueryConstructor():
         '''
         if conditions:
             where = []
-            for eventCode, tagCode, tagValue in conditions.items():
+            for eventCode, tagCode, tagValue in conditions:
                 tagType = self.appConfig.getTag(eventCode, tagCode).type
 
                 if tagValue:
