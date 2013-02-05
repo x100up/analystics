@@ -77,7 +77,7 @@ class PackerScript(BaseAnalyticsScript):
                     continue
 
                 # если не сжата
-                if not hiveTablePartition.isCompact and not self.skipCheckInDB:
+                if not hiveTablePartition.isCompact or self.skipCheckInDB:
                     print 'Start pack table {}.{}'.format(appCode, eventCode)
                     try:
                         start = datetime.now()
