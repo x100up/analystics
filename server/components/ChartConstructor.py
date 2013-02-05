@@ -73,10 +73,10 @@ class ChartConstructor():
 
         if tagCloud:
             for cloudKey in tagCloud:
+                eventCode, tagCode = cloudKey
                 tagValueMaxWeight = max([weight for value, weight in tagCloud[cloudKey].items()])
                 tagCloudGroup = []
                 for value in tagCloud[cloudKey]:
-                    eventCode, tagCode = cloudKey
                     name = self.nameService.getTagValueName(eventCode, tagCode, value)
                     if tagCloud[cloudKey][value] == 0:
                         weight = 0
@@ -92,7 +92,7 @@ class ChartConstructor():
 
 
                 tagCloudGroup = sorted(tagCloudGroup, key=lambda item: item['weight'], reverse=True)
-                self.tagCloud[self.nameService.getTagName(cloudKey)] = tagCloudGroup
+                self.tagCloud[self.nameService.getTagName(eventCode, tagCode)] = tagCloudGroup
 
 
 
