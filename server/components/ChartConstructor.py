@@ -36,6 +36,7 @@ class ChartConstructor():
                 series.name = self.nameService.getKeyNameByIndex(taskItemIndex)
                 if params.has_key('conditions'):
                     series.conditions = self.nameService.prepareConditions(params['conditions'])
+                    print params['conditions']
                     for tag, value in params['conditions']:
                         key = (tag, value)
                         if not tagCloud.has_key(tag):
