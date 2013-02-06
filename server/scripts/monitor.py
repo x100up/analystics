@@ -157,7 +157,7 @@ class MonitorScript(BaseAnalyticsScript):
 
     def dropPartition(self, year, month, day, appCode, eventCode):
         table_name = self.getTableName(eventCode)
-        query = 'ALTER TABLE {} DROP PARTITION IF EXISTS (day={},month={},year={})'.format(table_name,day, month, year)
+        query = 'ALTER TABLE {} DROP PARTITION (day={},month={},year={})'.format(table_name,day, month, year)
         print 'Drop partition {}.{}.{} for {}'.format(year, month, day, table_name)
         try:
             self.hiveclient.execute(query)
