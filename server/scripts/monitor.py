@@ -145,7 +145,7 @@ class MonitorScript(BaseAnalyticsScript):
             'day': day,
             'path': '{}/{}/{}/{}/{}/'.format(self.getTablePath(appCode), eventCode, year, month, day)
         }
-        print 'Create partition {} for {}'.format(year + '/' + month + '/' +  day, table_name)
+        print 'Create partition {}.{}.{} for {}'.format(year, month, day, table_name)
         try:
             self.hiveclient.execute(query)
         except Exception as ex:
