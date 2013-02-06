@@ -24,9 +24,41 @@ class MonitorScript(BaseAnalyticsScript):
     partNameR = re.compile('^year=(\d+)/month=(\d+)/day=(\d+)$')
 
     def run(self):
+
+        command = self.options['command']
+
+        self.hiveMetaService = None
         self.hiveclient = self.getHiveClient()
-        for appCode in self.getAppCodes():
-            self.processApp(appCode)
+        if command == 'reload':
+            day = int(self.options['day'])
+            month = int(self.options['month'])
+            year = int(self.options['year'])
+            appname = self.options['appname']
+            self.reload(appname, day, month, year)
+        else:
+            for appCode in self.getAppCodes():
+                self.processApp(appCode)
+
+    def reload(self, appCode, day, month, year):
+        dbSession = self.getDBSession()
+        app = dbSession.query(App).filter(App.code == appCode).first()
+        if not app:
+            print 'App {} not present in database. Process app terminated'.format(appCode)
+            return
+        print 'ProcessApp {}'.format(appCode)
+        self.hiveclient.execute('USE {}'.format(appCode))
+        appConfig = self.getAppConfig(appCode)
+        hiveMetaService = self.getHiveMetaService()
+        for eventCode in [appEvent.code for appEvent in appConfig.getEvents()]:
+            hiveTable = hiveMetaService.getOrCreateHiveTable(app.appId, eventCode)
+
+            if not hiveTable:
+                print 'Cannot get or create HiveTable for {} {}'.format(appCode, eventCode)
+                continue
+
+            self.dropPartition(year, month, day, appCode, eventCode)
+            if self.createPartition(year, month, day, appCode, eventCode):
+                self.getHiveMetaService().getOrCreateHiveTablePartition(hiveTable.hiveTableId, date(year, month, day))
 
     def processApp(self, appCode):
         print 'ProcessApp {}'.format(appCode)
@@ -40,7 +72,7 @@ class MonitorScript(BaseAnalyticsScript):
             print 'App {} not present in database. Process app terminated'.format(appCode)
             return
 
-        hiveMetaService = HiveMetaService(dbSession)
+        hiveMetaService = self.getHiveMetaService()
 
         # получаем список директорий -ключей
         hdfsEvents = webHDFSClient.getEventCodes(appCode)
@@ -101,26 +133,52 @@ class MonitorScript(BaseAnalyticsScript):
                 # если дата партиции есть на диске но ее нет в Hive
                 if not partitionDate in existingPartitionsDates:
                     year, month, day = (partitionDate.year, partitionDate.month, partitionDate.day)
-                    query =  CREATE_PARTITION_QUERY%{
-                        'table_name': table_name,
-                        'year': year,
-                        'month': month,
-                        'day': day,
-                        'path': '{}/{}/{}/{}/{}/'.format(self.getTablePath(appCode), eventCode, year, month, day)
-                    }
-                    print 'Create partition {} for {}'.format(str(partitionDate), table_name)
-                    try:
-                        self.hiveclient.execute(query)
-                    except:
-                        print '- Exception on create partition'
-                    else:
-                        print '+ Partition created'
-                        hiveMetaService.getOrCreateHiveTablePartition(hiveTable.hiveTableId, partitionDate)
+                    if self.createPartition(year, month, day, appCode, eventCode):
+                        self.getHiveMetaService().getOrCreateHiveTablePartition(hiveTable.hiveTableId, partitionDate)
+
+    def createPartition(self, year, month, day, appCode, eventCode):
+        table_name = self.getTableName(eventCode)
+        query =  CREATE_PARTITION_QUERY % {
+            'table_name': table_name,
+            'year': year,
+            'month': month,
+            'day': day,
+            'path': '{}/{}/{}/{}/{}/'.format(self.getTablePath(appCode), eventCode, year, month, day)
+        }
+        print 'Create partition {} for {}'.format(year + '/' + month + '/' +  day, table_name)
+        try:
+            self.hiveclient.execute(query)
+        except Exception as ex:
+            print '- Exception on create partition: {}'.format(ex.message)
+            return False
+        else:
+            print '+ Partition created'
+            return True
+
+    def dropPartition(self, year, month, day, appCode, eventCode):
+        table_name = self.getTableName(eventCode)
+        query = 'ALTER TABLE {} DROP PARTITION IF EXISTS (day={},month={},year={})'.format(table_name,day, month, year)
+        print 'Drop partition {} for {}'.format(year + '/' + month + '/' +  day, table_name)
+        try:
+            self.hiveclient.execute(query)
+        except Exception as ex:
+            print '- Exception on drop partition: {}'.format(ex.message)
+            return False
+        else:
+            print '+ Partition droped'
+            return True
 
 
 
-    def getTableName(self, key):
-        return self.config.get(Config.HIVE_PREFIX) + key
+    def getHiveMetaService(self):
+        if not self.hiveMetaService:
+            dbSession = self.getDBSession()
+            self.hiveMetaService = HiveMetaService(dbSession)
+        return self.hiveMetaService
+
+
+    def getTableName(self, eventCode):
+        return self.config.get(Config.HIVE_PREFIX) + eventCode
 
     def getTablePath(self, appCode):
         return self.config.get(Config.HDFS_STAT_ROOT) + appCode + '/'

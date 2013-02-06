@@ -18,6 +18,7 @@ class PackerScript(BaseAnalyticsScript):
         self.hiveClient.execute('set hive.merge.mapfiles=true')
         self.hiveClient.execute('set mapred.output.compression.type=BLOCK')
         self.hiveClient.execute('set hive.merge.mapredfiles=true')
+        self.hiveClient.execute('set hive.stats.autogather=false')
         self.hiveClient.execute('set hive.mergejob.maponly=true')
         self.event = False
         self.skipCheckInDB = bool(self.options['skipCheckInDB'])

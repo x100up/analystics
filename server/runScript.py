@@ -11,6 +11,7 @@ optParser.add_option("-m", "--month", dest="month", help="month")
 optParser.add_option("-d", "--day", dest="day", help="day")
 optParser.add_option("-e", "--event", dest="event", help="event")
 optParser.add_option("-s", "--skipCheckInDB", dest="skipCheckInDB", help="event")
+optParser.add_option("-c", "--command", dest="command", help="command")
 
 scripts = ['initHiveMeta', 'packer', 'monitor', 'convertConfig']
 
