@@ -34,7 +34,6 @@ if scriptName == 'packer':
     script = PackerScript(options)
     script.run()
 
-
 if scriptName == 'monitor':
     from scripts.monitor import MonitorScript
     script = MonitorScript(options)
