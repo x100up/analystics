@@ -16,12 +16,12 @@ MAP KEYS TERMINATED BY '='"""
 
 CREATE_PARTITION_QUERY = """
 ALTER TABLE %(table_name)s ADD
-PARTITION (dt=%(date)s) location '%(path)s'
+PARTITION (dt='%(year)-%(month)02d-%(day)02d') location '%(path)s'
 """
 
 class MonitorScript(BaseAnalyticsScript):
 
-    partNameR = re.compile('^year=(\d+)/month=(\d+)/day=(\d+)$')
+    partNameR = re.compile('^dt=(\d+)-(\d+)-(\d+)$')
 
     def run(self):
 
@@ -121,7 +121,6 @@ class MonitorScript(BaseAnalyticsScript):
             partitions = self.hiveclient.execute('SHOW PARTITIONS {}'.format(table_name))
             partitions = [item[0] for item in partitions]
             print partitions
-            exit();
             existingPartitionsDates = []
             for partName in partitions:
                 r = self.partNameR.search(partName).group
@@ -141,7 +140,7 @@ class MonitorScript(BaseAnalyticsScript):
         table_name = self.getTableName(eventCode)
         query =  CREATE_PARTITION_QUERY % {
             'table_name': table_name,
-            'year': year,
+            'date': year,
             'month': month,
             'day': day,
             'path': '{}/{}/{}/{}/{}/'.format(self.getTablePath(appCode), eventCode, year, month, day)
@@ -158,8 +157,8 @@ class MonitorScript(BaseAnalyticsScript):
 
     def dropPartition(self, year, month, day, appCode, eventCode):
         table_name = self.getTableName(eventCode)
-        query = 'ALTER TABLE {} DROP PARTITION (day={},month={},year={})'.format(table_name,day, month, year)
-        print 'Drop partition {}.{}.{} for {}'.format(year, month, day, table_name)
+        query = 'ALTER TABLE {} DROP PARTITION (dt=\'%(year)d-%(month)02d-%(day)02d\')'.format(table_name, day, month, year)
+        print 'Drop partition {}-{}-{} for {}'.format(year, month, day, table_name)
         try:
             self.hiveclient.execute(query)
         except Exception as ex:
