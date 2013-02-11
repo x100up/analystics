@@ -8,7 +8,7 @@ from models.App import App
 from services.HiveMetaService import HiveMetaService
 
 CREATE_TABLE_QUERY = """CREATE EXTERNAL TABLE %(table_name)s (params MAP<STRING, STRING>, `userId` INT, `timestamp` TIMESTAMP, hour INT, minute INT, second INT)
-PARTITIONED BY (year INT, month INT, day INT)
+PARTITIONED BY (dt STRING)
 ROW FORMAT DELIMITED
   FIELDS TERMINATED BY ','
 COLLECTION ITEMS TERMINATED BY '\;'
@@ -16,7 +16,7 @@ MAP KEYS TERMINATED BY '='"""
 
 CREATE_PARTITION_QUERY = """
 ALTER TABLE %(table_name)s ADD
-PARTITION (year=%(year)i, month=%(month)i, day=%(day)i) location '%(path)s'
+PARTITION (dt=%(date)s) location '%(path)s'
 """
 
 class MonitorScript(BaseAnalyticsScript):
@@ -120,7 +120,8 @@ class MonitorScript(BaseAnalyticsScript):
             # получаем партиции в Hive
             partitions = self.hiveclient.execute('SHOW PARTITIONS {}'.format(table_name))
             partitions = [item[0] for item in partitions]
-
+            print partitions
+            exit();
             existingPartitionsDates = []
             for partName in partitions:
                 r = self.partNameR.search(partName).group
