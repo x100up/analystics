@@ -5,8 +5,8 @@ import time
 from models.Hive import HiveTable, HiveTablePartition
 from services.HiveMetaService import HiveMetaService
 
-PACK_TABLE_QUERY = """INSERT OVERWRITE TABLE stat_{0} PARTITION (year={1},month={2},day={3}) SELECT params, userId, `timestamp`, `hour`, minute, second \
-FROM stat_{0} WHERE year={1} AND month={2} AND day={3}"""
+PACK_TABLE_QUERY = """INSERT OVERWRITE TABLE stat_{0} PARTITION (dt='{1}') SELECT params, userId, `timestamp`, `hour`, minute, second \
+FROM stat_{0} WHERE dt='{1}'"""
 
 class PackerScript(BaseAnalyticsScript):
 
@@ -82,8 +82,8 @@ class PackerScript(BaseAnalyticsScript):
                     print 'Start pack table {}.{}'.format(appCode, eventCode)
                     try:
                         start = datetime.now()
-                        query = PACK_TABLE_QUERY.format(eventCode, self.year, self.month, self.day)
-                        self.hiveClient.execute('USE {}'.format(appCode))
+                        query = PACK_TABLE_QUERY.format(eventCode, '%(year)d-%(month)02d-%(day)02d' % {'year': self.year, 'month': self.month, 'day': self.day})
+                        self.hiveClient.execute('USE {}'.format(self.getDBName(appCode)))
                         self.hiveClient.execute(query)
                         end = datetime.now()
                         print 'Pack complete. Query time: {}'.format(end - start)
@@ -100,6 +100,9 @@ class PackerScript(BaseAnalyticsScript):
                     print 'table {}.{} already packed'.format(appCode, eventCode)
             else:
                 print  'cant find app {} in database'.format(appCode)
+
+    def getDBName(self, appCode):
+        return 'stat_' + appCode
 
 
 

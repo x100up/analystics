@@ -97,7 +97,7 @@ class HiveQueryConstructor():
             subquery += ' GROUP BY userId, ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsByOperation(taskItem, 'group')
             return '(' + subquery + ') `sq_{}`'.format(taskItem.index)
         else:
-            return '{}.stat_{} '.format(self.task.appname, taskItem.key)
+            return '{}.stat_{} '.format('stat_' . self.task.appname, taskItem.key)
 
     def getStageCount(self):
         count = len(self.task.items)
@@ -209,11 +209,11 @@ class HiveQueryConstructor():
             Генерирует список полей дат, нужных для интервала
         '''
         fields = []
-        fields.append(('year'))
+        fields.append(('year(`dt`)', 'year'))
 
         if  interval != Task.INTERVAL_WEEK:
-            fields.append(('month'))
-            fields.append(('day'))
+            fields.append(('month(`dt`)', 'month'))
+            fields.append(('day(`dt`)', 'day'))
 
         if  interval == Task.INTERVAL_MINUTE:
             fields.append(('hour'))
@@ -242,6 +242,16 @@ class HiveQueryConstructor():
         return fields
 
     def getIntervalCondition(self, start, end):
+        intervals = []
+        if start.date() == end.date():
+            intervals.append('dt = \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day})
+        else:
+            intervals.append('dt >= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day} \
+                + ' AND dt <= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': end.year, 'm': end.month, 'd': end.day})
+        return intervals
+
+
+    def getIntervalCondition_old(self, start, end):
         '''
         генерирует временные интервалы выборки
         '''
@@ -302,25 +312,34 @@ class HiveQueryConstructor():
         Генерит группировку основываясь на интервале
         '''
         if group_interval == Task.INTERVAL_MINUTE:
-            return ' year, month, day, hour, minute '
+            if isSubquery:
+                return ' year, month, day, hour, minute '
+            else:
+                return ' year(`dt`), month(`dt`), day(`dt`), hour, minute '
 
         if group_interval == Task.INTERVAL_10_MINUTE:
             if isSubquery:
                 return ' year, month, day, hour, minute_10 '
             else:
-                return ' year, month, day, hour, floor(`minute` / 10) * 10 '
+                return ' year(`dt`), month(`dt`), day(`dt`), hour, floor(`minute` / 10) * 10 '
 
         if group_interval ==  Task.INTERVAL_HOUR:
-            return ' year, month, day, hour'
+            if isSubquery:
+                return ' year, month, day, hour'
+            else:
+                return ' year(`dt`), month(`dt`), day, hour'
 
         if group_interval == Task.INTERVAL_DAY:
-            return ' year, month, day'
+            if isSubquery:
+                return ' year, month, day'
+            else:
+                return ' year(`dt`), month(`dt`), day'
 
         if group_interval == Task.INTERVAL_WEEK:
             if isSubquery:
                 return ' year, weekofyear'
             else:
-                return ' year, weekofyear(`timestamp`)'
+                return ' year(`dt`), weekofyear(`timestamp`)'
 
         raise Exception("Unknow interval")
 
