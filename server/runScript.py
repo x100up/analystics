@@ -13,7 +13,7 @@ optParser.add_option("-e", "--event", dest="event", help="event")
 optParser.add_option("-s", "--skipCheckInDB", dest="skipCheckInDB", help="event")
 optParser.add_option("-c", "--command", dest="command", help="command")
 
-scripts = ['initHiveMeta', 'packer', 'monitor', 'convertConfig']
+scripts = ['initHiveMeta', 'packer', 'monitor', 'convertConfig', 'newScheme']
 
 (options, args) = optParser.parse_args()
 if not len(args) == 1 or not args[0]  in scripts:
