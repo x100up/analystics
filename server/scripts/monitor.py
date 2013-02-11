@@ -16,7 +16,7 @@ MAP KEYS TERMINATED BY '='"""
 
 CREATE_PARTITION_QUERY = """
 ALTER TABLE %(table_name)s ADD
-PARTITION (dt='%(year)-%(month)02d-%(day)02d') location '%(path)s'
+PARTITION (dt='%(year)d-%(month)02d-%(day)02d') location '%(path)s'
 """
 
 class MonitorScript(BaseAnalyticsScript):
@@ -83,19 +83,19 @@ class MonitorScript(BaseAnalyticsScript):
 
         # check table existing
         try:
-            self.hiveclient.execute('CREATE DATABASE IF NOT EXISTS {}'.format(appCode))
+            self.hiveclient.execute('CREATE DATABASE IF NOT EXISTS {}'.format(self.getDBName(appCode)))
         except:
             print 'Exception on create database {}'.format(appCode)
             return
 
 
-        self.hiveclient.execute('USE {}'.format(appCode))
+        self.hiveclient.execute('USE {}'.format(self.getDBName(appCode)))
         tables = self.hiveclient.execute('SHOW TABLES')
         tables = [item[0] for item in tables]
-        print 'tables for app {}: {} '.format(appCode, str(tables))
+        print 'tables for app {}: {} '.format(appCode, len(tables))
 
         for eventCode in realKeys:
-
+            print eventCode
             if eventCode in non_existing_folders:
                 continue
 
@@ -105,6 +105,7 @@ class MonitorScript(BaseAnalyticsScript):
                 # create table
                 q = CREATE_TABLE_QUERY % {'table_name':table_name}
                 try:
+                    print q
                     self.hiveclient.execute(q)
                 except:
                     print 'Exception on create Table {}'.format(table_name)
@@ -115,7 +116,6 @@ class MonitorScript(BaseAnalyticsScript):
             if not hiveTable:
                 print 'Cannot get or create HiveTable for {} {}'.format(appCode, eventCode)
                 continue
-
 
             # получаем партиции в Hive
             partitions = self.hiveclient.execute('SHOW PARTITIONS {}'.format(table_name))
@@ -140,7 +140,7 @@ class MonitorScript(BaseAnalyticsScript):
         table_name = self.getTableName(eventCode)
         query =  CREATE_PARTITION_QUERY % {
             'table_name': table_name,
-            'date': year,
+            'year': year,
             'month': month,
             'day': day,
             'path': '{}/{}/{}/{}/{}/'.format(self.getTablePath(appCode), eventCode, year, month, day)
@@ -169,7 +169,6 @@ class MonitorScript(BaseAnalyticsScript):
             return True
 
 
-
     def getHiveMetaService(self):
         if not self.hiveMetaService:
             dbSession = self.getDBSession()
@@ -179,6 +178,9 @@ class MonitorScript(BaseAnalyticsScript):
 
     def getTableName(self, eventCode):
         return self.config.get(Config.HIVE_PREFIX) + eventCode
+
+    def getDBName(self, appCode):
+        return 'stat_' + appCode
 
     def getTablePath(self, appCode):
         return self.config.get(Config.HDFS_STAT_ROOT) + appCode + '/'

@@ -48,3 +48,8 @@ if scriptName == 'convertConfig':
     from scripts.convertConfig import ConvertConfig
     script = ConvertConfig(options)
     script.run()
+
+if scriptName == 'newScheme':
+    from scripts.newScheme import NewScheme
+    script = NewScheme(options)
+    script.run()
