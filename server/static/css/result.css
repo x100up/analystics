@@ -294,6 +294,7 @@ span.legendKey > span.op {
     background: url('/static/img/sprite.png') no-repeat;
     width: 17px;
     height: 17px;
+    margin-top: 4px;
 }
 /*
 span.legendKey > span.op.group.red, span.legendKey > span.op.count.red {
@@ -397,6 +398,11 @@ span.legendKey > span.op.violet{
 .legend-group-head {
     font-size: 22pt;
     vertical-align: middle;
+}
+
+.legend-group-head sup{
+    font-size: 11pt;
+    top: -1em;
 }
 
 .show-charts-group,

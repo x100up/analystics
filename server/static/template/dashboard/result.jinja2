@@ -39,10 +39,11 @@
             {% endfor %}
 
         </div>
-
+        {% if tagCloud %}
         <div id="tagcloud" class="span4 omega">
             {% include 'dashboard/result/tagCloud.jinja2' %}
         </div>
+        {% endif %}
 
         <div class="clearfix"></div>
 

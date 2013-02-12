@@ -58,9 +58,10 @@ class PackerScript(BaseAnalyticsScript):
             eventCodes = [appEvent.code for appEvent in appConfig.getEvents()]
         dbSession = self.getDBSession()
         hiveMetaService = HiveMetaService(dbSession)
-        counter = 1
+        counter = 0
         _len = len(eventCodes)
         for eventCode in eventCodes:
+            counter += 1
             print "\n",'start pack key {}.{} for date {} ({}/{})'.format(appCode, eventCode, self.date, counter, _len)
             app = self.getApp(appCode)
             if app:
@@ -105,7 +106,7 @@ class PackerScript(BaseAnalyticsScript):
             else:
                 print  'cant find app {} in database'.format(appCode)
 
-            counter += 1
+
 
     def getDBName(self, appCode):
         return 'stat_' + appCode
