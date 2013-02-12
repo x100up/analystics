@@ -1,4 +1,8 @@
 # coding=utf-8
+"""
+Скрипт упаковывает данные за день в большие файлы со сжатием snappy
+"""
+
 from datetime import datetime, date, timedelta
 from scripts.baseScript import BaseAnalyticsScript
 import time
@@ -11,15 +15,15 @@ FROM stat_{0} WHERE dt='{1}'"""
 class PackerScript(BaseAnalyticsScript):
 
     def run(self):
-        self.hiveClient = self.getHiveClient()
-        self.hiveClient.execute('set hive.merge.smallfiles.avgsize = 128000000')
-        self.hiveClient.execute('set hive.exec.compress.output=true')
-        self.hiveClient.execute('set mapred.output.compression.codec=org.apache.hadoop.io.compress.SnappyCodec')
-        self.hiveClient.execute('set hive.merge.mapfiles=true')
-        self.hiveClient.execute('set mapred.output.compression.type=BLOCK')
-        self.hiveClient.execute('set hive.merge.mapredfiles=true')
-        self.hiveClient.execute('set hive.stats.autogather=false')
-        self.hiveClient.execute('set hive.mergejob.maponly=true')
+        hiveClient = self.getHiveClient()
+        hiveClient.execute('set hive.merge.smallfiles.avgsize = 128000000')
+        hiveClient.execute('set hive.exec.compress.output=true')
+        hiveClient.execute('set mapred.output.compression.codec=org.apache.hadoop.io.compress.SnappyCodec')
+        hiveClient.execute('set hive.merge.mapfiles=true')
+        hiveClient.execute('set mapred.output.compression.type=BLOCK')
+        hiveClient.execute('set hive.merge.mapredfiles=true')
+        hiveClient.execute('set hive.stats.autogather=false')
+        hiveClient.execute('set hive.mergejob.maponly=true')
         self.event = False
         self.skipCheckInDB = bool(self.options['skipCheckInDB'])
         print self.skipCheckInDB
@@ -44,9 +48,9 @@ class PackerScript(BaseAnalyticsScript):
         self.HDFSClient = self.getWebHDFSClient()
 
         for appCode in self.getAppCodes():
-            self.processApp(appCode)
+            self.processApp(appCode, hiveClient)
 
-    def processApp(self, appCode):
+    def processApp(self, appCode, hiveClient):
         appConfig = self.getAppConfig(appCode)
         if self.event:
             eventCodes = [self.event]
@@ -83,8 +87,8 @@ class PackerScript(BaseAnalyticsScript):
                     try:
                         start = datetime.now()
                         query = PACK_TABLE_QUERY.format(eventCode, '%(year)d-%(month)02d-%(day)02d' % {'year': self.year, 'month': self.month, 'day': self.day})
-                        self.hiveClient.execute('USE {}'.format(self.getDBName(appCode)))
-                        self.hiveClient.execute(query)
+                        hiveClient.execute('USE {}'.format(self.getDBName(appCode)))
+                        hiveClient.execute(query)
                         end = datetime.now()
                         print 'Pack complete. Query time: {}'.format(end - start)
                         time.sleep(10)
@@ -105,6 +109,3 @@ class PackerScript(BaseAnalyticsScript):
 
     def getDBName(self, appCode):
         return 'stat_' + appCode
-
-
-
