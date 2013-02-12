@@ -54,8 +54,10 @@ class PackerScript(BaseAnalyticsScript):
             eventCodes = [appEvent.code for appEvent in appConfig.getEvents()]
         dbSession = self.getDBSession()
         hiveMetaService = HiveMetaService(dbSession)
+        counter = 1
+        _len = len(eventCodes)
         for eventCode in eventCodes:
-            print "\n",'start pack key {}.{} for date {}'.format(appCode, eventCode, self.date)
+            print "\n",'start pack key {}.{} for date {} ({}/{})'.format(appCode, eventCode, self.date, counter, _len)
             app = self.getApp(appCode)
             if app:
                 # получаем таблицу
@@ -85,7 +87,7 @@ class PackerScript(BaseAnalyticsScript):
                         self.hiveClient.execute(query)
                         end = datetime.now()
                         print 'Pack complete. Query time: {}'.format(end - start)
-                        time.sleep(20)
+                        time.sleep(10)
                     except Exception as ex:
                         print 'Pack end with exception {}'.format(ex.message)
                     else:
@@ -98,6 +100,8 @@ class PackerScript(BaseAnalyticsScript):
                     print 'table {}.{} already packed'.format(appCode, eventCode)
             else:
                 print  'cant find app {} in database'.format(appCode)
+
+            counter += 1
 
     def getDBName(self, appCode):
         return 'stat_' + appCode

@@ -3,6 +3,7 @@ from scripts.baseScript import BaseAnalyticsScript
 import re
 from datetime import datetime
 
+
 class NewScheme(BaseAnalyticsScript):
 
     def run(self):
@@ -31,14 +32,10 @@ class NewScheme(BaseAnalyticsScript):
                     self.hiveclient.execute('USE topface')
                     self.hiveclient.execute('ALTER TABLE {} DROP PARTITION (year={},month={},day={})'.format(table, year, month, day))
 
-
-
-
     def getOldTables(self):
         self.hiveclient.execute('USE topface')
         tables = self.hiveclient.execute('SHOW TABLES')
         return [t[0] for t in tables]
-
 
     def getOldPartitions(self, tableName):
         self.hiveclient.execute('USE topface')
