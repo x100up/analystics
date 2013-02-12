@@ -163,9 +163,15 @@ $(function(){
     }
 
     contentContainer = $('#dashboard_container');
-    loadDashboardContent(location.hash.substr(1));
+    var hash = location.hash.substr(1);
+    if (hash) {
+        loadDashboardContent(hash);
+    } else {
+        startNewTask();
+    }
 
     initTaskList();
+
 });
 
 function initTaskList(){

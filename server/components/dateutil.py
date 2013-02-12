@@ -32,7 +32,7 @@ def minuteCountName(count):
     count = int(str(count)[-1:])
     if count == 1:
         return u'минута'
-    elif count > 1 and count < 5:
+    elif 5 > count > 1:
         return u'минуты'
     else:
         return u'минут'

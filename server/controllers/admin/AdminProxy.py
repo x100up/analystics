@@ -20,7 +20,7 @@ class CoreProxy(AdminAction):
         href = re.compile('href=\"/([^\"]+)\"')
         abshref = re.compile('href=\"http:\/\/([^:]+):(\d+)([^\"]+)\"')
 
-        if url == None:
+        if url is None:
             url = '/'
 
         f = urllib2.urlopen('http://{}:{}{}'.format(host, port, url))

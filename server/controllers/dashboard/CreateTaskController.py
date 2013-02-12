@@ -166,7 +166,7 @@ class RecalculateAction(CreateTaskController):
         # создаем WorkerService и загружаем его данные
         workerService = WorkerService(self.application.getResultPath(), worker)
         workerService.load()
-        workerService.version = workerService.version + 1
+        workerService.version += 1
         workerService.init()
 
         # создаем и запускаем тред

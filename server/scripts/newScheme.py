@@ -10,10 +10,10 @@ class NewScheme(BaseAnalyticsScript):
         self.hiveclient = self.getHiveClient()
         oldTables = self.getOldTables()
         for table in oldTables:
-            partitions = self.getOldPartitions(table)
-            for partition in partitions:
-                g = re.search('year=(\d+)\/month=(\d+)\/day=(\d+)', partition).group
-                year, month, day = int(g(1)), int(g(2)), int(g(3))
+            # partitions = self.getOldPartitions(table)
+            # for partition in partitions:
+            #     g = re.search('year=(\d+)\/month=(\d+)\/day=(\d+)', partition).group
+                year, month, day = (2013, 2, 11)
 
                 if month == now.month and day == now.day:
                     continue

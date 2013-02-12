@@ -14,7 +14,7 @@ class UserAction(AdminAction):
         db = self.getDBSession()
         users = db.query(User).all()
 
-        self.render('admin/users.jinja2', {'users': users})
+        self.render('admin/users/users.jinja2', {'users': users})
 
 
 class EditUserAction(AdminAction):
@@ -28,7 +28,7 @@ class EditUserAction(AdminAction):
         else:
             user = User()
 
-        self.render('admin/users_edit.jinja2', {'user':user})
+        self.render('admin/users/users_edit.jinja2', {'user':user})
 
 
     def post(self):
@@ -72,7 +72,7 @@ class EditUserAction(AdminAction):
         if len(errors):
             user.password = ''
             db.commit()
-            self.render('admin/users_edit.jinja2', {'user':user, 'errors':errors})
+            self.render('admin/users/users_edit.jinja2', {'user':user, 'errors':errors})
         else:
             db = self.getDBSession()
             db.merge(user)

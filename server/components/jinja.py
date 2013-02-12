@@ -101,7 +101,7 @@ def smartDateInterval(date1, date2):
         if minutes_delta != 0:
             result += str(minutes_delta) + ' ' + minuteCountName(minutes_delta)
 
-        if delta.seconds < 61 and delta.seconds > 0:
+        if 61 > delta.seconds > 0:
             result += str(delta.seconds) + ' ' + secondCountName(delta.seconds)
 
     return result

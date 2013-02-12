@@ -190,9 +190,9 @@ class HiveQueryConstructor():
         return (start, end)
 
     def parseIntValue(self, tagName, tagValue):
-        '''
+        """
         Преобразует интовые параметры в запрос
-        '''
+        """
         values = tagValue.replace('- ', '-').replace(' -', '-').replace(' ', ',').replace('.', ',').split(',')
         exp = []
         for value in values:
@@ -205,11 +205,10 @@ class HiveQueryConstructor():
         return '(' + ' OR '.join(exp) + ')'
 
     def getDateFields(self, interval, isSubquery = False):
-        '''
+        """
             Генерирует список полей дат, нужных для интервала
-        '''
-        fields = []
-        fields.append(('year(`dt`)', 'year'))
+        """
+        fields = [('year(`dt`)', 'year')]
 
         if  interval != Task.INTERVAL_WEEK:
             fields.append(('month(`dt`)', 'month'))

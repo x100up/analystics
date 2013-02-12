@@ -1,9 +1,9 @@
 import ConfigParser
 
 class Config():
-    '''
+    """
     Struct for app settings
-    '''
+    """
 
     APP_HOST = 'app_host'
     APP_PORT = 'app_port'

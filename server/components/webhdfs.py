@@ -77,7 +77,7 @@ class WebHDFS(object):
         response = httpClient.getresponse()
         # if file is empty GET returns a response with length == NONE and
         # no msg["location"]
-        if response.length!=None:
+        if response.length is not None:
             msg = response.msg
             redirect_location = msg["location"]
             self.debug("HTTP Response: %d, %s"%(response.status, response.reason))

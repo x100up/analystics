@@ -1,5 +1,5 @@
 from Base import Base
-from sqlalchemy import Table, Column, Integer, String, MetaData, ForeignKey, Enum
+from sqlalchemy import Column, Integer, String, Enum
 
 
 class User(Base):

@@ -27,10 +27,10 @@ class ChartSeriesGroup():
     def process(self):
         self.series = sorted(self.series, key=lambda series: series.avg, reverse=True)
         for i, s in enumerate(self.series):
-            if self.minAvg == None or s.avg < self.minAvg:
+            if self.minAvg is None or s.avg < self.minAvg:
                 self.minAvg = s.avg
 
-            if self.maxAvg == None or s.avg > self.maxAvg:
+            if self.maxAvg is None or s.avg > self.maxAvg:
                 self.maxAvg = s.avg
 
             for spellTag, spellValue, tagCode, value in s.conditions:

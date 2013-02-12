@@ -18,7 +18,7 @@ class TaskItem(object):
         if kwargs.has_key('start'):
             self.start = kwargs['start']
         else:
-            now = datetime.now()
+            now = datetime.now() - timedelta(days = 1)
             time = now.time()
             self.start = now - timedelta(hours = time.hour, minutes = time.minute, seconds = time.second)
 
@@ -89,6 +89,9 @@ class TaskItem(object):
         return self.fields + fields
 
     def _getFields(self, topQuery = True, isSubquery = False):
+        '''
+
+        '''
         fields = {}
         for tag, operations in self.operations.items():
             if 'sum' in operations:

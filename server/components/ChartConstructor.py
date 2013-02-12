@@ -43,7 +43,7 @@ class ChartConstructor():
                         if not tagCloud[key].has_key(value):
                             tagCloud[key][value] = 0
 
-                        tagCloud[key][value] = tagCloud[key][value] + series.sum
+                        tagCloud[key][value] += series.sum
 
                 series.operation = seriesData['params']['op']
                 series.operationName = self.nameService.getOperationName(seriesData['params']['op'])
@@ -54,7 +54,7 @@ class ChartConstructor():
                 seriesData['id'] = series.id = i
                 series.seriesIndex = seriesIndex
                 series.taskItemIndex = taskItemIndex
-                i = i + 1
+                i += 1
 
         # группируем
         self.generateSeriesGroup()
@@ -148,9 +148,9 @@ class ChartConstructor():
 
 
     def groupByValues(self, seriesList, hardKey):
-        '''
+        """
         Группирует по значениям
-        '''
+        """
         rawGroups = {}
         for series in seriesList:
             if (series.avg == 0):
@@ -184,7 +184,7 @@ class ChartConstructor():
                         minEx = None
                         for i in _temp:
                             v = abs(maxChartInGroups - _temp[i])
-                            if minDiff == None or minDiff > v:
+                            if minDiff is None or minDiff > v:
                                 minDiff = v
                                 minEx = i
 

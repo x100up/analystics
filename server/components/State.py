@@ -1,9 +1,9 @@
 import json, os, inspect, logging
 
 class State():
-    '''
+    """
     Define the app state
-    '''
+    """
 
     def __init__(self):
         rootPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))

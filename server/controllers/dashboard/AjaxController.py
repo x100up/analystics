@@ -104,9 +104,9 @@ class GatTasksProgress(AjaxController):
 
 
 class CopyTaskKey(AjaxController):
-    '''
+    """
     remote copy task key
-    '''
+    """
     def post(self, *args, **kwargs):
         copy_index = self.get_argument('copy_key_index')
         new_index = self.get_argument('new_index')
@@ -134,7 +134,7 @@ class DownloadCSVAction(AjaxController):
             k = 'data[{}][]'.format(i)
             if self.request.arguments.has_key(k):
                 rows.append(';'.join( self.get_arguments(k, strip=False)) )
-                i = i + 1
+                i += 1
             else:
                 break
 
@@ -162,9 +162,9 @@ def toDate(strDate):
 from services.HiveMetaService import HiveMetaService
 
 class GetDateSelector(AjaxController):
-    '''
+    """
     Возвращает календарь
-    '''
+    """
     def get(self, *args, **kwargs):
 
         index = self.get_argument('index')

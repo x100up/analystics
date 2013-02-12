@@ -191,9 +191,9 @@ class AppConfig():
             raise Exception('No event with code {}'.format(eventCode))
 
     def getEventTags(self, eventCode, skipBunches = False):
-        '''
+        """
         Возвращает все теги приложения и общие и персональьные
-        '''
+        """
         appEvent = self.events[eventCode]
         tags = []
 
@@ -214,9 +214,9 @@ class AppConfig():
         return tags
 
     def getEventBunches(self, eventCode):
-        '''
+        """
         Возвращает группы тегов события
-        '''
+        """
         appEvent = self.events[eventCode]
         bunches = []
         if appEvent.bunches:
