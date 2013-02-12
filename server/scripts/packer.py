@@ -2,11 +2,11 @@
 from datetime import datetime, date, timedelta
 from scripts.baseScript import BaseAnalyticsScript
 import time
-from models.Hive import HiveTable, HiveTablePartition
 from services.HiveMetaService import HiveMetaService
 
 PACK_TABLE_QUERY = """INSERT OVERWRITE TABLE stat_{0} PARTITION (dt='{1}') SELECT params, userId, `timestamp`, `hour`, minute, second \
 FROM stat_{0} WHERE dt='{1}'"""
+
 
 class PackerScript(BaseAnalyticsScript):
 
@@ -45,8 +45,6 @@ class PackerScript(BaseAnalyticsScript):
 
         for appCode in self.getAppCodes():
             self.processApp(appCode)
-
-
 
     def processApp(self, appCode):
         appConfig = self.getAppConfig(appCode)

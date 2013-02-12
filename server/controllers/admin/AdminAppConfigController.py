@@ -21,7 +21,7 @@ class BaseEditConfigAction(AdminAction):
 class IndexAction(BaseEditConfigAction):
     def get(self, *args, **kwargs):
         app, = args
-        self.render('admin/appConfig/index.jinja2', {'app': app})
+        self.render('admin/appConfig/index.jinja2', {'appCode': app})
 
 
 #-----------------------------------------------------------------------------------------------------------------------
