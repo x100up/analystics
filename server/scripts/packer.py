@@ -28,7 +28,7 @@ class PackerScript(BaseAnalyticsScript):
         self.skipCheckInDB = bool(self.options['skipCheckInDB'])
         print self.skipCheckInDB
 
-        now = datetime.now() - timedelta(days = 1)
+        now = datetime.now() - timedelta(days=1)
         self.year, self.month, self.day = (now.year, now.month, now.day)
 
         if self.options['year']:
@@ -89,6 +89,7 @@ class PackerScript(BaseAnalyticsScript):
                         start = datetime.now()
                         query = PACK_TABLE_QUERY.format(eventCode, '%(year)d-%(month)02d-%(day)02d' % {'year': self.year, 'month': self.month, 'day': self.day})
                         hiveClient.execute('USE {}'.format(self.getDBName(appCode)))
+                        print query
                         hiveClient.execute(query)
                         end = datetime.now()
                         print 'Pack complete. Query time: {}'.format(end - start)
