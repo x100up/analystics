@@ -332,13 +332,13 @@ class HiveQueryConstructor():
             if isSubquery:
                 return ' year, month, day, hour'
             else:
-                return ' year(`dt`), month(`dt`), day, hour'
+                return ' year(`dt`), month(`dt`), day(`dt`), hour'
 
         if group_interval == Task.INTERVAL_DAY:
             if isSubquery:
                 return ' year, month, day'
             else:
-                return ' year(`dt`), month(`dt`), day'
+                return ' year(`dt`), month(`dt`), day(`dt`)'
 
         if group_interval == Task.INTERVAL_WEEK:
             if isSubquery:
