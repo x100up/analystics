@@ -51,7 +51,7 @@ class BaseDashboardAction(BaseController):
     def getPager(self, pageCount, page):
         startPageRange = 1
         endPageRange = pageCount
-        return (startPageRange, endPageRange)
+        return startPageRange, endPageRange
 
 
 

@@ -36,6 +36,7 @@ class EventListAction(BaseEditConfigAction):
         events = sorted(events, key=lambda x: x.getName(), reverse=False)
         self.render('admin/appConfig/eventsList.jinja2', {'events': events, 'appCode':appCode, 'js_vars':{'appCode': appCode}})
 
+
 class EditEvent(AdminAjaxAction, BaseEditConfigAction):
 
     def get(self, *args, **kwargs):
@@ -43,11 +44,10 @@ class EditEvent(AdminAjaxAction, BaseEditConfigAction):
         eventCode = self.get_argument('eventCode', default=False)
         self.show(appCode, eventCode)
 
-
     def post(self, *args, **kwargs):
-        '''
+        """
         Сохраняем пост
-        '''
+        """
         appCode = self.get_argument('appCode', None)
         appConfig = self.getAppConfig(appCode)
         oldCode = self.get_argument('key_code_old', False)
@@ -61,6 +61,8 @@ class EditEvent(AdminAjaxAction, BaseEditConfigAction):
 
         appEvent.code = self.get_argument('key_code', None)
         appEvent.name = self.get_argument('key_name', None)
+        appEvent.hasUser = bool(self.get_argument('event_hasUser', False))
+        print appEvent.hasUser
         appEvent.bunches = bunches
 
         # оставляем только персональные теги
@@ -170,7 +172,7 @@ class EditTag(AdminAjaxAction, BaseEditConfigAction):
                 values[key] = self.get_argument('tag_values_value_{}'.format(index), default=None)
 
             if not len(values):
-                self.errors.append(u'Для типа выбора (тег {0}) должен быть хотя бы один вариант'.format(tagCode))
+                self.errors.append(u'Для типа выбора (тег {0}) должен быть хотя бы один вариант'.format(tag.code))
 
             tag.values = values
 

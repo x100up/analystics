@@ -73,8 +73,8 @@ class AddNewBunch(AjaxController):
 class GatTasksProgress(AjaxController):
     def post(self, *args, **kwargs):
         arguments = []
-        appIdToWorkerId = {}
-        blank = u'None'
+        # appIdToWorkerId = {}
+        # blank = u'None'
 
         for workerId, stageCount in self.request.arguments.items():
             arguments.append( (int(workerId), stageCount) )

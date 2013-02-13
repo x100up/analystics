@@ -8,7 +8,10 @@ from services.AppService import AppService
 from services.RuleService import RuleService
 from services.WorkerService import WorkerService
 from components.NameConstructor import NameConstructor
-import tornado, time
+import tornado
+import time
+import tornado.web
+
 
 class BaseResultAction(AjaxController):
 
@@ -18,6 +21,7 @@ class BaseResultAction(AjaxController):
 
     def getWorker(self, workerId):
         return self.dbSession.query(Worker).filter_by(workerId = int(workerId)).first()
+
 
 class ResultAction(BaseResultAction):
 
@@ -86,19 +90,40 @@ class ResultAction(BaseResultAction):
                 'interval': task.interval,
                 'minStartDate': time.mktime(minStartDate.timetuple()),
                 'maxEndDate': time.mktime(maxEndDate.timetuple()),
+                'taskId': workerId
             }})
+
+
+class TableAction(BaseResultAction):
+    def get(self, *args, **kwargs):
+        appCode, taskId = args
+        worker = self.getWorker(int(taskId))
+        service = WorkerService(self.application.getResultPath(), worker)
+        data = service.getResultData()['data']['result']
+
+        task = service.getTask()
+
+        appService = AppService(self.application.getAppConfigPath())
+        appConfig = appService.getNewAppConfig(appCode)
+        nameService = NameConstructor(appConfig, task)
+
+        tableService = TableConstructor(data, nameService, task)
+        tableHeaders, tableData = tableService.getVerticalData()
+        self.render('dashboard/result/table2.jinja2', tableData=tableData, tableHeaders=tableHeaders,
+                    interval=task.interval)
+
 
 class ShowTaskStatus(BaseResultAction):
     def get(self, *args, **kwargs):
-        appcode, workerId = args
+        appCode, workerId = args
         worker = self.getWorker(workerId)
 
-        if (worker.status == Worker.STATUS_ALIVE):
+        if worker.status == Worker.STATUS_ALIVE:
             self.renderJSON({'html': self.render('dashboard/result/taskAlive.jinja2', _return=True) })
         elif (worker.status == Worker.STATUS_ERROR) or (worker.status == Worker.STATUS_DIED):
             service = WorkerService(self.application.getResultPath(), worker)
             self.renderJSON({'html': self.render('dashboard/result/taskFailed.jinja2', {'errors': [service.getError()]}, _return=True) })
-        elif (worker.status == Worker.STATUS_SUCCESS):
+        elif worker.status == Worker.STATUS_SUCCESS:
             self.renderJSON({'redirect': 'result/job=' + workerId })
         else:
             raise Exception('Unknown worker state')

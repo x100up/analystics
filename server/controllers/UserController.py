@@ -26,9 +26,9 @@ class AuthAction(BaseController):
             self.get(self)
 
 class LogoutAction(BaseController):
-    '''
+    """
         Выход из приложения
-    '''
+    """
     @tornado.web.authenticated
     def get(self, *args, **kwargs):
         self.clear_cookie("user.login")

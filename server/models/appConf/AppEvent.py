@@ -7,10 +7,10 @@ class AppEvent():
         self.groups = []
         self.code = ''
         self.name = ''
-        self.bunches =\
-        self.description = \
-        self.tags = \
-        None
+        self.bunches = None
+        self.description = None
+        self.tags = None
+        self.hasUser = False
 
         if data:
             self.createFromDict(data)
@@ -21,23 +21,26 @@ class AppEvent():
         return self.code
 
     def createFromDict(self, data):
-        if data.has_key('bunches'):
+        if 'bunches' in data:
             self.bunches = data['bunches']
 
-        if data.has_key('group'):
+        if 'group' in data:
             self.groups = data['group']
 
-        if data.has_key('code'):
+        if 'code' in data:
             self.code = data['code']
 
-        if data.has_key('description'):
+        if 'description' in data:
             self.description = data['description']
 
-        if data.has_key('name'):
+        if 'name' in data:
             self.name = data['name']
 
-        if data.has_key('tags'):
+        if 'tags' in data:
             self.tags = data['tags']
+
+        if 'hasUser' in data:
+            self.hasUser = bool(data['hasUser'])
 
     def toObject(self):
         return {
@@ -47,4 +50,5 @@ class AppEvent():
             'group': self.groups,
             'tags': self.tags,
             'bunches': self.bunches,
+            'hasUser': self.hasUser
         }

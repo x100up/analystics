@@ -1,14 +1,18 @@
 __author__ = 'x100up'
 
 import logging
-import os, inspect
+import os
+import inspect
+
+from sqlalchemy.engine import create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
+
 from models.Config import Config
 from services.HiveService import HiveService
 from services.AppService import AppService
-from sqlalchemy.engine import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
 from models.App import App
-from components.webhdfs import WebHDFS, WebHDFSException, AnalyticsWebHDFS
+from components.webhdfs import AnalyticsWebHDFS
+
 
 class BaseAnalyticsScript():
 
@@ -44,9 +48,9 @@ class BaseAnalyticsScript():
         return self.appCodes
 
     def getAppConfig(self, appCode):
-        '''
+        """
         -> AppConfig
-        '''
+        """
         return self.appService.getAppConfig(appCode)
 
     def getApp(self, appCode):

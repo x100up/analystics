@@ -19,17 +19,17 @@ webHDFS = WebHDFS(HDFS_HOST, HDFS_PORT, HDFS_USER)
 
 dirs = webHDFS.listdir(STATISTICS_ROOT)
 
-def scanDir(dir, eventcode, skip):
-    years = webHDFS.listdir(dir)
+def scanDir(dirname, eventcode, skip):
+    years = webHDFS.listdir(dirname)
     for year in years:
-        months = webHDFS.listdir(dir + '/' + year)
+        months = webHDFS.listdir(dirname + '/' + year)
         for month in months:
-            days = webHDFS.listdir(dir + '/' + year + '/' + month)
+            days = webHDFS.listdir(dirname + '/' + year + '/' + month)
             for day in days:
                 if (int(year), int(month), int(day)) in skip:
                     continue
 
-                files = webHDFS.listdir(dir + '/' + year + '/' + month + '/' + day)
+                files = webHDFS.listdir(dirname + '/' + year + '/' + month + '/' + day)
                 for filename in files:
                     if not filename.endswith('.snappy'):
                         print './packer.py -k{} -y{} -m{} -d{}'.format(eventcode, year, month, day)
@@ -38,5 +38,5 @@ def scanDir(dir, eventcode, skip):
 
 now = datetime.now()
 
-for dir in dirs:
-    scanDir(STATISTICS_ROOT + dir, dir, [(now.year, now.month, now.day)])
+for directory in dirs:
+    scanDir(STATISTICS_ROOT + directory, directory, [(now.year, now.month, now.day)])

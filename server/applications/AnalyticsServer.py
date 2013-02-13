@@ -139,9 +139,9 @@ class AnalyticsServer(tornado.web.Application):
         return self.appRoot + '/template/'
 
     def determineIsInstall(self):
-        '''
+        """
         Простое определение - установлено ли приложение
-        '''
+        """
         self.isInstalled =  os.path.exists(self.appRoot + '/server.cfg')
 
     def setData(self, key, value):
@@ -164,6 +164,7 @@ class AnalyticsServer(tornado.web.Application):
             (r"/dashboard/app/([^/]+)/?", DashboardController.IndexAction),
             (r"/dashboard/app/([^/]+)/first/?", DashboardController.FirstAction),
             (r"/dashboard/app/([^/]+)/result/?", ResultController.ResultAction),
+            (r"/dashboard/app/([^/]+)/result/table/(\d+)/?", ResultController.TableAction),
             (r"/dashboard/app/([^/]+)/new/?", CreateTaskController.CreateAction),
             (r"/dashboard/app/([^/]+)/recalculate/?", CreateTaskController.RecalculateAction),
             (r"/dashboard/app/([^/]+)/templates/?", TemplateController.IndexAction),

@@ -50,7 +50,7 @@ class WebHDFS(object):
         self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
         msg = response.msg
         redirect_location = msg["location"]
-        self.debug("HTTP Location: %s"%(redirect_location))
+        self.debug("HTTP Location: %s"% redirect_location)
         result = urlparse.urlparse(redirect_location)
         redirect_host = result.netloc[:result.netloc.index(":")]
         redirect_port = result.netloc[(result.netloc.index(":")+1):]
@@ -80,8 +80,8 @@ class WebHDFS(object):
         if response.length is not None:
             msg = response.msg
             redirect_location = msg["location"]
-            self.debug("HTTP Response: %d, %s"%(response.status, response.reason))
-            self.debug("HTTP Location: %s"%(redirect_location))
+            self.debug("HTTP Response: %d, %s" % (response.status, response.reason))
+            self.debug("HTTP Location: %s" % redirect_location)
             result = urlparse.urlparse(redirect_location)
             redirect_host = result.netloc[:result.netloc.index(":")]
             redirect_port = result.netloc[(result.netloc.index(":")+1):]
@@ -89,8 +89,7 @@ class WebHDFS(object):
             redirect_path = result.path + "?" + result.query
 
             self.debug("Send redirect to: host: %s, port: %s, path: %s "%(redirect_host, redirect_port, redirect_path))
-            fileDownloadClient = httplib.HTTPConnection(redirect_host,
-                redirect_port, timeout=600)
+            fileDownloadClient = httplib.HTTPConnection(redirect_host, redirect_port, timeout=600)
 
             fileDownloadClient.request('GET', redirect_path, headers={})
             response = fileDownloadClient.getresponse()
@@ -212,6 +211,6 @@ class AnalyticsWebHDFS():
         folder = '{}{}/{}/{}/{}/{}/'.format(self.stat_root, appCode, eventCode, date.year, date.month, date.day)
         try:
             data = self.webHDFSClient.listdir(folder)
-        except:
+        except BaseException:
             return False
         return bool(data)

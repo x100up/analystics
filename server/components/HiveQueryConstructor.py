@@ -11,18 +11,18 @@ class HiveQueryConstructor():
         self.appConfig = appConfig
 
     def getFields(self):
-        '''
+        """
             Возвращает лист названий полей, которые должен вернуть запрос.
-        '''
+        """
         fields = ['wid']
         fields.extend(self.getDateFields(self.task.interval))
         fields.extend(['value'])
         return fields
 
     def getHiveQuery(self, workerId):
-        '''
+        """
             Генерирует запрос для Hive основываясь на зачаче Task
-        '''
+        """
 
         queries = []
         isMulty = len(self.task.items) > 1
@@ -78,10 +78,10 @@ class HiveQueryConstructor():
         return query.encode('utf-8')
 
     def getSelectSource(self, taskItem):
-        '''
+        """
         Из чего выбираем - из таблицы или из выражения
-        '''
-        if (taskItem.userUnique):
+        """
+        if taskItem.userUnique:
             subquery = 'SELECT {}, userId '.format(self.toSQLFields(self.getDateFields(self.task.interval)))
 
             taskFields = taskItem.getFields(topQuery = True, isSubquery = True)
@@ -97,7 +97,7 @@ class HiveQueryConstructor():
             subquery += ' GROUP BY userId, ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsByOperation(taskItem, 'group')
             return '(' + subquery + ') `sq_{}`'.format(taskItem.index)
         else:
-            return '{}.stat_{} '.format('stat_' . self.task.appname, taskItem.key)
+            return '{}.stat_{} '.format('stat_' + self.task.appname, taskItem.key)
 
     def getStageCount(self):
         count = len(self.task.items)
@@ -107,9 +107,9 @@ class HiveQueryConstructor():
             return 1
 
     def getTagsCondition(self, conditions):
-        '''
+        """
         Условия по тегам
-        '''
+        """
         if conditions:
             where = []
             for eventCode, tagCode, tagValue in conditions:
@@ -187,7 +187,7 @@ class HiveQueryConstructor():
             if not hasMinutes:
                 end = datetime(year, month, endDay, hour, minute = minutes, second=59)
 
-        return (start, end)
+        return start, end
 
     def parseIntValue(self, tagName, tagValue):
         """
@@ -215,17 +215,22 @@ class HiveQueryConstructor():
             fields.append(('day(`dt`)', 'day'))
 
         if  interval == Task.INTERVAL_MINUTE:
+            # noinspection PyRedundantParentheses
             fields.append(('hour'))
+            # noinspection PyRedundantParentheses
             fields.append(('minute'))
 
         elif  interval == Task.INTERVAL_10_MINUTE:
+            # noinspection PyRedundantParentheses
             fields.append(('hour'))
             if isSubquery:
+                # noinspection PyRedundantParentheses
                 fields.append(('minute_10'))
             else:
                 fields.append(('floor(`minute` / 10) * 10', 'minute_10'))
 
         elif  interval == Task.INTERVAL_HOUR:
+            # noinspection PyRedundantParentheses
             fields.append(('hour'))
 
         elif  interval == Task.INTERVAL_DAY:
@@ -233,6 +238,7 @@ class HiveQueryConstructor():
 
         elif  interval == Task.INTERVAL_WEEK:
             if isSubquery:
+                # noinspection PyRedundantParentheses
                 fields.append(('weekofyear'))
             else:
                 fields.append(('weekofyear(`timestamp`)', 'weekofyear'))
@@ -251,9 +257,9 @@ class HiveQueryConstructor():
 
 
     def getIntervalCondition_old(self, start, end):
-        '''
+        """
         генерирует временные интервалы выборки
-        '''
+        """
         intervals = []
         start_year = start.date().year
         end_year = end.date().year
@@ -307,9 +313,9 @@ class HiveQueryConstructor():
         return intervals
 
     def getGroupInterval(self, group_interval, isSubquery = False):
-        '''
+        """
         Генерит группировку основываясь на интервале
-        '''
+        """
         if group_interval == Task.INTERVAL_MINUTE:
             if isSubquery:
                 return ' year, month, day, hour, minute '
@@ -356,9 +362,9 @@ class HiveQueryConstructor():
         return ''
 
     def toSQLFields(self, fields):
-        '''
+        """
         Список полей => SQL string
-        '''
+        """
         sql = []
         for field in fields:
             if isinstance(field, tuple):

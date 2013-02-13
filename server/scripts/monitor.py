@@ -56,7 +56,7 @@ class MonitorScript(BaseAnalyticsScript):
                 print 'Cannot get or create HiveTable for {} {}'.format(appCode, eventCode)
                 continue
 
-            self.dropPartition(year, month, day, appCode, eventCode)
+            self.dropPartition(year, month, day, eventCode)
             if self.createPartition(year, month, day, appCode, eventCode):
                 self.getHiveMetaService().getOrCreateHiveTablePartition(hiveTable.hiveTableId, date(year, month, day))
 
@@ -84,7 +84,7 @@ class MonitorScript(BaseAnalyticsScript):
         # check table existing
         try:
             self.hiveclient.execute('CREATE DATABASE IF NOT EXISTS {}'.format(self.getDBName(appCode)))
-        except:
+        except BaseException:
             print 'Exception on create database {}'.format(appCode)
             return
 
@@ -107,7 +107,7 @@ class MonitorScript(BaseAnalyticsScript):
                 try:
                     print q
                     self.hiveclient.execute(q)
-                except:
+                except BaseException:
                     print 'Exception on create Table {}'.format(table_name)
                     return
 
@@ -155,7 +155,7 @@ class MonitorScript(BaseAnalyticsScript):
             print '+ Partition created'
             return True
 
-    def dropPartition(self, year, month, day, appCode, eventCode):
+    def dropPartition(self, year, month, day, eventCode):
         table_name = self.getTableName(eventCode)
         query = 'ALTER TABLE {} DROP PARTITION (dt=\'%(year)d-%(month)02d-%(day)02d\')'.format(table_name, day, month, year)
         print 'Drop partition {}-{}-{} for {}'.format(year, month, day, table_name)
@@ -168,13 +168,11 @@ class MonitorScript(BaseAnalyticsScript):
             print '+ Partition droped'
             return True
 
-
     def getHiveMetaService(self):
         if not self.hiveMetaService:
             dbSession = self.getDBSession()
             self.hiveMetaService = HiveMetaService(dbSession)
         return self.hiveMetaService
-
 
     def getTableName(self, eventCode):
         return self.config.get(Config.HIVE_PREFIX) + eventCode

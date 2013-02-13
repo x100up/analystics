@@ -49,7 +49,7 @@ class EditUserAction(AdminAction):
         user.fullname = self.get_argument('fullname', '')
 
         errors = []
-        if len(user.login) < 4:
+        if len(str(user.login)) < 4:
             errors.append(u'Логин должен быть не менее 4 символов')
         else:
             if isNewUser:
@@ -66,7 +66,7 @@ class EditUserAction(AdminAction):
             else:
                 user.password = hashlib.sha256(password).hexdigest()
 
-        if len(user.fullname) < 1:
+        if len(str(user.fullname)) < 1:
             errors.append(u'Имя не должно быть пустое')
 
         if len(errors):

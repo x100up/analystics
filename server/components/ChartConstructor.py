@@ -4,9 +4,9 @@ from models.ChartSeries import ChartSeries
 from models.ChartSeriesGroup import ChartSeriesGroup
 
 class ChartConstructor():
-    '''
+    """
     Подготавливает данные для построеня графика
-    '''
+    """
     def __init__(self, data, nameService, task):
         self.data = data
         self.nameService = nameService
@@ -153,7 +153,7 @@ class ChartConstructor():
         """
         rawGroups = {}
         for series in seriesList:
-            if (series.avg == 0):
+            if series.avg == 0:
                 exponent = 0
             else:
                 exponent = len(str(int(series.avg)))

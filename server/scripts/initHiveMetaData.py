@@ -17,7 +17,6 @@ class InitHiveMetaDataScript(BaseAnalyticsScript):
             self.processApp(appConfig)
 
     def processApp(self, appConfig):
-        dbSession = self.getDBSession()
         appCode = appConfig.getAppCode()
         app = self.getApp(appCode)
         if not app:

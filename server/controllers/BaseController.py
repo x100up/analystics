@@ -8,7 +8,6 @@ from models.UserAppRule import RuleCollection
 import tornado.web, json
 
 
-
 class BaseController(tornado.web.RequestHandler):
     dbSession = False
 
@@ -31,31 +30,34 @@ class BaseController(tornado.web.RequestHandler):
 
         return None
 
-
     def getConfigValue(self, key):
-        '''
+        """
         Return config value for key from app config
-        '''
+        """
         return self.application.config.get(key)
 
-    def render(self, template_name, dict = None, _return = False):
-        if dict is None:
-            dict = {}
-        dict['static_url_prefix'] = self.application.settings['static_url_prefix']
-        dict['is_login'] = self.get_secure_cookie('user.login')
+    def render(self, template_name, params=None, _return=False, **kwargs):
+        if params is None:
+            params = {}
+
+        if kwargs:
+            for k in kwargs:
+                params[k] = kwargs[k]
+
+        params['static_url_prefix'] = self.application.settings['static_url_prefix']
+        params['is_login'] = self.get_secure_cookie('user.login')
         user = self.get_current_user()
 
-        user_apps = None
         if user:
-            dict['__user__'] = {'name': user.fullname, 'isAdmin': user.role == User.ROLE_ADMIN}
+            params['__user__'] = {'name': user.fullname, 'isAdmin': user.role == User.ROLE_ADMIN}
             # доступные приложения
             ruleCollection = RuleCollection(self.getDBSession())
-            dict['user_apps'] = ruleCollection.getUserApps(user.userId)
+            params['user_apps'] = ruleCollection.getUserApps(user.userId)
 
-        dict['title'] = self.title
-        dict['currentAppCode'] = self.currentAppCode
+        params['title'] = self.title
+        params['currentAppCode'] = self.currentAppCode
 
-        html = self.application.jinjaEnvironment.get_template(template_name).render(**dict)
+        html = self.application.jinjaEnvironment.get_template(template_name).render(**params)
         if _return:
             return html
 
@@ -102,8 +104,6 @@ class BaseController(tornado.web.RequestHandler):
         pass
 
 
-
-
 class AjaxController(BaseController):
 
     def send_ajax_error(self, error):
@@ -113,17 +113,18 @@ class AjaxController(BaseController):
         self.set_header("Content-Type", "application/json")
         self.write(json.dumps(data))
 
+
 class InstallController(BaseController):
 
-    def render(self, template_name, dict = None):
-        '''
+    def render(self, template_name, params=None, _return=False, **kwargs):
+        """
         Rewrite render without user
-        '''
-        if dict is None:
-            dict = {}
-        dict['static_url_prefix'] = self.application.settings['static_url_prefix']
+        """
+        if params is None:
+            params = {}
+        params['static_url_prefix'] = self.application.settings['static_url_prefix']
         env = Environment(loader = PackageLoader('static', 'template'))
-        self.write(env.get_template(template_name).render(**dict))
+        self.write(env.get_template(template_name).render(**params))
 
     def prepare(self):
         if self.application.isInstalled:

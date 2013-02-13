@@ -6,9 +6,9 @@ from hive_service import ThriftHive
 import logging
 
 class HiveService():
-    '''
+    """
     Инкапсулируем hive
-    '''
+    """
 
     def __init__(self, host, port):
         self.transport = TTransport.TBufferedTransport(TSocket.TSocket(host, port))

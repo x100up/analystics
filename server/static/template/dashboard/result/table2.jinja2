@@ -1,40 +1,44 @@
+{#
+    Перевернутая таблица. Загружается через аякс.
+#}
 {% set showTime = interval in ['minute', 'hour', '10minutes'] %}
-
-<h1>Сводная таблица </h1>
-
-<div class="row">
-    <div class="span3 table-button">
-        <button class="table-transform" onclick="switchTable()" title="перевенуть таблицу"></button>
-        <button class="table-select" onclick="copyToBuffer()" title="выделить выбранное"></button>
-        <button class="table-export" onclick="exportToExcel()" title="экспортировать в эксель"></button>
-        <button class="table-chart" onclick="createChartWithSelectedData()" title="построить график"></button>
-    </div>
-</div>
-
-
-<div id="tableBox">
-
-{% for key in tablesdata %}
-    {% set tabledata = tablesdata[key] %}
-    <table class="data_table" id="tableResult1">
-        <thead>
-            <tr>
-                <th id="emptyData">_</th>
-                <th class="r m" onclick="selectColumn(this, 'sum')"><span>Сумма <span class="button sort down" onclick="sortResultTable(event, this, 'sum')"></span></span></th>
+{{ interval }}
+<thead>
+    <tr>
+        <th id="emptyData">_</th>
+{% for header in tableHeaders.items() %}
+        <th>{{ header[1][0] }}</th>
+                {# <th class="r m" onclick="selectColumn(this, 'sum')"><span>Сумма <span class="button sort down" onclick="sortResultTable(event, this, 'sum')"></span></span></th>
                 <th class="r m" onclick="selectColumn(this, 'avg')"><span>Среднее <span class="button sort down"  onclick="sortResultTable(event, this, 'avg')"></span></span></th>
-                {% for ts in tabledata['columnHeaders'] %}
+                {% for ts in dataItem['columnHeaders'] %}
                 <th onclick="selectColumn(this, {{ loop.index0 }})" data-timestamp="{{ ts }}" class="date m">
                     <span>{{ ts|excelDate(interval) }}</span>
                     {% if showTime %}
                      <em> {{ ts|excelTime(interval) }}</em>
                     {% endif %}
                 </th>
-                {% endfor %}
-            </tr>
-        </thead>
+                {% endfor %} #}
+
+{% endfor %}
+    </tr>
+</thead>
+
+<tbody>
+{% for dataItem in tableData %}
+    <tr>
+        <th>{{ dataItem.header|excelTime(interval) }}</th>
+        {% set values = dataItem['values'] %}
+        {% for seriesIndex in tableHeaders %}
+            <td>{{ values[seriesIndex]|numberFormat }}</td>
+        {% endfor %}
+    </tr>
+{% endfor %}
+</tbody>
+{# {% for key in tableData %}
+    {% set dataItem = tableData[key] %}
 
         <tbody>
-            {% for rowData in tabledata['horizontalData'] %}
+            {% for rowData in dataItem['rowsData'] %}
                 <tr class="datarow" data-sum="{{ rowData.sum }}" data-avg="{{ rowData.avg }}" data-index="{{ loop.index }}">
                     <th onclick="selectRow(this)" data-seriesindex="{{ rowData.seriesIndex }}" data-chartindex="{{ rowData.chartIndex }}">
                         <span>{{ rowData.header }}</span>
@@ -50,7 +54,5 @@
                 </tr>
             {% endfor %}
         </tbody>
-    </table>
-{% endfor %}
+ {% endfor %}   #}
 
-</div>

@@ -38,9 +38,9 @@ class TaskItem(object):
 
 
     def addCondition(self, eventCode, tagCode, values):
-        '''
+        """
         УСловия по значению
-        '''
+        """
         self.conditions.append((eventCode, tagCode, values))
 
     def getConditionValue(self, eventCode, tagCode):
@@ -60,9 +60,9 @@ class TaskItem(object):
         return []
 
     def getFields(self, topQuery = True, isSubquery = False):
-        '''
+        """
         depreatede
-        '''
+        """
         fields = []
         for tag, operations in self.operations.items():
             if 'sum' in operations:
@@ -89,9 +89,9 @@ class TaskItem(object):
         return self.fields + fields
 
     def _getFields(self, topQuery = True, isSubquery = False):
-        '''
+        """
 
-        '''
+        """
         fields = {}
         for tag, operations in self.operations.items():
             if 'sum' in operations:
@@ -129,9 +129,9 @@ class TaskItem(object):
         return names
 
     def getExtraFields(self):
-        '''
+        """
 
-        '''
+        """
         fields = []
         for tag, operations in self.operations.items():
             if 'sum' in operations:

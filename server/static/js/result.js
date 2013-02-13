@@ -757,8 +757,34 @@ function exportToExcel(){
         textData.push(rowData);
     }
 
-    $.post('/ajax/downloadCSV', {'data': textData}, function(retData){
+    $.post('/ajax/downloadCSV', {data: textData}, function(retData){
         $("body").append("<iframe src='/ajax/downloadCSV/?file=" + retData + "' style='display: none;' ></iframe>")
     });
+}
+
+
+var table2loaded = false;
+var showingTable = 1;
+
+/**
+ * перевернуть таблицу
+ */
+function switchTable(){
+    $('#tableResult' + showingTable).hide();
+    if (!table2loaded) {
+        $('#tableBox').append('<table class="data_table" id="tableResult2"></table>');
+        $('#tableResult2').load('/dashboard/app/' + app + '/result/table/' + globalData['taskId'], function(){
+            table2loaded = true;
+            showingTable = 2;
+        });
+    } else {
+        if (showingTable == 1){
+            $('#tableResult2').show();
+            showingTable = 2;
+        } else {
+            $('#tableResult1').show();
+            showingTable = 1;
+        }
+    }
 }
 

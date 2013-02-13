@@ -25,9 +25,9 @@ class GetPathAction(HDFSController):
 
         self.webhdfs = self.getHDFSClient()
 
-        list = self.webhdfs.list(rootPath + path)
+        _list = self.webhdfs.list(rootPath + path)
         files = []
-        for values in list:
+        for values in _list:
             values['dir'] = path
             files.append(HDFS_item.create(values))
 

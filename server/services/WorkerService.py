@@ -89,12 +89,12 @@ class WorkerService(object):
         f.write(json.dumps(data, sort_keys=True, indent=4))
         f.close()
 
-    def getResultData(self, version = None):
+    def getResultData(self, version=None):
         self.result = self.getRawResults()
 
         # fix old versions
-        if self.result.has_key('result'):
-            self.result = {1:{'data':  self.result}}
+        if 'result'in self.result:
+            self.result = {1: {'data':  self.result}}
 
         if version is None:
             version = max(self.result.keys())
@@ -118,7 +118,7 @@ class WorkerService(object):
             return message
         else:
 
-            if result.has_key('data') and result['data'].has_key('exception'):
+            if 'data' in result and 'exception' in result['data']:
                 ex = ''
                 for key in result['data']['exception']:
                     ex += key + ' => ' + str(result['data']['exception'][key]) + ';'

@@ -5,7 +5,7 @@ from models.Worker import Worker
 import os, inspect, re
 
 task = 1
-file = '/../TestHiveResponse'
+_file = '/../TestHiveResponse'
 
 thisPath = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))) # script directory
 resultPath = os.path.abspath(thisPath + '/../result/')
@@ -17,7 +17,7 @@ task = workerService.getTask()
 
 r = re.compile('\s+')
 
-f = open(os.path.abspath(thisPath + file), 'r')
+f = open(os.path.abspath(thisPath + _file), 'r')
 data = f.readlines()
 data = [r.split(line) for line in data]
 

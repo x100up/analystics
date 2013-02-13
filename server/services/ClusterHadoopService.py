@@ -2,7 +2,7 @@
 __author__ = 'pavlenko.roman.spb@gmail.com'
 
 from services.HadoopService import HadoopService
-import json
+
 
 class ClusterHadoopService(HadoopService):
 

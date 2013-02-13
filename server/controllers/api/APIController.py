@@ -13,12 +13,12 @@ class PutConfigAction(BaseController):
                 data = json.loads(jsonData)
                 service = AppService(self.application.getAppConfigPath())
                 service.saveConfig(data)
-            except :
-                self.renderJSON({'error':'exception in process data'})
+            except BaseException:
+                self.renderJSON({'error': 'exception in process data'})
         else:
-            self.renderJSON({'error':'cant find data'})
+            self.renderJSON({'error': 'cant find data'})
 
-        self.renderJSON({'success':'success'})
+        self.renderJSON({'success': 'success'})
 
 
     def renderJSON(self, data):

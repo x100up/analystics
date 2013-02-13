@@ -66,9 +66,9 @@ class AppConfig():
                 del self.tags[tagCode]
 
     def getGeneralTags(self):
-        '''
+        """
         Общие теги
-        '''
+        """
         return self.tags.values()
 
     def getGeneralEventTags(self, eventCode):
@@ -83,9 +83,9 @@ class AppConfig():
 
 
     def getPersonalEventTags(self, eventCode):
-        '''
+        """
         Собственные теги события
-        '''
+        """
         appEvent = self.events[eventCode]
         tags = []
         eventTags = appEvent.tags
@@ -115,9 +115,9 @@ class AppConfig():
         return AppTag(event.tags[tagCode])
 
     def addTag(self, appTag, eventCode = None):
-        '''
+        """
         Добавление тега
-        '''
+        """
         if eventCode:
             if self.isEventExist(eventCode):
                 self.getEvent(eventCode).tags[appTag.code] = appTag.toObject()

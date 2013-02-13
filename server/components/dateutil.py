@@ -3,12 +3,14 @@ monthNamesShort = [u'янв', u'фев', u'март', u'апр', u'май', u'и
 monthNamesB = [u'января', u'февраля', u'марта', u'апреля', u'мая', u'июня', u'июля', u'августа', u'сентября', u'октября', u'ноября', u'декабря']
 monthNamesF = [u'январь', u'февраль', u'март', u'апрель', u'май', u'июнь', u'июль', u'август', u'сентябрь', u'октябрь', u'ноябрь', u'декабрь']
 
+
 def repMonth(value, decode = True):
     if decode:
         value = value.decode('utf-8')
     for i, m in enumerate(monthNamesShort):
         value = value.replace(m, str(i + 1))
     return value
+
 
 def dayCountName(count):
     count = int(str(count)[-1:])
@@ -19,6 +21,7 @@ def dayCountName(count):
     else:
         return u'дней'
 
+
 def hourCountName(count):
     count = int(str(count)[-1:])
     if count == 1:
@@ -27,6 +30,7 @@ def hourCountName(count):
         return u'часа'
     else:
         return u'часов'
+
 
 def minuteCountName(count):
     count = int(str(count)[-1:])
@@ -37,17 +41,9 @@ def minuteCountName(count):
     else:
         return u'минут'
 
+
 def secondCountName(count):
     return u'сек'
-    '''
-    count = int(str(count)[-1:])
-    if count == 1:
-        return u'секунда'
-    elif count < 5:
-        return u'секунды'
-    else:
-        return u'секунд'
-            '''
 
 
 def smartPeriod(date1, date2):
@@ -70,13 +66,13 @@ def smartPeriod(date1, date2):
         _time_from = ' %02d:%02d'% (_time1.hour, _time1.minute)
         _time_to = ' %02d:%02d' % (_time2.hour, _time2.minute)
 
-    if (_date1.year != _date2.year):
+    if _date1.year != _date2.year:
         _from += str(_date1.day) + ' ' + _time_from + ' ' + monthNamesB[_date1.month - 1] + ' ' +  str(_date1.day)
         _to += str(_date2.day) + ' ' + _time_to + ' ' + monthNamesB[_date2.month - 1] + ' ' +  str(_date2.day)
-    elif (_date1.month != _date2.month):
+    elif _date1.month != _date2.month:
         _from += str(_date1.day) + ' ' + _time_from + ' ' + monthNamesB[_date1.month - 1]
         _to += str(_date2.day) + ' ' + _time_to + ' ' + monthNamesB[_date2.month - 1] + ' ' +  str(_date2.year) + u' года'
-    elif (_date1.day != _date2.day):
+    elif _date1.day != _date2.day:
         _from += str(_date1.day)
         _to += str(_date2.day) + ' ' + _time_to + ' ' + _time_from + ' ' + monthNamesB[_date2.month - 1] + ' ' +  str(_date2.year) + u' года'
     else:

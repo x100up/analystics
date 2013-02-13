@@ -1,10 +1,12 @@
 # coding=utf-8
 __author__ = 'pavlenko.roman.spb@gmail.com'
 
+from datetime import datetime
+import time
+
 from controllers.admin.AdminIndexController import AdminAction, AdminAjaxAction
 from services.ClusterHadoopService import ClusterHadoopService
-from datetime import datetime
-import time, random
+
 
 class IndexAction(AdminAction):
 

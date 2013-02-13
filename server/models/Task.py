@@ -47,10 +47,10 @@ class Task(object):
             return self.items[index].getFields()
 
     def getFieldsCount(self):
-        '''
+        """
         Возвращает количество полей для всего таска, которое равно макс кол-ву полей taskItem
         @deprecated
-        '''
+        """
         return max([len(self.items[i].getFields()) for i in self.items])
 
     def getFieldsNames(self):

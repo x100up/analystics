@@ -20,6 +20,10 @@
                         <label for="key_name">Название:</label>
                         <input type="text" value="{{ event.getName() }}" name="key_name" id="key_name">
                     </li>
+                    <li>
+                        <label for="key_name">Есть userId (уникальность):</label>
+                        <input type="checkbox" {% if event.hasUser %}checked="checked"{% endif %} value="true" name="event_hasUser" id="event_hasUser">
+                    </li>
                 </ul>
 
 

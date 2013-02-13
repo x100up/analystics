@@ -11,9 +11,9 @@ class HiveResponseProcessor():
         self.fieldsNames = self.task.getFieldsNames()
 
     def getDateMatrix(self, default = 0):
-        '''
+        """
         Возвращает ожидаемы список дат с нулевыми значениями
-        '''
+        """
         interval = self.task.interval
         delta = timedelta(minutes = 1)
         if interval == Task.INTERVAL_10_MINUTE:
@@ -38,9 +38,9 @@ class HiveResponseProcessor():
         return matrixes
 
     def registerDateParser(self):
-        '''
+        """
         Регистрирует функцию парсинга даты
-        '''
+        """
         interval = self.task.interval
         if interval == Task.INTERVAL_MINUTE or interval == Task.INTERVAL_10_MINUTE:
             self.dateParser = self._parserByMinute
@@ -70,7 +70,7 @@ class HiveResponseProcessor():
             #
             taskItem = self.task.getTaskItem(taskItemIndex)
             _count_extra = 'all'
-            if (taskItem.userUnique):
+            if taskItem.userUnique:
                 _count_extra = 'userunique'
 
             # следующее поле всегда количество, общее или группы
@@ -156,10 +156,10 @@ class HiveResponseProcessor():
                                      minute = int(line[offset + 4])).strftime("%s000"))
 
     def _parserByHour(self, line, offset = 1):
-        return (offset + 4, datetime(int(line[offset + 0]), int(line[offset + 1]), int(line[offset + 2]), hour = int(line[offset + 3])).strftime("%s000"))
+        return offset + 4, datetime(int(line[offset + 0]), int(line[offset + 1]), int(line[offset + 2]), hour = int(line[offset + 3])).strftime("%s000")
 
     def _parserByDay(self, item, offset = 1):
-        return (offset + 3,  datetime(int(item[offset + 0]), int(item[offset + 1]), int(item[offset + 2])).strftime("%s000"))
+        return offset + 3,  datetime(int(item[offset + 0]), int(item[offset + 1]), int(item[offset + 2])).strftime("%s000")
 
     def _parserByWeek(self, item, offset = 1):
-        return (offset + 2, datetime.fromtimestamp(time.mktime(time.strptime('{} {} 1'.format(item[offset + 0], item[offset + 1]), '%Y %W %w'))).strftime("%s000"))
+        return offset + 2, datetime.fromtimestamp(time.mktime(time.strptime('{} {} 1'.format(item[offset + 0], item[offset + 1]), '%Y %W %w'))).strftime("%s000")

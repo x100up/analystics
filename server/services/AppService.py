@@ -11,25 +11,25 @@ class AppService():
         self.appConfCache = {}
 
     def getAppConfigList(self):
-        '''
+        """
         return list of available config apps
         stored in app_config_path
-        '''
-        list = []
-        for file in os.listdir(self.folder):
-            match = self.nameR.search(file)
+        """
+        l = []
+        for f in os.listdir(self.folder):
+            match = self.nameR.search(f)
             if match:
-                list.append(match.group(1))
-        return list
+                l.append(match.group(1))
+        return l
 
     def getRawAppConfig(self, appCode):
         f = open(self._getFilePath(appCode), 'r')
         return json.load(f)
 
     def getAppConfig(self, appCode):
-        '''
+        """
         return app config dict
-        '''
+        """
         if not self.appConfCache.has_key(appCode):
             try:
                 self.appConfCache[appCode] = AppConfig(self.getRawAppConfig(appCode))
@@ -72,10 +72,10 @@ class AppService():
             f.write(json.dumps(data, sort_keys=True, indent=4))
             f.close()
         else:
-            raise Error('Cant find appname in config')
+            raise Exception('Cant find appname in config')
 
     def newSaveConfig(self, appConfig):
         self.saveConfig(appConfig.dumpToJSON())
 
     def getKnowAppList(self):
-        return [ file.replace('.json', '') for file in os.listdir(self.folder)]
+        return [fileName.replace('.json', '') for fileName in os.listdir(self.folder)]

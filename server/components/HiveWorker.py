@@ -1,19 +1,20 @@
 # -*- coding: utf-8 -*-
 import threading
 import logging
+from datetime import datetime
+
 from thrift import Thrift
 from thrift.transport.TTransport import TTransportException
 from hive_service.ttypes import HiveServerException
 from models.Worker import Worker
 from components.HiveResponseProcessor import HiveResponseProcessor
-from datetime import datetime
 from services.HiveService import HiveService
-import time
+
 
 class HiveWorker(threading.Thread):
-    '''
+    """
     Тред для выполнения запроса к hive
-    '''
+    """
     def __init__ (self, workerService):
         self.mysqlSessionMaker = None
         self.folderForWorkerService = None

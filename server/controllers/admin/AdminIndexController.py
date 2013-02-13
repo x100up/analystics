@@ -6,12 +6,12 @@ import tornado.web
 
 class AdminAction(BaseController):
     def adminAuthenticated(self):
-        '''
+        """
         Админ ли пользователь
-        '''
+        """
         user = self.get_current_user()
         if user.role != User.ROLE_ADMIN:
-            self.redirect('/dashboard');
+            self.redirect('/dashboard')
 
 
 class AdminAjaxAction(AjaxController):

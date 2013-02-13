@@ -4,23 +4,27 @@ from datetime import datetime, timedelta
 import time
 from models.Task import Task
 
+
 def showMonth(date):
     return monthNamesF[date.month - 1]
 
-def datetofiled(value, format = '%d {0} %Y %H:%M'):
-    return unicode(value.strftime(format)).format(monthNamesShort[value.date().month - 1],
-                                                  monthNamesB[value.date().month - 1],
-                                                  value.date().day)
 
-def excelDate(timestamp, precision = Task.INTERVAL_MINUTE):
+def datetofiled(value, dateFormat='%d {0} %Y %H:%M'):
+    return unicode(value.strftime(dateFormat)).format(monthNamesShort[value.date().month - 1],
+                                                      monthNamesB[value.date().month - 1], value.date().day)
+
+
+def excelDate(timestamp, precision=Task.INTERVAL_MINUTE):
     date = datetime.fromtimestamp(int(timestamp) / 1000)
     return date.strftime('%d.%m.%Y')
 
-def excelTime(timestamp, precision = Task.INTERVAL_MINUTE):
+
+def excelTime(timestamp, precision=Task.INTERVAL_MINUTE):
     date = datetime.fromtimestamp(int(timestamp) / 1000)
     return date.strftime('%H:%M')
 
-def smartDate(timestamp, precision = Task.INTERVAL_MINUTE):
+
+def smartDate(timestamp, precision=Task.INTERVAL_MINUTE):
     date = datetime.fromtimestamp(int(timestamp) / 1000)
     _format = '{2} {1} %Y %H:%M'
 
@@ -32,6 +36,7 @@ def smartDate(timestamp, precision = Task.INTERVAL_MINUTE):
         return datetofiled(date, _format) + ' - ' + datetofiled(date + timedelta(weeks = 1), _format)
 
     return datetofiled(date, _format)
+
 
 def dateFromTS(timestamp):
     date = datetime.fromtimestamp(int(timestamp) / 1000)
@@ -45,11 +50,12 @@ def toJsVar(var):
 
     return var
 
+
 def smartDatePeriod(date1, date2):
+    '''
+    Умный интервал
+    '''
     if date2:
-        '''
-        Умный интервал
-        '''
         _date1 = date1.date()
         _date2 = date2.date()
         _time1 = date1.time()
@@ -58,13 +64,13 @@ def smartDatePeriod(date1, date2):
         _to = ''
         date_template = u'С {} по {}'
         atOneDay = False
-        if (_date1.year != _date2.year):
+        if _date1.year != _date2.year:
             _from += str(_date1.day) + ' ' + monthNamesB[_date1.month] + ' ' +  str(_date1.day)
             _to += str(_date2.day) + ' ' + monthNamesB[_date2.month] + ' ' +  str(_date2.day)
-        elif (_date1.month != _date2.month):
+        elif _date1.month != _date2.month:
             _from += str(_date1.day) + ' ' + monthNamesB[_date1.month]
             _to += str(_date2.day) + ' ' + monthNamesB[_date2.month] + ' ' +  str(_date2.year) + u' года'
-        elif (_date1.day != _date2.day):
+        elif _date1.day != _date2.day:
             _from += str(_date1.day)
             _to += str(_date2.day) + ' ' + monthNamesB[_date2.month] + ' ' +  str(_date2.year) + u' года'
         else:
@@ -106,19 +112,19 @@ def smartDateInterval(date1, date2):
 
     return result
 
+
 def minInt(_list):
     return min(_list)
 
 
-#
-# Форматирование числа
-#
 def numberFormat(value):
     if type(value) == str:
         value = float(value)
 
-    value =  "%0.2f" % value
+    #return locale.format("%0.2f", value, 1)
+
+    value = "%0.2f" % value
 
     if value.split('.')[1] == '00':
-        return value.split('.')[0]
-    return value
+        value = int(value.split('.')[0])
+    return '{0:,}'.format(value).replace(',', ' ')

@@ -30,4 +30,4 @@ class ResourceManagerService(HadoopService):
     def getAppData(self, app):
         matchObject = self.workerIdRe.search(app['name'])
         if matchObject:
-            return (int(matchObject.group(1)), int(matchObject.group(3)), app['progress'])
+            return int(matchObject.group(1)), int(matchObject.group(3)), app['progress']

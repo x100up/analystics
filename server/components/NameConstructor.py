@@ -9,9 +9,9 @@ class NameConstructor(object):
         self.task = task
 
     def generateTaskName(self):
-        '''
+        """
         Генерирует имя задачи
-        '''
+        """
         return "Новая задача"
 
     def getTaskItemName(self, taskItem):
@@ -21,9 +21,9 @@ class NameConstructor(object):
         return self.appConfig.getEvent(eventCode).getName()
 
     def getKeyNameByIndex(self, index, params = None):
-        '''
+        """
         return key name by taskItem index
-        '''
+        """
 
         taskItem = self.task.getTaskItem(index)
         if taskItem:
@@ -67,9 +67,9 @@ class NameConstructor(object):
         return 'not name for task item: ' + str(index)
 
     def getTagValueName(self, eventCode, tagCode, value):
-        '''
+        """
             Возвращает значение тега
-        '''
+        """
         tag_value = value
         tag = self.appConfig.getTag(eventCode, tagCode)
         if tag:
@@ -91,9 +91,9 @@ class NameConstructor(object):
         return tag_value
 
     def getTagName(self, eventCode, tagCode):
-        '''
+        """
             Возвращает имя тега по коду
-        '''
+        """
         tag = self.appConfig.getTag(eventCode, tagCode)
         if tag:
             return tag.getName()
@@ -115,16 +115,16 @@ class NameConstructor(object):
         return 'seria name'
 
     def getOperationName(self, operation):
-        if (operation == 'count'):
+        if operation == 'count':
             return u'Количество'
 
-        if (operation == 'sum'):
+        if operation == 'sum':
             return u'Сумма'
 
-        if (operation == 'sum'):
+        if operation == 'sum':
             return u'Среднее'
 
-        if (operation == 'group'):
+        if operation == 'group':
             return u'Количество'
 
     def getSeriesGroupName(self, seriesGroup):
