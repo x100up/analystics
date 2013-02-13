@@ -46,7 +46,7 @@ class MonitorScript(BaseAnalyticsScript):
             print 'App {} not present in database. Process app terminated'.format(appCode)
             return
         print 'ProcessApp {}'.format(appCode)
-        self.hiveclient.execute('USE {}'.format(appCode))
+        self.hiveclient.execute('USE stat_{}'.format(appCode))
         appConfig = self.getAppConfig(appCode)
         hiveMetaService = self.getHiveMetaService()
         for eventCode in [appEvent.code for appEvent in appConfig.getEvents()]:
