@@ -158,8 +158,8 @@ class MonitorScript(BaseAnalyticsScript):
 
     def dropPartition(self, year, month, day, eventCode):
         table_name = self.getTableName(eventCode)
-        query = 'ALTER TABLE %(table_name)s DROP PARTITION (dt=\'%(year)d-%(month)02d-%(day)02d\')'.format({
-            'table_name': table_name, 'day': day, 'month': month, 'year': year})
+        query = 'ALTER TABLE %(table_name)s DROP PARTITION (dt=\'%(year)d-%(month)02d-%(day)02d\')' % {
+            'table_name': table_name, 'day': day, 'month': month, 'year': year}
         print 'Drop partition {}-{}-{} for {}'.format(year, month, day, table_name)
         try:
             print query
