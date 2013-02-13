@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from models.Task import Task
-from datetime import datetime
+from datetime import datetime, timedelta
 from components.dateutil import repMonth
 import time, re, calendar
 
@@ -248,7 +248,7 @@ class HiveQueryConstructor():
 
     def getIntervalCondition(self, start, end):
         intervals = []
-        if start.date() == end.date():
+        if start.date() == end.date() or ((end.hour + end.minute == 0) and end - start <= timedelta(days=1)):
             intervals.append('dt = \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day})
         else:
             intervals.append('dt >= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day} \
