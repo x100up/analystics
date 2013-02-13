@@ -147,6 +147,7 @@ class MonitorScript(BaseAnalyticsScript):
         }
         print 'Create partition {}.{}.{} for {}'.format(year, month, day, table_name)
         try:
+            print query
             self.hiveclient.execute(query)
         except Exception as ex:
             print '- Exception on create partition: {}'.format(ex.message)
