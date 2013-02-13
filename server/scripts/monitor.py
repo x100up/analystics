@@ -161,6 +161,7 @@ class MonitorScript(BaseAnalyticsScript):
         query = 'ALTER TABLE {} DROP PARTITION (dt=\'%(year)d-%(month)02d-%(day)02d\')'.format(table_name, day, month, year)
         print 'Drop partition {}-{}-{} for {}'.format(year, month, day, table_name)
         try:
+            print query
             self.hiveclient.execute(query)
         except Exception as ex:
             print '- Exception on drop partition: {}'.format(ex.message)
