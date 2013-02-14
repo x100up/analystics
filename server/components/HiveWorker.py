@@ -43,7 +43,7 @@ class HiveWorker(threading.Thread):
             for query in self.workerService.querys:
                 print 'run {}'.format(query)
                 dataPart = hiveClient.execute(query)
-                print 'Date responsed'
+                print 'Data responsed'
                 #print dataPart
                 data += dataPart
 
@@ -66,8 +66,9 @@ class HiveWorker(threading.Thread):
             status = Worker.STATUS_ERROR
             self.logger.error(tx.message)
         except Exception as tx:
-            print tx
-            data = {'exception': {'Exception': str(tx) }}
+            print tx.message
+            print tx.args
+            data = {'exception': {'Exception': str(tx.message)}}
             status = Worker.STATUS_ERROR
             self.logger.error(tx.message)
         finally:

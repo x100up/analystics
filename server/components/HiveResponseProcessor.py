@@ -56,6 +56,7 @@ class HiveResponseProcessor():
         dateMatrixes = self.getDateMatrix()
         result = {}
         for line in data:
+            print line
             # данные в этой строке
             values = {}
 
@@ -101,9 +102,9 @@ class HiveResponseProcessor():
                     if operation == 'group' :
                         # если есть группа, то кол-во не катит
                         # в строке всегда одна запись кол-во в группе
-                        if values.has_key('count'):
+                        if 'count' in values:
                             del values['count']
-                            values['group'] = [count, {'op' : 'group', 'extra':_count_extra}]
+                            values['group'] = [count, {'op': 'group', 'extra':_count_extra}]
 
                         conditions.append((taskItem.key, tag, value))
                     else:
@@ -112,7 +113,7 @@ class HiveResponseProcessor():
                             value = 0
                         else:
                             value = float(value)
-                        values[operation + '_' + tag] = [value, {'op' : operation, 'tag': tag}]
+                        values[operation + '_' + tag] = [value, {'op': operation, 'tag': tag}]
 
                 # кладем условия в каждое значение
                 for index in values:
@@ -123,21 +124,21 @@ class HiveResponseProcessor():
                 value = values[index]
                 seria_id = str(taskItemIndex) + '_' + index
                 opts = value[1]
-                if opts.has_key('conditions'):
+                if 'conditions' in opts:
                     for eventCode, tag, tag_value in opts['conditions']:
                         seria_id += '_' + tag + '=' + tag_value
 
                 if not result.has_key(taskItemIndex):
                     result[taskItemIndex] = {}
 
-                if not result[taskItemIndex].has_key(seria_id):
+                if not seria_id in result[taskItemIndex]:
                     # еще нет серии
                     result[taskItemIndex][seria_id] = {
                         'data': copy.copy(dateMatrixes[taskItemIndex]),
                         'params': opts
                     }
 
-                if not result[taskItemIndex][seria_id]['data'].has_key(date):
+                if not date in result[taskItemIndex][seria_id]['data']:
                     # тут мы отсекаем лишние данные по времени - не вставляем то что не входит в матрицу данных
                     pass
                 else:
