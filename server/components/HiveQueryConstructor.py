@@ -253,7 +253,7 @@ class HiveQueryConstructor():
         else:
             queryPart = 'dt >= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day}
             if end.hour + end.minute == 0:
-                #x = end - timedelta(days=1)
+                x = end# - timedelta(days=1)
                 queryPart += ' AND dt < \'%(y)d-%(m)02d-%(d)02d\'' % {'y': x.year, 'm': x.month, 'd': x.day}
             else:
                 queryPart += ' AND dt <= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': end.year, 'm': end.month, 'd': end.day}
