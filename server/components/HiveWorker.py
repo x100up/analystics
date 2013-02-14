@@ -66,6 +66,7 @@ class HiveWorker(threading.Thread):
             status = Worker.STATUS_ERROR
             self.logger.error(tx.message)
         except Exception as tx:
+            print type(tx)
             print tx.message
             print tx.args
             data = {'exception': {'Exception': str(tx.message)}}
