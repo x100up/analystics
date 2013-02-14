@@ -345,19 +345,19 @@ class HiveQueryConstructor():
         """
         if group_interval == Task.INTERVAL_MINUTE:
             if isSubquery:
-                return ' `year`, `month`, `day`, `hour`, `minute` '
+                return ' `year`, `month`, `day`, hour, minute '
             else:
                 return ' year(`dt`), month(`dt`), day(`dt`), hour, minute '
 
         if group_interval == Task.INTERVAL_10_MINUTE:
             if isSubquery:
-                return ' `year`, `month`, `day`, `hour`, `minute_10` '
+                return ' `year`, `month`, `day`, hour, `minute_10` '
             else:
                 return ' year(`dt`), month(`dt`), day(`dt`), hour, floor(`minute` / 10) * 10 '
 
         if group_interval == Task.INTERVAL_HOUR:
             if isSubquery:
-                return ' `year`, `month`, `day`, `hour`'
+                return ' `year`, `month`, `day`, hour'
             else:
                 return ' year(`dt`), month(`dt`), day(`dt`), hour'
 
