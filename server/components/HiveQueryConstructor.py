@@ -68,7 +68,7 @@ class HiveQueryConstructor():
         dateFields = self.getDateFields(self.task.interval, taskItem.userUnique)
 
         query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.fields) + fieldsTemplate % fields \
-                 + ' FROM {}'.format(self.getSelectSource(taskItem))
+                 + ' FROM {}'.format(self.getSelectSource(taskItem, forceStart or taskItem.start, forceEnd or taskItem.end))
 
         if not taskItem.userUnique:
             # временная составляющая
@@ -83,16 +83,9 @@ class HiveQueryConstructor():
         query += ' GROUP BY ' + self.getGroupInterval(self.task.interval, taskItem.userUnique) + \
                  self.getTaskTagsByOperation(taskItem, 'group', not taskItem.userUnique)
         return query
-        #     queries.append(query)
-        #
-        # if not isMulty:
-        #     return queries.pop().encode('utf-8')
-        #
-        # query = 'SELECT \'' + str(workerId) + '\' as `wid`, * FROM (' + ' UNION ALL '.join(queries) + ') FINAL'
-        # return query.encode('utf-8')
 
 
-    def getSelectSource(self, taskItem):
+    def getSelectSource(self, taskItem, start, end):
         """
         Из чего выбираем - из таблицы или из выражения
         """
@@ -106,7 +99,7 @@ class HiveQueryConstructor():
                 subquery += ', ' + self.toSQLFields(taskFields)
 
             subquery += ' FROM {}.stat_{}'.format('stat_' + self.task.appname, taskItem.key)
-            interval = self.getIntervalCondition(taskItem.start, taskItem.end)
+            interval = self.getIntervalCondition(start, end)
             subquery += ' WHERE ' + interval
             subquery += self.getTagsCondition(taskItem.conditions)
             subquery += ' GROUP BY userId, ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsByOperation(taskItem, 'group')
@@ -282,62 +275,7 @@ class HiveQueryConstructor():
         return interval
 
 
-    def getIntervalCondition_old(self, start, end):
-        """
-        генерирует временные интервалы выборки
-        """
-        intervals = []
-        start_year = start.date().year
-        end_year = end.date().year
-        start_month = start.date().month
-        end_month = end.date().month
-        start_day = start.date().day
-        end_day = end.date().day
-
-        if start_year == end_year:
-            prefix = '(year = %(year)i'%{'year':start_year}
-            if start_month == end_month:
-                prefix += ' AND month = %(month)i'%{'month':start_month}
-                if (start_day == end_day) or (end_day - start_day == 1 and end.hour == 0 and end.minute == 0):
-                    intervals.append(prefix + ' AND day = %(start_day)i)'%{'start_day':start_day})
-                else:
-                    intervals.append(prefix + ' AND day >= %(start_day)i AND day <= %(end_day)i)'%{'start_day':start_day, 'end_day':end_day})
-            else:
-                for mi in range(start_month, end_month + 1):
-                    prefix2 = prefix + ' AND month = %(month)i'%{'month':mi}
-                    if mi == start_month:
-                        intervals.append(prefix2 + ' AND day >= %(day)i)'%{'day':start_day})
-                    elif mi == end_month:
-                        intervals.append(prefix2 + ' AND day <= %(day)i)'%{'day':end_day})
-                    else:
-                        intervals.append(prefix2 + ')')
-        else:
-            # разные годы
-            for yi in range(start_year, end_year + 1):
-                prefix = '(year = %(year)i'%{'year':yi}
-                if yi == start_year:
-
-                    for mi in range(start_month, 12 + 1):
-                        prefix2 = prefix + ' AND month = %(month)i'%{'month':mi}
-                        if mi == start_month:
-                            intervals.append(prefix2 + ' AND day >= %(day)i)'%{'day':start_day})
-                        else:
-                            intervals.append(prefix2 + ')')
-
-                elif yi == end_year:
-
-                    for mi in range(1, end_month + 1):
-                        prefix2 = prefix + ' AND month = %(month)i'%{'month':mi}
-                        if mi == end_month:
-                            intervals.append(prefix2 + ' AND day <= %(day)i)'%{'day':end_day})
-                        else:
-                            intervals.append(prefix2 + ')')
-
-                else:
-                    # весь год
-                    intervals.append(prefix)
-        return intervals
-
+    
     def getGroupInterval(self, group_interval, isSubquery=False):
         """
         Генерит группировку основываясь на интервале
