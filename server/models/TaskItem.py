@@ -115,19 +115,16 @@ class TaskItem(object):
         return fields
 
     def getFieldsNames(self):
-        """
-        Список возвращаемых имен полей
-        """
         names = []
         for tag, operations in self.operations.items():
             if 'sum' in operations:
-                names.append('`sum_{0}`'.format(tag))
+                names.append(('0.0', '`sum_{0}`'.format(tag)))
 
             if 'avg' in operations:
-                names.append('`avg_{0}`'.format(tag))
+                names.append(('0.0', '`avg_{0}`'.format(tag)))
 
             if 'group' in operations:
-                names.append('`group_{0}`'.format(tag))
+                names.append(('\'\'', '`group_{0}`'.format(tag)))
 
         return names
 

@@ -81,17 +81,19 @@ class HiveResponseProcessor():
 
             extraFields = taskItem.getExtraFields()
 
+            fieldsNames = taskItem.getFieldsNames()
+
             # если есть операции то есть и дополнительные поля
             if extraFields:
                 # мапим оставшиеся поля на названия столбцов
                 lineValues = {}
 
                 for _i, value in enumerate(line[offset:]):
-                    if _i < len(self.fieldsNames):
-                        _default, name = self.fieldsNames[_i]
+                        _default, name = fieldsNames[_i]
                         lineValues[name] = value
 
-                params = [] # параметры выборка для этой строки
+                # параметры выборка для этой строки
+                params = []
                 for operation, tag, fieldsName in extraFields:
                     # операция, тег, значение
                     params.append((operation, tag, lineValues[fieldsName]))
