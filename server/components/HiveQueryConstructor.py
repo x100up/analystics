@@ -19,7 +19,10 @@ class HiveQueryConstructor():
         fields.extend(['value'])
         return fields
 
-    def getHiveQuery(self, workerId):
+    def getHiveQuerys(self, workerId):
+        return [self.constructHiveQuery(workerId)]
+
+    def constructHiveQuery(self, workerId):
         """
             Генерирует запрос для Hive основываясь на зачаче Task
         """
@@ -45,7 +48,7 @@ class HiveQueryConstructor():
             fields = taskItem._getFields(not taskItem.userUnique)
             for default, fieldsName in self.fieldsName:
                 if not fieldsName in fields:
-                    fields[fieldsName] =default
+                    fields[fieldsName] = default
 
             # создаем интервалы - нужны для партицирования
             query = 'SELECT '
@@ -54,13 +57,13 @@ class HiveQueryConstructor():
 
             dateFields = self.getDateFields(self.task.interval, taskItem.userUnique)
 
-            query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.fields) + fieldsTemplate%fields\
+            query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.fields) + fieldsTemplate % fields\
                      + ' FROM {}'.format(self.getSelectSource(taskItem))
 
             if not taskItem.userUnique:
                 # временная составляющая
-                intervals = self.getIntervalCondition(taskItem.start, taskItem.end)
-                query += ' WHERE (' + ' OR '.join(intervals) + ')'
+                interval = self.getIntervalCondition(taskItem.start, taskItem.end)
+                query += ' WHERE ' + interval
                 # условия по тегам
                 query += self.getTagsCondition(taskItem.conditions)
             else:
@@ -91,8 +94,8 @@ class HiveQueryConstructor():
                 subquery += ', ' + self.toSQLFields(taskFields)
 
             subquery += ' FROM {}.stat_{}'.format(self.task.appname, taskItem.key)
-            intervals = self.getIntervalCondition(taskItem.start, taskItem.end)
-            subquery += ' WHERE (' + ' OR '.join(intervals) + ')'
+            interval = self.getIntervalCondition(taskItem.start, taskItem.end)
+            subquery += ' WHERE ' + interval
             subquery += self.getTagsCondition(taskItem.conditions)
             subquery += ' GROUP BY userId, ' + self.getGroupInterval(self.task.interval) + self.getTaskTagsByOperation(taskItem, 'group')
             return '(' + subquery + ') `sq_{}`'.format(taskItem.index)
@@ -247,18 +250,18 @@ class HiveQueryConstructor():
         return fields
 
     def getIntervalCondition(self, start, end):
-        intervals = []
+        """
+        Возвращает интервал выборки данных
+        """
         if start.date() == end.date() or ((end.hour + end.minute == 0) and end - start <= timedelta(days=1)):
-            intervals.append('dt = \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day})
+            interval = 'dt = \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day}
         else:
-            queryPart = 'dt >= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day}
+            interval = 'dt >= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day}
             if end.hour + end.minute == 0:
-                x = end# - timedelta(days=1)
-                queryPart += ' AND dt < \'%(y)d-%(m)02d-%(d)02d\'' % {'y': x.year, 'm': x.month, 'd': x.day}
+                interval += ' AND dt < \'%(y)d-%(m)02d-%(d)02d\'' % {'y': end.year, 'm': end.month, 'd': end.day}
             else:
-                queryPart += ' AND dt <= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': end.year, 'm': end.month, 'd': end.day}
-            intervals.append(queryPart)
-        return intervals
+                interval += ' AND dt <= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': end.year, 'm': end.month, 'd': end.day}
+        return interval
 
 
     def getIntervalCondition_old(self, start, end):

@@ -9,7 +9,7 @@ class WorkerService(object):
         self.version = 1
         self.path = path
         self.task = None
-        self.query = None
+        self.query = []
         self.result = None
         if worker:
             self.setWorker(worker)
@@ -20,11 +20,8 @@ class WorkerService(object):
     def getWorker(self):
         return self.worker
 
-    def setQuery(self, query):
-        self.query = query
-
-    #def setFields(self, fields):
-    #    self.fields = fields
+    def setQuery(self, querys):
+        self.querys = querys
 
     def setTask(self, task):
         self.task = task
@@ -39,7 +36,7 @@ class WorkerService(object):
 
         for_json = {
             'workId': self.worker.workerId,
-            'query': self.query,
+            'querys': self.querys,
             'version': self.version
         }
         job_json = json.dumps(for_json, sort_keys=True, indent=4)
@@ -58,7 +55,7 @@ class WorkerService(object):
         f = open(self.getFolder() + '/job.json', 'r+')
         data = json.load(f)
         f.close()
-        self.query = data['query']
+        self.querys = data['querys']
         if not 'version' in data:
             data['version'] = 1
         self.version = data['version']

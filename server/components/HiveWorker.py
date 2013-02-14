@@ -37,9 +37,12 @@ class HiveWorker(threading.Thread):
         hiveClient = None
         try:
             hiveClient = HiveService(self.host, self.port)
-            processor = HiveResponseProcessor(task = self.task)
-            data = hiveClient.execute(self.workerService.query)
-            print data
+            processor = HiveResponseProcessor(task=self.task)
+            data = []
+            for query in self.workerService.querys:
+                dataPart = hiveClient.execute(query)
+                print dataPart
+                data += dataPart
             data = {'result' : processor.prepareData(data)}
             self.logger.debug('worker [' + self.getName() + '] end job')
             status = Worker.STATUS_SUCCESS

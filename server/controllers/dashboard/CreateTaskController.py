@@ -129,12 +129,12 @@ class CreateAction(CreateTaskController, AjaxController):
 
         # конструирем запрос
         constructor = HiveQueryConstructor(task, appConfig)
-        query = constructor.getHiveQuery(worker.workerId)
+        querys = constructor.getHiveQuerys(worker.workerId)
 
         #task.stageCount = constructor.getStageCount()
         # создаем WorkerService - он будет связывать тред с файловой системой
         workerService = WorkerService(self.application.getResultPath(), worker)
-        workerService.setQuery(query)
+        workerService.setQuery(querys)
         workerService.setTask(task)
         workerService.init()
 
