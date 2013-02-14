@@ -60,8 +60,10 @@ class HiveQueryConstructor():
         query = 'SELECT \'' + str(workerId) + '\' as `wid`,'
 
         dateFields = self.getDateFields(self.task.interval, taskItem.userUnique)
-
-        query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.fields) + ', '.join(fields) \
+        comma = ','
+        if not fields:
+            comma = ''
+        query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.fields) + comma + ', '.join(fields) \
                  + ' FROM {}'.format(self.getSelectSource(taskItem, forceStart or taskItem.start, forceEnd or taskItem.end))
 
         if not taskItem.userUnique:
