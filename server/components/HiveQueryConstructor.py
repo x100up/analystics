@@ -238,22 +238,22 @@ class HiveQueryConstructor():
 
         if interval == Task.INTERVAL_MINUTE:
             # noinspection PyRedundantParentheses
-            fields.append(('hour'))
+            fields.append(('`hour`'))
             # noinspection PyRedundantParentheses
-            fields.append(('minute'))
+            fields.append(('`minute`'))
 
         elif interval == Task.INTERVAL_10_MINUTE:
             # noinspection PyRedundantParentheses
-            fields.append(('hour'))
+            fields.append(('`hour`'))
             if isSubquery:
                 # noinspection PyRedundantParentheses
-                fields.append(('minute_10'))
+                fields.append(('`minute_10`'))
             else:
                 fields.append(('floor(`minute` / 10) * 10', 'minute_10'))
 
-        elif  interval == Task.INTERVAL_HOUR:
+        elif interval == Task.INTERVAL_HOUR:
             # noinspection PyRedundantParentheses
-            fields.append(('hour'))
+            fields.append(('`hour`'))
 
         elif  interval == Task.INTERVAL_DAY:
             pass
@@ -261,11 +261,10 @@ class HiveQueryConstructor():
         elif  interval == Task.INTERVAL_WEEK:
             if isSubquery:
                 # noinspection PyRedundantParentheses
-                fields.append(('weekofyear'))
+                fields.append(('`weekofyear`'))
             else:
                 fields.append(('weekofyear(`timestamp`)', 'weekofyear'))
 
-        #fields.reverse()
         return fields
 
     def getIntervalCondition(self, start, end):
