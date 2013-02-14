@@ -30,6 +30,8 @@ class HiveQueryConstructor():
                 queris.append(self.constructHiveQuery(workerId, taskItem, forceStart=separator))
             else:
                 queris.append(self.constructHiveQuery(workerId, taskItem))
+
+        print queris
         return queris
 
     def constructHiveQuery(self, workerId, taskItem, forceStart=False, forceEnd=False):
