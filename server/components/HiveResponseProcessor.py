@@ -78,8 +78,6 @@ class HiveResponseProcessor():
             values['count'] = [count, {'op':'count', 'extra':_count_extra}]
             offset += 1
 
-
-
             extraFields = taskItem.getExtraFields()
 
             # если есть операции то есть и дополнительные поля

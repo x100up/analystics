@@ -41,11 +41,12 @@ class HiveWorker(threading.Thread):
             processor = HiveResponseProcessor(task=self.task)
             data = []
             for query in self.workerService.querys:
+                print 'run {}'.format(query)
                 dataPart = hiveClient.execute(query)
-                print dataPart
+                #print dataPart
                 data += dataPart
 
-            print data
+            #print data
 
             data = {'result' : processor.prepareData(data)}
             self.logger.debug('worker [' + self.getName() + '] end job')
@@ -64,7 +65,7 @@ class HiveWorker(threading.Thread):
             self.logger.error(tx.message)
         except Exception as tx:
             print tx
-            data = {'exception' : {'Exception': str(tx) }}
+            data = {'exception': {'Exception': str(tx) }}
             status = Worker.STATUS_ERROR
             self.logger.error(tx.message)
         finally:
