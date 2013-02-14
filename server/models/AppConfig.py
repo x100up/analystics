@@ -95,15 +95,21 @@ class AppConfig():
                     tags.append(AppTag(eventTags[tagCode]))
         return tags
 
-
     def getTag(self, eventCode, tagCode):
         if self.isEventExist(eventCode):
             event = self.events[eventCode]
-            if event.tags.has_key(tagCode):
+            if tagCode in event.tags:
                 if event.tags[tagCode]:
                     return AppTag(event.tags[tagCode])
                 else:
                     return self.tags[tagCode]
+            else:
+                # может тег в банче
+                bunches = self.getEventBunches(eventCode)
+                for appTagBunch in bunches:
+                    if tagCode in appTagBunch.tags:
+                        return self.tags[tagCode]
+
 
     def getGeneralTag(self, tagCode):
         if self.tags.has_key(tagCode):
@@ -225,8 +231,6 @@ class AppConfig():
 
         return bunches
 
-
-
     def setTagGroup(self, groupId, tagCode):
         if self.tags.has_key(tagCode):
             if not self.tags[tagCode].has_key('group'):
@@ -247,7 +251,6 @@ class AppConfig():
             return self.tags[tagCode].has_key('group') and int(groupId) in self.tags[tagCode]['group']
         else:
             raise Exception('No tag with code {}'.format(tagCode))
-
 
     def isEventExist(self, eventCode):
         return self.events.has_key(eventCode)
