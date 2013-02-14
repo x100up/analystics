@@ -224,14 +224,14 @@ class HiveQueryConstructor():
             Генерирует список полей дат, нужных для интервала
         """
         if isSubquery:
-            fields = [('year')]
+            fields = [('`year`')]
         else:
             fields = [('year(`dt`)', 'year')]
 
         if interval != Task.INTERVAL_WEEK:
             if isSubquery:
-                fields.append(('month'))
-                fields.append(('day'))
+                fields.append(('`month`'))
+                fields.append(('`day`'))
             else:
                 fields.append(('month(`dt`)', 'month'))
                 fields.append(('day(`dt`)', 'day'))
