@@ -91,14 +91,13 @@ class IndexAction(BaseDashboardAction):
         db_session = self.getDBSession()
 
         action = self.get_argument('action', False)
-        print action
+
         if action == u'Удалить выбранные отчеты':
             workerIds = self.get_arguments('jobId', False)
             if workerIds:
                 workers = db_session.query(Worker).filter(Worker.workerId.in_(workerIds)).all()
                 for worker in workers:
                     db_session.delete(worker)
-                    print worker
 
             db_session.commit()
 

@@ -62,7 +62,6 @@ class EditEvent(AdminAjaxAction, BaseEditConfigAction):
         appEvent.code = self.get_argument('key_code', None)
         appEvent.name = self.get_argument('key_name', None)
         appEvent.hasUser = bool(self.get_argument('event_hasUser', False))
-        print appEvent.hasUser
         appEvent.bunches = bunches
 
         # оставляем только персональные теги

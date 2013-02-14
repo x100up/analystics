@@ -80,7 +80,7 @@ class HiveQueryConstructor():
             pass
 
         # группировка
-        query += ' GROUP BY ' + self.getGroupInterval(self.task.interval,taskItem.userUnique) + \
+        query += ' GROUP BY ' + self.getGroupInterval(self.task.interval, taskItem.userUnique) + \
                  self.getTaskTagsByOperation(taskItem, 'group', not taskItem.userUnique)
         return query
         #     queries.append(query)
@@ -219,23 +219,30 @@ class HiveQueryConstructor():
 
         return '(' + ' OR '.join(exp) + ')'
 
-    def getDateFields(self, interval, isSubquery = False):
+    def getDateFields(self, interval, isSubquery=False):
         """
             Генерирует список полей дат, нужных для интервала
         """
-        fields = [('year(`dt`)', 'year')]
+        if isSubquery:
+            fields = [('year')]
+        else:
+            fields = [('year(`dt`)', 'year')]
 
-        if  interval != Task.INTERVAL_WEEK:
-            fields.append(('month(`dt`)', 'month'))
-            fields.append(('day(`dt`)', 'day'))
+        if interval != Task.INTERVAL_WEEK:
+            if isSubquery:
+                fields.append(('month'))
+                fields.append(('day'))
+            else:
+                fields.append(('month(`dt`)', 'month'))
+                fields.append(('day(`dt`)', 'day'))
 
-        if  interval == Task.INTERVAL_MINUTE:
+        if interval == Task.INTERVAL_MINUTE:
             # noinspection PyRedundantParentheses
             fields.append(('hour'))
             # noinspection PyRedundantParentheses
             fields.append(('minute'))
 
-        elif  interval == Task.INTERVAL_10_MINUTE:
+        elif interval == Task.INTERVAL_10_MINUTE:
             # noinspection PyRedundantParentheses
             fields.append(('hour'))
             if isSubquery:
@@ -332,37 +339,38 @@ class HiveQueryConstructor():
                     intervals.append(prefix)
         return intervals
 
-    def getGroupInterval(self, group_interval, isSubquery = False):
+    def getGroupInterval(self, group_interval, isSubquery=False):
         """
         Генерит группировку основываясь на интервале
+        isSubquery = True - мы гуппируем по данным из подзапроси и нам не нужны выражения
         """
         if group_interval == Task.INTERVAL_MINUTE:
             if isSubquery:
-                return ' year, month, day, hour, minute '
+                return ' `year`, `month`, `day`, `hour`, `minute` '
             else:
                 return ' year(`dt`), month(`dt`), day(`dt`), hour, minute '
 
         if group_interval == Task.INTERVAL_10_MINUTE:
             if isSubquery:
-                return ' year, month, day, hour, minute_10 '
+                return ' `year`, `month`, `day`, `hour`, `minute_10` '
             else:
                 return ' year(`dt`), month(`dt`), day(`dt`), hour, floor(`minute` / 10) * 10 '
 
-        if group_interval ==  Task.INTERVAL_HOUR:
+        if group_interval == Task.INTERVAL_HOUR:
             if isSubquery:
-                return ' year, month, day, hour'
+                return ' `year`, `month`, `day`, `hour`'
             else:
                 return ' year(`dt`), month(`dt`), day(`dt`), hour'
 
         if group_interval == Task.INTERVAL_DAY:
             if isSubquery:
-                return ' year, month, day'
+                return ' `year`, `month`, `day`'
             else:
                 return ' year(`dt`), month(`dt`), day(`dt`)'
 
         if group_interval == Task.INTERVAL_WEEK:
             if isSubquery:
-                return ' year, weekofyear'
+                return ' `year`, `weekofyear`'
             else:
                 return ' year(`dt`), weekofyear(`timestamp`)'
 
