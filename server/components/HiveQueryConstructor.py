@@ -23,7 +23,7 @@ class HiveQueryConstructor():
         queris = []
         now = datetime.now().date()
         for taskItem in self.task.items.values():
-            if taskItem.start.date() != now or taskItem.end.date() != now:
+            if taskItem.start.date() != now and (taskItem.end.date() == now and taskItem.end.hour + taskItem.end.minute > 0 ):
                 # если мы хотим получить данные за сегодня и не только - нужно дернуть 2 запроса task 12835
                 separator = datetime(taskItem.end.year, taskItem.end.month, taskItem.end.day, 0, 0, 0)
                 queris.append(self.constructHiveQuery(workerId, taskItem, forceEnd=separator))
