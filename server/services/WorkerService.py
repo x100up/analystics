@@ -59,7 +59,7 @@ class WorkerService(object):
         data = json.load(f)
         f.close()
         self.query = data['query']
-        if not data.has_key('version'):
+        if not 'version' in data:
             data['version'] = 1
         self.version = data['version']
 

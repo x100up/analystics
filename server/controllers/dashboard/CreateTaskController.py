@@ -75,9 +75,6 @@ class CreateAction(CreateTaskController, AjaxController):
             task = Task(appname = app.code)
 
         eventsLoaded = len(task.items)
-
-
-
         html = self.render('dashboard/new.jinja2', {'task':task, 'app':app,  'appConfig':appConfig}, _return = True)
 
         self.renderJSON({'html': html, 'vars':{'eventLoaded': eventsLoaded}})
@@ -103,7 +100,7 @@ class CreateAction(CreateTaskController, AjaxController):
             session.commit()
 
             # скидываем на диск
-            taskTemplateFile = TaskTemplateFile(self.application.getTemplatePath(), task = task, taskTemplate = taskTemplate)
+            taskTemplateFile = TaskTemplateFile(self.application.getTemplatePath(), task=task, taskTemplate=taskTemplate)
             taskTemplateFile.baseDate = datetime.now()
             taskTemplateFile.save()
 
@@ -147,6 +144,9 @@ class CreateAction(CreateTaskController, AjaxController):
 
         self.redirect('/dashboard/app/' + app.code + '/#new_task/' + str(worker.workerId))
 
+
+
+
 class RecalculateAction(CreateTaskController):
 
     def get(self, *args, **kwargs):
@@ -156,7 +156,7 @@ class RecalculateAction(CreateTaskController):
         dbSession = self.getDBSession()
 
         # загружаем воркер из базы
-        worker = dbSession.query(Worker).filter_by(workerId = workerId).first()
+        worker = dbSession.query(Worker).filter_by(workerId=workerId).first()
         worker.status = Worker.STATUS_ALIVE
         worker.startDate = datetime.now()
         worker.endDate = None
@@ -181,6 +181,13 @@ class ShowNewTaskAction(AjaxController):
         appcode, workerId = args
         aliveThreadNames = ThredService.getAliveThreads()
         if not 'worker-' + workerId in aliveThreadNames:
-            self.renderJSON({'redirect':'status/' + workerId})
+            self.renderJSON({'redirect': 'status/' + workerId})
         else:
-            self.renderJSON({'html': self.render('/dashboard/result/taskAlive.jinja2', _return = True)})
+            dbSession = self.getDBSession()
+            # загружаем воркер из базы
+            worker = dbSession.query(Worker).filter_by(workerId=int(workerId)).first()
+            workerService = WorkerService(self.application.getResultPath(), worker)
+            workerService.load()
+
+
+            self.renderJSON({'html': self.render('/dashboard/result/taskAlive.jinja2', query=workerService.query, _return=True)})
