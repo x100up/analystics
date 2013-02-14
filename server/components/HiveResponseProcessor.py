@@ -8,7 +8,7 @@ class HiveResponseProcessor():
     def __init__(self, task):
         self.task = task
         self.operationsCache = {}
-        self.fieldsNames = self.task.getFieldsNames()
+        #self.fieldsNames = self.task.getFieldsNames()
 
     def getDateMatrix(self, default = 0):
         """

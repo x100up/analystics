@@ -53,15 +53,15 @@ class Task(object):
         """
         return max([len(self.items[i].getFields()) for i in self.items])
 
-    def getFieldsNames(self):
-        fieldsName = []
-        for i in self.items:
-            item = self.items[i]
-            fieldsNames = item.getFieldsNames()
-            for default, name in fieldsNames:
-                if not name in fieldsName:
-                    fieldsName.append((default, name))
-
-        return fieldsName
+    # def getFieldsNames(self):
+    #     fieldsName = []
+    #     for i in self.items:
+    #         item = self.items[i]
+    #         fieldsNames = item.getFieldsNames()
+    #         for default, name in fieldsNames:
+    #             if not name in fieldsName:
+    #                 fieldsName.append((default, name))
+    #
+    #     return fieldsName
 
 

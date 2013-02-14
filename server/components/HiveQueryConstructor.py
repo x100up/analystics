@@ -40,35 +40,28 @@ class HiveQueryConstructor():
             Генерирует запрос для Hive основываясь на зачаче Task
         """
 
-        #queries = []
-        #isMulty = len(self.task.items) > 1
+        # for expName in taskItem.getFieldsNames():
+        #     field = '%({0})s as {0}'.format(expName)
+        #     fieldsTemplates.append(field)
+        #     #if field not in fieldsTemplates:
+        #
+        #
+        # fieldsTemplate = ','.join(fieldsTemplates)
+        # if fieldsTemplate:
+        #     fieldsTemplate = ', ' + fieldsTemplate
 
-        # узнаем количество полей в выдаче для того, чтоыб дополнить запросы до одинакового количества
-        # self.fieldCount = self.task.getFieldsCount()
-        # какие поля должны быть в запросе, для синхронизации UNION
-        self.fieldsName = self.task.getFieldsNames()
-        fieldsTemplates = []
-        for default, name in self.fieldsName:
-            field = '%({0})s as {0}'.format(name)
-            if field not in fieldsTemplates:
-                fieldsTemplates.append(field)
-
-        fieldsTemplate = ','.join(fieldsTemplates)
-        if fieldsTemplate:
-            fieldsTemplate = ', ' + fieldsTemplate
-
-        #for index, taskItem in self.task.items.items():
-        fields = taskItem._getFields(not taskItem.userUnique)
-        for default, fieldsName in self.fieldsName:
-            if not fieldsName in fields:
-                fields[fieldsName] = default
+        expressions = taskItem._getFields(not taskItem.userUnique)
+        expNames = taskItem.getFieldsNames()
+        fields = []
+        for index, expression in enumerate(expressions):
+            fields.append('{} as {}'.format(expression, expNames[index]))
 
         # создаем интервалы - нужны для партицирования
         query = 'SELECT \'' + str(workerId) + '\' as `wid`,'
 
         dateFields = self.getDateFields(self.task.interval, taskItem.userUnique)
 
-        query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.fields) + fieldsTemplate % fields \
+        query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.fields) + ', '.join(fields) \
                  + ' FROM {}'.format(self.getSelectSource(taskItem, forceStart or taskItem.start, forceEnd or taskItem.end))
 
         if not taskItem.userUnique:
