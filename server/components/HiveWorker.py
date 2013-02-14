@@ -33,6 +33,7 @@ class HiveWorker(threading.Thread):
         self.task = task
 
     def run(self):
+        print 'run HiveWorker'
         self.logger.debug('worker [' + self.getName() + '] run')
         hiveClient = None
         try:
@@ -43,6 +44,9 @@ class HiveWorker(threading.Thread):
                 dataPart = hiveClient.execute(query)
                 print dataPart
                 data += dataPart
+    
+            print data
+
             data = {'result' : processor.prepareData(data)}
             self.logger.debug('worker [' + self.getName() + '] end job')
             status = Worker.STATUS_SUCCESS
