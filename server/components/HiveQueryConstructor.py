@@ -31,7 +31,8 @@ class HiveQueryConstructor():
             else:
                 queris.append(self.constructHiveQuery(workerId, taskItem))
 
-        print queris
+        for q in queris:
+            print '--> ', q
         return queris
 
     def constructHiveQuery(self, workerId, taskItem, forceStart=False, forceEnd=False):
@@ -275,7 +276,7 @@ class HiveQueryConstructor():
         return interval
 
 
-    
+
     def getGroupInterval(self, group_interval, isSubquery=False):
         """
         Генерит группировку основываясь на интервале
