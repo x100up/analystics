@@ -54,7 +54,7 @@ class HiveQueryConstructor():
         expNames = taskItem.getFieldsNames()
         fields = []
         for index, expression in expressions.iteritems():
-            fields.append('{} as {}'.format(index, expression))
+            fields.append('{} as {}'.format(expression, index))
 
         # создаем интервалы - нужны для партицирования
         query = 'SELECT \'' + str(workerId) + '\' as `wid`,'
