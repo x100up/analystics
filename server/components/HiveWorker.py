@@ -43,12 +43,14 @@ class HiveWorker(threading.Thread):
             for query in self.workerService.querys:
                 print 'run {}'.format(query)
                 dataPart = hiveClient.execute(query)
+                print 'Date responsed'
                 #print dataPart
                 data += dataPart
 
             #print data
-
+            print 'process data'
             data = {'result' : processor.prepareData(data)}
+            print 'end process data'
             self.logger.debug('worker [' + self.getName() + '] end job')
             status = Worker.STATUS_SUCCESS
         except Thrift.TException as tx:
