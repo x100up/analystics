@@ -22,7 +22,7 @@ class HiveQueryConstructor():
     def getHiveQuerys(self, workerId):
         queris = []
         now = datetime.now().date()
-        for taskItem in self.task.items:
+        for taskItem in self.task.items.values():
             if taskItem.start.date() != now or taskItem.end.date() != now:
                 # если мы хотим получить данные за сегодня и не только - нужно дернуть 2 запроса task 12835
                 separator = datetime(taskItem.end.year, taskItem.end.month, taskItem.end.day, 0, 0, 0)
