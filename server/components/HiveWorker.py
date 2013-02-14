@@ -44,7 +44,7 @@ class HiveWorker(threading.Thread):
                 dataPart = hiveClient.execute(query)
                 print dataPart
                 data += dataPart
-    
+
             print data
 
             data = {'result' : processor.prepareData(data)}

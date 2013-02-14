@@ -20,15 +20,25 @@ class HiveQueryConstructor():
         return fields
 
     def getHiveQuerys(self, workerId):
-        return [self.constructHiveQuery(workerId)]
+        queris = []
+        now = datetime.now().date()
+        for taskItem in self.task.items:
+            if taskItem.start.date() != now or taskItem.end.date() != now:
+                # если мы хотим получить данные за сегодня и не только - нужно дернуть 2 запроса task 12835
+                separator = datetime(taskItem.end.year, taskItem.end.month, taskItem.end.day, 0, 0, 0)
+                queris.append(self.constructHiveQuery(workerId, taskItem, forceEnd=separator))
+                queris.append(self.constructHiveQuery(workerId, taskItem, forceStart=separator))
+            else:
+                queris.append(self.constructHiveQuery(workerId, taskItem))
+        return queris
 
-    def constructHiveQuery(self, workerId):
+    def constructHiveQuery(self, workerId, taskItem, forceStart=False, forceEnd=False):
         """
             Генерирует запрос для Hive основываясь на зачаче Task
         """
 
-        queries = []
-        isMulty = len(self.task.items) > 1
+        #queries = []
+        #isMulty = len(self.task.items) > 1
 
         # узнаем количество полей в выдаче для того, чтоыб дополнить запросы до одинакового количества
         # self.fieldCount = self.task.getFieldsCount()
@@ -44,41 +54,41 @@ class HiveQueryConstructor():
         if fieldsTemplate:
             fieldsTemplate = ', ' + fieldsTemplate
 
-        for index, taskItem in self.task.items.items():
-            fields = taskItem._getFields(not taskItem.userUnique)
-            for default, fieldsName in self.fieldsName:
-                if not fieldsName in fields:
-                    fields[fieldsName] = default
+        #for index, taskItem in self.task.items.items():
+        fields = taskItem._getFields(not taskItem.userUnique)
+        for default, fieldsName in self.fieldsName:
+            if not fieldsName in fields:
+                fields[fieldsName] = default
 
-            # создаем интервалы - нужны для партицирования
-            query = 'SELECT '
-            if not isMulty:
-                query += '\'' + str(workerId) + '\' as `wid`,'
+        # создаем интервалы - нужны для партицирования
+        query = 'SELECT \'' + str(workerId) + '\' as `wid`,'
 
-            dateFields = self.getDateFields(self.task.interval, taskItem.userUnique)
+        dateFields = self.getDateFields(self.task.interval, taskItem.userUnique)
 
-            query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.fields) + fieldsTemplate % fields\
-                     + ' FROM {}'.format(self.getSelectSource(taskItem))
+        query += self.toSQLFields(dateFields) + ', ' + self.toSQLFields(taskItem.fields) + fieldsTemplate % fields \
+                 + ' FROM {}'.format(self.getSelectSource(taskItem))
 
-            if not taskItem.userUnique:
-                # временная составляющая
-                interval = self.getIntervalCondition(taskItem.start, taskItem.end)
-                query += ' WHERE ' + interval
-                # условия по тегам
-                query += self.getTagsCondition(taskItem.conditions)
-            else:
-                # при уникальном юзере все селектим из подзапроса
-                pass
+        if not taskItem.userUnique:
+            # временная составляющая
+            query += ' WHERE ' + self.getIntervalCondition(forceStart or taskItem.start, forceEnd or taskItem.end)
+            # условия по тегам
+            query += self.getTagsCondition(taskItem.conditions)
+        else:
+            # при уникальном юзере все селектим из подзапроса
+            pass
 
-            # группировка
-            query += ' GROUP BY ' + self.getGroupInterval(self.task.interval, taskItem.userUnique) + self.getTaskTagsByOperation(taskItem, 'group', not taskItem.userUnique)
-            queries.append(query)
+        # группировка
+        query += ' GROUP BY ' + self.getGroupInterval(self.task.interval,taskItem.userUnique) + \
+                 self.getTaskTagsByOperation(taskItem, 'group', not taskItem.userUnique)
+        return query
+        #     queries.append(query)
+        #
+        # if not isMulty:
+        #     return queries.pop().encode('utf-8')
+        #
+        # query = 'SELECT \'' + str(workerId) + '\' as `wid`, * FROM (' + ' UNION ALL '.join(queries) + ') FINAL'
+        # return query.encode('utf-8')
 
-        if not isMulty:
-            return queries.pop().encode('utf-8')
-
-        query = 'SELECT \'' + str(workerId) + '\' as `wid`, * FROM (' + ' UNION ALL ' .join(queries) +') FINAL'
-        return query.encode('utf-8')
 
     def getSelectSource(self, taskItem):
         """
@@ -93,7 +103,7 @@ class HiveQueryConstructor():
             if taskFields:
                 subquery += ', ' + self.toSQLFields(taskFields)
 
-            subquery += ' FROM {}.stat_{}'.format(self.task.appname, taskItem.key)
+            subquery += ' FROM {}.stat_{}'.format('stat_' + self.task.appname, taskItem.key)
             interval = self.getIntervalCondition(taskItem.start, taskItem.end)
             subquery += ' WHERE ' + interval
             subquery += self.getTagsCondition(taskItem.conditions)
