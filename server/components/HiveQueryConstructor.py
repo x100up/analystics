@@ -155,7 +155,7 @@ class HiveQueryConstructor():
     def getTSValues(self, val):
         start = False
         end = False
-        dt1 = repMonth(val, decode = False)
+        dt1 = repMonth(val, decode=False)
         components1 = dt1.split(' ')
 
         if len(components1) == 2:
@@ -251,8 +251,13 @@ class HiveQueryConstructor():
         if start.date() == end.date() or ((end.hour + end.minute == 0) and end - start <= timedelta(days=1)):
             intervals.append('dt = \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day})
         else:
-            intervals.append('dt >= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day} \
-                + ' AND dt <= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': end.year, 'm': end.month, 'd': end.day})
+            queryPart = 'dt >= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': start.year, 'm': start.month, 'd': start.day}
+            if end.hour + end.minute == 0:
+                x = end - timedelta(days=1)
+                queryPart += ' AND dt < \'%(y)d-%(m)02d-%(d)02d\'' % {'y': x.year, 'm': x.month, 'd': x.day}
+            else:
+                queryPart += ' AND dt <= \'%(y)d-%(m)02d-%(d)02d\'' % {'y': end.year, 'm': end.month, 'd': end.day}
+            intervals.append(queryPart)
         return intervals
 
 
